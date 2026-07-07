@@ -51,6 +51,9 @@
      border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
   .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
   .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--blue);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#0077ed}.nextbtn:active{transform:scale(.97)}
   .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
      pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
   .hint svg{width:20px;height:20px}
@@ -116,7 +119,7 @@
     <span class="rev">⇄</span>
     <span class="eq" data-i18n="pair_i">s = ∫v dt<small>积分 · 求面积</small></span>
   </div>
-  <div class="lim reveal" data-i18n="p6_next" style="margin-top:14px">第四章 · 敬请期待</div>
+  <a href="ch04.html" class="nextbtn reveal" data-i18n="p6_next">下一章：找最大最小 →</a>
 </section>
 
 <div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -124,7 +127,7 @@
 <script>
 const TAU=Math.PI*2;
 const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',SOFT='#86868b';
-const TMAX=5, S=t=>t*t, V=t=>2*t, SMAX=25, VMAX=10;   // 同一辆车：s=t², v=2t
+const TMAX=5, S=t=>1.2*(2.5*t*t-t*t*t/3), V=t=>1.2*t*(5-t), SMAX=25, VMAX=9;   // 同一辆车：先加速后刹车（v 是倒U）；s 是它的积分，s(5)=25
 let LANG='zh', heroT=3.4, rieMode=0, hoverId=null;   // rieMode: 0 变速, 1 匀速
 function TT(zh,en){return LANG==='en'?en:zh;}
 function dpr(){return Math.min(window.devicePixelRatio||1,2);}
@@ -156,7 +159,7 @@ function drawHero(){
   for(let i=0;i<=40;i++){const t=heroT*i/40;ctx.lineTo(mx(t),my(V(t)));}
   ctx.lineTo(mx(heroT),my(0));ctx.closePath();ctx.fill();
   // 速度直线
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TMAX),my(V(TMAX)));ctx.stroke();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<=80;i++){const t=TMAX*i/80,x=mx(t),y=my(V(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
   const px=mx(heroT);
   ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1.2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px,my(V(heroT)));ctx.lineTo(px,Y+H);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(px,my(V(heroT)),7,0,TAU);ctx.fill();ctx.stroke();
@@ -166,19 +169,19 @@ function drawHero(){
 
 function drawRie(){
   const cv=document.getElementById('cRie');const {ctx,w,h}=setup(cv,430);ctx.clearRect(0,0,w,h);
-  const X=48,Y=26,W=w-74,H=h-70,ff=ffont();const TR=4, vmax=9;
+  const X=48,Y=26,W=w-74,H=h-70,ff=ffont();const TR=5, vmax=9;
   const mx=t=>X+t/TR*W, my=v=>Y+H-v/vmax*H;
   const n=+document.getElementById('rieN').value, dt=TR/n;
-  const uniform=(rieMode===1), vf=uniform?(t=>4):V, trueA=16;   // 匀速 4m/s·4s=16 ; 变速 v=2t 面积也是 16
+  const uniform=(rieMode===1), vf=uniform?(t=>5):V, trueA=25;   // 匀速 4m/s·4s=16 ; 变速 v=2t 面积也是 16
   axesBox(ctx,X,Y,W,H,TT('时间 t','time t'),TT('速度 v','speed v'),TR,vmax,1,2,hoverId==='cRie');
   // 矩形（左端取值）
   let sum=0;
   for(let i=0;i<n;i++){const t=i*dt,vt=vf(t);sum+=vt*dt;
-    ctx.fillStyle='rgba(0,113,227,.18)';ctx.strokeStyle='rgba(0,113,227,.55)';ctx.lineWidth=1;
+    ctx.fillStyle='rgba(0,113,227,.13)';ctx.strokeStyle='rgba(0,113,227,.32)';ctx.lineWidth=1;
     ctx.fillRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));ctx.strokeRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));}
-  // 速度线（变速=斜线，匀速=平线）
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();
-  if(uniform){ctx.moveTo(mx(0),my(4));ctx.lineTo(mx(TR),my(4));}else{ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TR),my(V(TR)));}
+  // 速度线（变速=倒U曲线，匀速=平线）——加粗、画在矩形之上
+  ctx.strokeStyle=BLUE;ctx.lineWidth=3.4;ctx.beginPath();
+  if(uniform){ctx.moveTo(mx(0),my(5));ctx.lineTo(mx(TR),my(5));}else{for(let i=0;i<=80;i++){const t=TR*i/80,x=mx(t),y=my(V(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}}
   ctx.stroke();
   ctx.fillStyle=BLUE;ctx.font='600 13px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillText(TT('矩形和 = ','sum = ')+sum.toFixed(2),X+8,Y+6);
@@ -210,7 +213,7 @@ function drawFtc(){
   axesBox(ctx,X,Y2,W,H2,TT('时间 t','time t'),TT('速度 v','speed v'),TMAX,VMAX,1,2,hoverId==='cFtc');
   ctx.fillStyle='rgba(255,45,85,.16)';ctx.beginPath();ctx.moveTo(mx(0),my2(0));
   for(let i=0;i<=40;i++){const t=t0*i/40;ctx.lineTo(mx(t),my2(V(t)));}ctx.lineTo(mx(t0),my2(0));ctx.closePath();ctx.fill();
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my2(0));ctx.lineTo(mx(TMAX),my2(V(TMAX)));ctx.stroke();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();for(let i=0;i<=80;i++){const t=TMAX*i/80,x=mx(t),y=my2(V(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(t0),my2(V(t0)),5,0,TAU);ctx.fill();
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.fillText(TT('阴影面积 = 路程 = '+S(t0).toFixed(1)+'（积分 ↑）','shaded area = distance = '+S(t0).toFixed(1)+' (integral ↑)'),X+W/2,Y2-6);
   // 连线
@@ -248,7 +251,7 @@ const I18N={
   p6_sub:{zh:'求导（切小、看变化率）和积分（切小、加起来），是同一件事的正反两面，互为逆运算。这，就是<b>微积分基本定理</b>——把整个微积分缝在了一起。',en:'The derivative (slice small, read the rate of change) and the integral (slice small, add up) are two sides of one coin — inverse operations. This is the <b>Fundamental Theorem of Calculus</b>, the stitch that holds it all together.'},
   pair_d:{zh:'v = ds/dt<small>导数 · 看斜率</small>',en:'v = ds/dt<small>derivative · the slope</small>'},
   pair_i:{zh:'s = ∫v dt<small>积分 · 求面积</small>',en:'s = ∫v dt<small>integral · the area</small>'},
-  p6_next:{zh:'第四章 · 敬请期待',en:'Chapter 4 · coming soon'},
+  p6_next:{zh:'下一章：找最大最小 →',en:'Next: Finding the Best →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
 function applyLang(){
