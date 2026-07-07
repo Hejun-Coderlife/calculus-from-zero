@@ -180,8 +180,8 @@ function drawSec(){
   document.getElementById('secOut').innerHTML=
     TT('多走了 Δs = <b>'+ds.toFixed(2)+'</b> 米，用了 Δt = <b>'+dt.toFixed(2)+'</b> 秒　→　平均速度 = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s',
        'gained Δs = <b>'+ds.toFixed(2)+'</b> m in Δt = <b>'+dt.toFixed(2)+'</b> s　→　avg speed = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s')
-    +'<br>'+TT('Δt 再缩也到不了 0（那会变成 0÷0，没意义）—— 但它越接近 0，这个商越贴近 <b class="pk">'+lim.toFixed(2)+'</b>，这个「奔向的数」就是此刻速度。',
-       'Δt can never truly reach 0 (that would be 0÷0, meaningless) — yet the smaller it gets, the tighter this ratio hugs <b class="pk">'+lim.toFixed(2)+'</b>; that number it heads for is the speed right now.');
+    +'<br>'+TT('Δt 再缩也到不了 0（那会变成 0÷0，没意义）—— 但它越接近 0，上面这个平均速度 Δs÷Δt 就越贴近 <b class="pk">'+lim.toFixed(2)+'</b>，这个「奔向的数」就是此刻速度。',
+       'Δt can never truly reach 0 (that would be 0÷0, meaningless) — yet the smaller it gets, the closer the average speed Δs÷Δt above hugs <b class="pk">'+lim.toFixed(2)+'</b>; that number it heads for is the speed right now.');
 }
 
 function drawDeriv(){
