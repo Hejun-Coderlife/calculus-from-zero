@@ -48,6 +48,9 @@
      border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
   .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
   .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--blue);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#0077ed}.nextbtn:active{transform:scale(.97)}
   .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
      pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
   .hint svg{width:20px;height:20px}
@@ -106,7 +109,7 @@
   <div class="kicker reveal" data-i18n="p6_kicker">微积分的另一半</div>
   <div class="q reveal" data-i18n="p6_q">切小时间，<em>看变化</em>。</div>
   <div class="sub reveal" data-i18n="p6_sub">第一章把东西<b>切小、加起来</b>（积分，求总量）；这一章把时间<b>切小、看变化率</b>（导数，求快慢）。一个问「一共多少」，一个问「变多快」—— 这就是微积分的两只手。</div>
-  <div class="lim reveal" data-i18n="p6_next" style="margin-top:10px">第三章 · 敬请期待</div>
+  <a href="ch03.html" class="nextbtn reveal" data-i18n="p6_next">下一章：面积就是路程 →</a>
 </section>
 
 <div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -237,7 +240,7 @@ const I18N={
   p6_kicker:{zh:'微积分的另一半',en:'The other half of calculus'},
   p6_q:{zh:'切小时间，<em>看变化</em>。',en:'Slice time, <em>watch it change</em>.'},
   p6_sub:{zh:'第一章把东西<b>切小、加起来</b>（积分，求总量）；这一章把时间<b>切小、看变化率</b>（导数，求快慢）。一个问「一共多少」，一个问「变多快」—— 这就是微积分的两只手。',en:'Chapter 1 sliced things small and <b>added them up</b> (integration — the total). This chapter slices time small and <b>reads the rate of change</b> (the derivative — the speed). One asks “how much in all,” the other “how fast” — the two hands of calculus.'},
-  p6_next:{zh:'第三章 · 敬请期待',en:'Chapter 3 · coming soon'},
+  p6_next:{zh:'下一章：面积就是路程 →',en:'Next: Area is Distance →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
 function applyLang(){

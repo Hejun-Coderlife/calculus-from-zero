@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>面积就是路程 — 从 0 开始的微积分</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%230071e3' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#6e6e73; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --indigo:#5e5ce6; --pink:#ff2d55;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--blue)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05;color:var(--ink)}
+  .q em{font-style:normal;color:var(--blue)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:33em;line-height:1.5}
+  .fig{width:min(720px,92vw);margin-top:6px}
+  canvas{display:block;width:100%}
+  .ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  .note{font-size:13px;color:var(--faint)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:min(300px,66vw);height:4px;border-radius:99px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+     border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 3px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.06);cursor:pointer}
+  .readout{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--soft);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .readout b{color:var(--ink);font-weight:600}.readout .bl{color:var(--blue);font-weight:600}.readout .pk{color:var(--pink);font-weight:600}
+  .eqbox{width:100%;max-width:100%;overflow-x:auto;padding:16px 4px 4px}
+  .eqrow{display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,3.5vw,34px);flex-wrap:nowrap;width:max-content;min-width:100%;margin:0 auto}
+  .eqrow .tok{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .eqrow .sym{font-size:clamp(38px,7.6vw,80px);font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap;color:var(--ink)}
+  .eqrow .sym.blue{color:var(--blue)}
+  .eqrow .lab{font-size:clamp(12px,1.5vw,15px);font-weight:500;color:var(--faint);line-height:1.3;text-align:center;max-width:11em}
+  .eqrow .lab::before{content:"";display:block;width:1px;height:12px;background:var(--line);margin:0 auto 8px}
+  .pair{display:flex;align-items:center;justify-content:center;gap:clamp(14px,4vw,40px);flex-wrap:wrap;margin-top:6px}
+  .pair .eq{font-size:clamp(22px,3.4vw,34px);font-weight:700;letter-spacing:-.02em;display:flex;flex-direction:column;gap:6px}
+  .pair .eq small{font-size:13px;font-weight:500;color:var(--faint)}
+  .pair .rev{font-size:clamp(24px,4vw,40px);color:var(--pink);font-weight:700}
+  .lim{font-size:clamp(15px,1.9vw,20px);color:var(--soft);font-weight:500}.lim b{color:var(--ink)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .homelink,.langbtn,.prevbtn{position:fixed;top:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
+  .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
+     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
+  .hint svg{width:20px;height:20px}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style></head>
+<body>
+<a href="index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<a href="ch02.html" class="prevbtn" data-i18n="nav_prev">← 上一章</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第三章</div>
+  <div class="q reveal" data-i18n="p1_q">反过来：<em>走了多远</em>？</div>
+  <div class="sub reveal" data-i18n="p1_sub">上一章从「路程」求出了每一刻的「速度」。现在反过来：只有仪表盘记下的<b>速度</b>（一直在变），能倒推出一共<b>走了多远</b>吗？</div>
+  <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="300"></canvas></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p2_kicker">化整为零</div>
+  <div class="q reveal" data-i18n="p2_q">速度 <em>×</em> 时间</div>
+  <div class="sub reveal" data-i18n="p2_sub">如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段，每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p3_kicker">逼近</div>
+  <div class="q reveal" data-i18n="p3_q">数<em>小矩形</em></div>
+  <div class="sub reveal" data-i18n="p3_sub">把时间切成 n 段，每段竖一个矩形（高 = 那一刻的速度，宽 = Δt）。矩形面积之和 ≈ 速度曲线下的面积。切得越多，越贴近真实路程。</div>
+  <div class="fig reveal"><canvas id="cRie" height="430"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p3_ln">切片数 n</label>
+    <input id="rieN" type="range" min="2" max="60" value="6" step="1"><span class="readout"><b id="rieNv">6</b></span></div>
+  <div class="readout reveal" id="rieOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p4_kicker">看出来了</div>
+  <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">矩形加满，正好等于速度曲线下的<b>面积</b>——而这块面积，就是<b>走过的路程</b>。</div>
+  <div class="sub reveal" style="transition-delay:.4s" data-i18n="p4_l2">这个「把 速度 × Δt 一段段累加」的操作，就是<b>积分</b>（和第一章剥圆环是同一件事）：</div>
+  <div class="eqbox reveal" style="transition-delay:.75s" data-i18n="p4_eq"><div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">把 速度×一点点时间<br>一路加起来<br>（= 曲线下的面积）</span></span></div></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p5_kicker">一来一回</div>
+  <div class="q reveal" data-i18n="p5_q">求导 与 积分，<em>互相抵消</em></div>
+  <div class="sub reveal" data-i18n="p5_sub">上：路程曲线，某点的<b>切线斜率</b> = 那一刻的速度（第二章，求导）。下：速度曲线，到该点为止的<b>面积</b> = 走过的路程（这一章，积分）。移动 t，两个数始终对得上 —— 一个拆开，一个合起来，正好抵消。</div>
+  <div class="fig reveal"><canvas id="cFtc" height="470"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p5_lt">移动此刻 t</label>
+    <input id="ftcT" type="range" min="3" max="50" value="30" step="1"></div>
+  <div class="readout reveal" id="ftcOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p6_kicker">微积分基本定理</div>
+  <div class="q reveal" data-i18n="p6_q">两只手，<em>合上了</em>。</div>
+  <div class="sub reveal" data-i18n="p6_sub">求导（切小、看变化率）和积分（切小、加起来），是同一件事的正反两面，互为逆运算。这，就是<b>微积分基本定理</b>——把整个微积分缝在了一起。</div>
+  <div class="pair reveal">
+    <span class="eq" data-i18n="pair_d">v = ds/dt<small>导数 · 看斜率</small></span>
+    <span class="rev">⇄</span>
+    <span class="eq" data-i18n="pair_i">s = ∫v dt<small>积分 · 求面积</small></span>
+  </div>
+  <div class="lim reveal" data-i18n="p6_next" style="margin-top:14px">第四章 · 敬请期待</div>
+</section>
+
+<div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<script>
+const TAU=Math.PI*2;
+const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',SOFT='#86868b';
+const TMAX=5, S=t=>t*t, V=t=>2*t, SMAX=25, VMAX=10;   // 同一辆车：s=t², v=2t
+let LANG='zh', heroT=3.4;
+function TT(zh,en){return LANG==='en'?en:zh;}
+function dpr(){return Math.min(window.devicePixelRatio||1,2);}
+function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  const ctx=cv.getContext('2d');ctx.setTransform(r,0,0,r,0,0);return{ctx,w:cssW,h:cssH};}
+function ffont(){return getComputedStyle(document.body).fontFamily;}
+function axesBox(ctx,X,Y,W,H,xl,yl){const ff=ffont();
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.4;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X-4,Y+9);ctx.moveTo(X,Y);ctx.lineTo(X+4,Y+9);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X+W,Y+H);ctx.lineTo(X+W-9,Y+H-4);ctx.moveTo(X+W,Y+H);ctx.lineTo(X+W-9,Y+H+4);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textBaseline='alphabetic';
+  ctx.textAlign='right';ctx.fillText(xl,X+W-2,Y+H+18);ctx.textAlign='left';ctx.fillText(yl,X-12,Y-4);}
+
+function drawHero(){
+  const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
+  const X=46,Y=26,W=w-70,H=h-64,ff=ffont();
+  const mx=t=>X+t/TMAX*W, my=v=>Y+H-v/VMAX*H;
+  axesBox(ctx,X,Y,W,H,TT('时间','time'),TT('速度','speed'));
+  // 面积（0..heroT）
+  ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my(0));
+  for(let i=0;i<=40;i++){const t=heroT*i/40;ctx.lineTo(mx(t),my(V(t)));}
+  ctx.lineTo(mx(heroT),my(0));ctx.closePath();ctx.fill();
+  // 速度直线
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TMAX),my(V(TMAX)));ctx.stroke();
+  const px=mx(heroT);
+  ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1.2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px,my(V(heroT)));ctx.lineTo(px,Y+H);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(px,my(V(heroT)),7,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=PINK;ctx.font='600 30px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',mx(heroT/2),my(V(heroT)/2)+8);
+  ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='600 15px '+ff;ctx.textBaseline='bottom';ctx.fillText(TT('走了多远？','how far?'),mx(heroT/2),my(0)-6);
+}
+
+function drawRie(){
+  const cv=document.getElementById('cRie');const {ctx,w,h}=setup(cv,430);ctx.clearRect(0,0,w,h);
+  const X=48,Y=26,W=w-74,H=h-70,ff=ffont();const TR=4, vmax=9;
+  const mx=t=>X+t/TR*W, my=v=>Y+H-v/vmax*H;
+  const n=+document.getElementById('rieN').value, dt=TR/n;
+  axesBox(ctx,X,Y,W,H,TT('时间 t','time t'),TT('速度 v','speed v'));
+  // 矩形（左端取值，欠一点，随 n 增大而逼近）
+  let sum=0;
+  for(let i=0;i<n;i++){const t=i*dt,vt=V(t);sum+=vt*dt;
+    ctx.fillStyle='rgba(0,113,227,.18)';ctx.strokeStyle='rgba(0,113,227,.55)';ctx.lineWidth=1;
+    ctx.fillRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));ctx.strokeRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));}
+  // 速度直线
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TR),my(V(TR)));ctx.stroke();
+  const trueA=TR*TR;
+  document.getElementById('rieNv').textContent=n;
+  document.getElementById('rieOut').innerHTML=
+    TT('矩形面积之和 = <b class="bl">'+sum.toFixed(2)+'</b>　→　真实路程 = <b>'+trueA.toFixed(0)+'</b> 米',
+       'sum of rectangles = <b class="bl">'+sum.toFixed(2)+'</b>　→　true distance = <b>'+trueA.toFixed(0)+'</b> m')
+    +'<br><span class="note">'+TT('切片越多，矩形和越贴近曲线下的面积 = 路程','more slices → the sum hugs the area under the curve = the distance')+'</span>';
+}
+
+function drawFtc(){
+  const cv=document.getElementById('cFtc');const {ctx,w,h}=setup(cv,470);ctx.clearRect(0,0,w,h);
+  const X=48,W=w-74,ff=ffont();const Y1=22,H1=196,Y2=258,H2=176;
+  const mx=t=>X+t/TMAX*W, my1=s=>Y1+H1-s/SMAX*H1, my2=v=>Y2+H2-v/VMAX*H2;
+  const t0=+document.getElementById('ftcT').value/10;
+  // 上：路程曲线 + 切线（求导）
+  axesBox(ctx,X,Y1,W,H1,TT('时间 t','time t'),TT('路程 s','dist s'));
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();
+  for(let i=0;i<=60;i++){const t=TMAX*i/60;const x=mx(t),y=my1(S(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  const m=V(t0),ta=Math.max(0,t0-1.3),tb=Math.min(TMAX,t0+1.3);
+  ctx.strokeStyle=PINK;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(mx(ta),my1(S(t0)+m*(ta-t0)));ctx.lineTo(mx(tb),my1(S(t0)+m*(tb-t0)));ctx.stroke();
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(t0),my1(S(t0)),5,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText(TT('切线斜率 = 速度（求导 ↓）','slope = speed (derivative ↓)'),mx(t0),Y1-6);
+  // 下：速度直线 + 面积（积分）
+  axesBox(ctx,X,Y2,W,H2,TT('时间 t','time t'),TT('速度 v','speed v'));
+  ctx.fillStyle='rgba(255,45,85,.16)';ctx.beginPath();ctx.moveTo(mx(0),my2(0));
+  for(let i=0;i<=40;i++){const t=t0*i/40;ctx.lineTo(mx(t),my2(V(t)));}ctx.lineTo(mx(t0),my2(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my2(0));ctx.lineTo(mx(TMAX),my2(V(TMAX)));ctx.stroke();
+  ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(t0),my2(V(t0)),5,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.fillText(TT('阴影面积 = 路程（积分 ↑）','shaded area = distance (integral ↑)'),mx(t0),Y2-6);
+  // 连线
+  ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(t0),my1(S(t0)));ctx.lineTo(mx(t0),my2(V(t0)));ctx.stroke();ctx.setLineDash([]);
+  document.getElementById('ftcOut').innerHTML=
+    TT('斜率(求导)=速度=<b class="pk">'+V(t0).toFixed(1)+'</b>　·　面积(积分)=路程=<b class="bl">'+S(t0).toFixed(1)+'</b>　·　都对得上',
+       'slope(derivative)=speed=<b class="pk">'+V(t0).toFixed(1)+'</b>　·　area(integral)=distance=<b class="bl">'+S(t0).toFixed(1)+'</b>　·　they always match');
+}
+
+const I18N={
+  title:{zh:'面积就是路程 — 从 0 开始的微积分',en:'Area is Distance — Calculus from Zero'},
+  nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
+  p1_kicker:{zh:'从 0 开始的微积分 · 第三章',en:'Calculus from Zero · Chapter 3'},
+  p1_q:{zh:'反过来：<em>走了多远</em>？',en:'In reverse: <em>how far?</em>'},
+  p1_sub:{zh:'上一章从「路程」求出了每一刻的「速度」。现在反过来：只有仪表盘记下的<b>速度</b>（一直在变），能倒推出一共<b>走了多远</b>吗？',en:'Last chapter we went from distance to the speed at every instant. Now the reverse: given only the <b>speed</b> the dashboard recorded (always changing), can we recover <b>how far</b> we went?'},
+  p2_kicker:{zh:'化整为零',en:'Break it up'},
+  p2_q:{zh:'速度 <em>×</em> 时间',en:'speed <em>×</em> time'},
+  p2_sub:{zh:'如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段，每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）',en:'If speed were constant, distance = speed × time — the area of one rectangle. But speed keeps changing, so slice time into many tiny bits; within each bit speed is <b>almost constant</b>, distance ≈ speed × Δt, then add them up. (Slice small, add it back — again.)'},
+  p3_kicker:{zh:'逼近',en:'Approach'},
+  p3_q:{zh:'数<em>小矩形</em>',en:'Count <em>rectangles</em>'},
+  p3_sub:{zh:'把时间切成 n 段，每段竖一个矩形（高 = 那一刻的速度，宽 = Δt）。矩形面积之和 ≈ 速度曲线下的面积。切得越多，越贴近真实路程。',en:'Cut time into n pieces; on each, stand a rectangle (height = the speed there, width = Δt). The sum of the rectangles ≈ the area under the speed curve. More pieces, closer to the true distance.'},
+  p3_ln:{zh:'切片数 n',en:'slices n'},
+  p4_kicker:{zh:'看出来了',en:'Now you see it'},
+  p4_l1:{zh:'矩形加满，正好等于速度曲线下的<b>面积</b>——而这块面积，就是<b>走过的路程</b>。',en:'Fill in the rectangles and you get the <b>area</b> under the speed curve — and that area <b>is</b> the distance travelled.'},
+  p4_l2:{zh:'这个「把 速度 × Δt 一段段累加」的操作，就是<b>积分</b>（和第一章剥圆环是同一件事）：',en:'This “add up speed × Δt, piece by piece” is <b>integration</b> — the very same move as peeling rings in Chapter 1:'},
+  p4_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">把 速度×一点点时间<br>一路加起来<br>（= 曲线下的面积）</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym">dist</span><span class="lab">how far</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">add up speed×a bit of time<br>all the way<br>(= area under the curve)</span></span></div>'},
+  p5_kicker:{zh:'一来一回',en:'There and back'},
+  p5_q:{zh:'求导 与 积分，<em>互相抵消</em>',en:'Derivative & integral, <em>they undo each other</em>'},
+  p5_sub:{zh:'上：路程曲线，某点的<b>切线斜率</b> = 那一刻的速度（第二章，求导）。下：速度曲线，到该点为止的<b>面积</b> = 走过的路程（这一章，积分）。移动 t，两个数始终对得上 —— 一个拆开，一个合起来，正好抵消。',en:'Top: the distance curve — its <b>tangent slope</b> at a point = the speed then (Chapter 2, the derivative). Bottom: the speed curve — the <b>area</b> up to that point = the distance (this chapter, the integral). Move t and the two always agree — one takes apart, one puts together, cancelling out.'},
+  p5_lt:{zh:'移动此刻 t',en:'move now t'},
+  p6_kicker:{zh:'微积分基本定理',en:'The Fundamental Theorem'},
+  p6_q:{zh:'两只手，<em>合上了</em>。',en:'The two hands, <em>joined</em>.'},
+  p6_sub:{zh:'求导（切小、看变化率）和积分（切小、加起来），是同一件事的正反两面，互为逆运算。这，就是<b>微积分基本定理</b>——把整个微积分缝在了一起。',en:'The derivative (slice small, read the rate of change) and the integral (slice small, add up) are two sides of one coin — inverse operations. This is the <b>Fundamental Theorem of Calculus</b>, the stitch that holds it all together.'},
+  pair_d:{zh:'v = ds/dt<small>导数 · 看斜率</small>',en:'v = ds/dt<small>derivative · the slope</small>'},
+  pair_i:{zh:'s = ∫v dt<small>积分 · 求面积</small>',en:'s = ∫v dt<small>integral · the area</small>'},
+  p6_next:{zh:'第四章 · 敬请期待',en:'Chapter 4 · coming soon'},
+  hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+};
+function applyLang(){
+  document.documentElement.lang=LANG;document.title=I18N.title[LANG];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  drawHero();drawRie();drawFtc();
+}
+function initAll(){
+  drawHero();drawRie();drawFtc();
+  const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
+  const aim=e=>{const rc=hero.getBoundingClientRect();const X=46,W=hero.clientWidth-70;
+    let t=(e.clientX-rc.left-X)/W*TMAX;heroT=Math.max(0.3,Math.min(TMAX,t));drawHero();};
+  let drag=false;
+  hero.addEventListener('pointerdown',e=>{drag=true;hero.setPointerCapture(e.pointerId);aim(e);});
+  hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
+  hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
+  let r1=null;document.getElementById('rieN').addEventListener('input',()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawRie();});});
+  let r2=null;document.getElementById('ftcT').addEventListener('input',()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawFtc();});});
+  document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const lastPanel=document.querySelector('.panel:last-of-type');
+  new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
+  addEventListener('resize',()=>{drawHero();drawRie();drawFtc();});
+  addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
+  applyLang();
+}
+initAll();
+</script>
+</body></html>
