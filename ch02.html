@@ -162,6 +162,8 @@ function drawSec(){
   const m=2*t0;ctx.strokeStyle='rgba(255,45,85,.35)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
   const ta=Math.max(0,t0-1.4),tb=Math.min(TMAX,t0+1.4);
   ctx.beginPath();ctx.moveTo(mx(ta),my(S(t0)+m*(ta-t0)));ctx.lineTo(mx(tb),my(S(t0)+m*(tb-t0)));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=PINK;ctx.font='500 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('切线 = 此刻速度','tangent = speed now'),mx(ta)+3,my(S(t0)+m*(ta-t0))+5);
   const A=[mx(t0),my(S(t0))],B=[mx(t0+dt),my(S(t0+dt))],C=[mx(t0+dt),my(S(t0))];
   // 割线（延长）
   const dx=B[0]-A[0],dy=B[1]-A[1];
@@ -180,8 +182,8 @@ function drawSec(){
   document.getElementById('secOut').innerHTML=
     TT('多走了 Δs = <b>'+ds.toFixed(2)+'</b> 米，用了 Δt = <b>'+dt.toFixed(2)+'</b> 秒　→　平均速度 = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s',
        'gained Δs = <b>'+ds.toFixed(2)+'</b> m in Δt = <b>'+dt.toFixed(2)+'</b> s　→　avg speed = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s')
-    +'<br>'+TT('Δt 再缩也到不了 0（那会变成 0÷0，没意义）—— 但它越接近 0，上面这个平均速度 Δs÷Δt 就越贴近 <b class="pk">'+lim.toFixed(2)+'</b>，这个「奔向的数」就是此刻速度。',
-       'Δt can never truly reach 0 (that would be 0÷0, meaningless) — yet the smaller it gets, the closer the average speed Δs÷Δt above hugs <b class="pk">'+lim.toFixed(2)+'</b>; that number it heads for is the speed right now.');
+    +'<br>'+TT('红字 <b class="pk">'+lim.toFixed(2)+'</b> = 把 Δt 一直缩小、上面这个平均速度最终会贴近的数，也就是此刻速度（= 图上粉色切线的斜率）。现在 Δt='+dt.toFixed(2)+' 还没缩到底，所以显示 '+avg.toFixed(2)+'；越缩越靠近它，但 Δt 永远到不了 0。',
+       'The red <b class="pk">'+lim.toFixed(2)+'</b> = the number this average speed settles toward as Δt keeps shrinking — the speed right now (= slope of the pink tangent). Δt='+dt.toFixed(2)+' is not tiny yet, so it reads '+avg.toFixed(2)+'; keep shrinking and it closes in, but Δt never truly reaches 0.');
 }
 
 function drawDeriv(){
