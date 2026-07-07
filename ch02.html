@@ -213,7 +213,7 @@ function drawDeriv(){
   document.getElementById('derOut').innerHTML=
     TT('此刻 t = <b>'+t0.toFixed(1)+'</b> 秒　·　切线斜率 = 速度 = <b class="pk">'+(2*t0).toFixed(1)+'</b> m/s',
        'now t = <b>'+t0.toFixed(1)+'</b> s　·　tangent slope = speed = <b class="pk">'+(2*t0).toFixed(1)+'</b> m/s')
-    +'<br><span class="note">'+TT('速度是一条直线上升 —— 这辆车在匀加速','the speed rises in a straight line — this car accelerates steadily')+'</span>';
+    +'<br><span class="note">'+TT('这条速度线是直的，只因这辆车「匀加速」（路程恰好是 t²）。换种开法，速度曲线就会是弯的——导数一般是另一条曲线，不一定是直线。','This speed line is straight only because the car accelerates uniformly (distance happens to be t²). Drive differently and it would curve — in general the derivative is another curve, not necessarily a line.')+'</span>';
 }
 
 const I18N={
