@@ -83,16 +83,16 @@
   <div class="ctrl reveal"><label data-i18n="p3_lt">此刻 t</label>
     <input id="secT0" type="range" min="5" max="35" value="20" step="1">
     <label data-i18n="p3_ldt">间隔 Δt</label>
-    <input id="secDt" type="range" min="2" max="150" value="100" step="1"></div>
+    <input id="secDt" type="range" min="1" max="150" value="100" step="1"></div>
   <div class="readout reveal" id="secOut"></div>
 </section>
 
 <section class="panel">
   <div class="kicker reveal" data-i18n="p4_kicker">给它一个名字</div>
-  <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">当 Δt 缩到 0，平均速度 Δs/Δt 不再乱跳，稳定到一个数——那就是<b>此刻的速度</b>。它正好是曲线在这点的<b>切线斜率</b>。</div>
+  <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">注意：Δt <b>不能真的等于 0</b>（0÷0 没意义）。但让 Δt 不断缩小，平均速度 Δs/Δt 会越来越稳，<b>逼近一个确定的数</b>——那就是<b>此刻的速度</b>，也正好是曲线在这点的<b>切线斜率</b>。</div>
   <div class="sub reveal" style="transition-delay:.4s" data-i18n="p4_l2">这个「一瞬间的变化率」，数学里给它名字，叫<b>导数</b>：</div>
   <div class="eqbox reveal" style="transition-delay:.75s" data-i18n="p4_eq"><div class="eqrow"><span class="tok"><span class="sym blue">v</span><span class="lab">此刻的速度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue"><span class="frac"><span class="num">ds</span><span class="den">dt</span></span></span><span class="lab">一点点路程 ÷<br>一点点时间<br>（= 切线斜率）</span></span></div></div>
-  <div class="lim reveal" style="transition-delay:1.1s" data-i18n="p4_lim">也就是 <b>v = 当 Δt→0 时的 Δs/Δt</b> —— Δt 缩到 0 的那个数。</div>
+  <div class="lim reveal" style="transition-delay:1.1s" data-i18n="p4_lim">也就是 <b>v = Δt→0 时 Δs/Δt 奔向的那个数</b>（数学里叫「<b>极限</b>」）。</div>
 </section>
 
 <section class="panel">
@@ -176,11 +176,12 @@ function drawSec(){
   // 点
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(A[0],A[1],5.5,0,TAU);ctx.fill();
   ctx.fillStyle=IND;ctx.beginPath();ctx.arc(B[0],B[1],5,0,TAU);ctx.fill();
-  const ds=S(t0+dt)-S(t0), avg=ds/dt;
+  const ds=S(t0+dt)-S(t0), avg=ds/dt, lim=(S(t0+1e-4)-S(t0))/1e-4;
   document.getElementById('secOut').innerHTML=
     TT('多走了 Δs = <b>'+ds.toFixed(2)+'</b> 米，用了 Δt = <b>'+dt.toFixed(2)+'</b> 秒　→　平均速度 = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s',
        'gained Δs = <b>'+ds.toFixed(2)+'</b> m in Δt = <b>'+dt.toFixed(2)+'</b> s　→　avg speed = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s')
-    +'<br><span class="note">'+TT('把 Δt 拖到最小，看这个数稳定到哪 —— 那就是此刻速度','drag Δt to the smallest and watch it settle — that is the speed right now')+'</span>';
+    +'<br>'+TT('Δt 再缩也到不了 0（那会变成 0÷0，没意义）—— 但它越接近 0，这个商越贴近 <b class="pk">'+lim.toFixed(2)+'</b>，这个「奔向的数」就是此刻速度。',
+       'Δt can never truly reach 0 (that would be 0÷0, meaningless) — yet the smaller it gets, the tighter this ratio hugs <b class="pk">'+lim.toFixed(2)+'</b>; that number it heads for is the speed right now.');
 }
 
 function drawDeriv(){
@@ -229,10 +230,10 @@ const I18N={
   p3_lt:{zh:'此刻 t',en:'now t'},
   p3_ldt:{zh:'间隔 Δt',en:'interval Δt'},
   p4_kicker:{zh:'给它一个名字',en:'Give it a name'},
-  p4_l1:{zh:'当 Δt 缩到 0，平均速度 Δs/Δt 不再乱跳，稳定到一个数——那就是<b>此刻的速度</b>。它正好是曲线在这点的<b>切线斜率</b>。',en:'As Δt shrinks to 0, the average Δs/Δt stops wobbling and settles on one number — the <b>speed at this instant</b>. It is exactly the <b>slope of the tangent</b> to the curve there.'},
+  p4_l1:{zh:'注意：Δt <b>不能真的等于 0</b>（0÷0 没意义）。但让 Δt 不断缩小，平均速度 Δs/Δt 会越来越稳，<b>逼近一个确定的数</b>——那就是<b>此刻的速度</b>，也正好是曲线在这点的<b>切线斜率</b>。',en:'Careful: Δt <b>can never actually be 0</b> (0÷0 means nothing). But as Δt keeps shrinking, the average Δs/Δt steadies and <b>homes in on one definite number</b> — the <b>speed at this instant</b>, which is exactly the <b>slope of the tangent</b> there.'},
   p4_l2:{zh:'这个「一瞬间的变化率」，数学里给它名字，叫<b>导数</b>：',en:'This “rate of change at an instant” has a name in math — the <b>derivative</b>:'},
   p4_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">v</span><span class="lab">此刻的速度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue"><span class="frac"><span class="num">ds</span><span class="den">dt</span></span></span><span class="lab">一点点路程 ÷<br>一点点时间<br>（= 切线斜率）</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">v</span><span class="lab">speed now</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue"><span class="frac"><span class="num">ds</span><span class="den">dt</span></span></span><span class="lab">a bit of distance ÷<br>a bit of time<br>(= tangent slope)</span></span></div>'},
-  p4_lim:{zh:'也就是 <b>v = 当 Δt→0 时的 Δs/Δt</b> —— Δt 缩到 0 的那个数。',en:'That is, <b>v = Δs/Δt as Δt→0</b> — the number Δs/Δt homes in on.'},
+  p4_lim:{zh:'也就是 <b>v = Δt→0 时 Δs/Δt 奔向的那个数</b>（数学里叫「<b>极限</b>」）。',en:'That is, <b>v = the number Δs/Δt heads toward as Δt→0</b> (mathematicians call it the <b>limit</b>).'},
   p5_kicker:{zh:'这，就是导数',en:'This is the derivative'},
   p5_q:{zh:'每一刻的速度，<em>连成一条线</em>',en:'Every instant’s speed, <em>as one curve</em>'},
   p5_sub:{zh:'把 t 从头移到尾，每一刻都量一次切线斜率（= 那一刻的速度），画在下面 —— 它们连成一条<b>新曲线</b>。路程曲线有多「陡」，本身就是一条速度曲线。这条新曲线，就是导数。',en:'Slide t from start to end; at each moment measure the tangent slope (the speed then) and plot it below — they trace a <b>new curve</b>. How steep the distance curve is <i>is</i> a speed curve. That new curve is the derivative.'},
