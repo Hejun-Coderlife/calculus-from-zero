@@ -69,7 +69,7 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p2_kicker">化整为零</div>
   <div class="q reveal" data-i18n="p2_q">速度 <em>×</em> 时间</div>
-  <div class="sub reveal" data-i18n="p2_sub">如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段，每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）</div>
+  <div class="sub reveal" data-i18n="p2_sub">如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段（每段时长记作 <b>Δt</b>），每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）</div>
 </section>
 
 <section class="panel">
@@ -206,7 +206,7 @@ const I18N={
   p1_sub:{zh:'上一章从「路程」求出了每一刻的「速度」。现在反过来：只有仪表盘记下的<b>速度</b>（一直在变），能倒推出一共<b>走了多远</b>吗？',en:'Last chapter we went from distance to the speed at every instant. Now the reverse: given only the <b>speed</b> the dashboard recorded (always changing), can we recover <b>how far</b> we went?'},
   p2_kicker:{zh:'化整为零',en:'Break it up'},
   p2_q:{zh:'速度 <em>×</em> 时间',en:'speed <em>×</em> time'},
-  p2_sub:{zh:'如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段，每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）',en:'If speed were constant, distance = speed × time — the area of one rectangle. But speed keeps changing, so slice time into many tiny bits; within each bit speed is <b>almost constant</b>, distance ≈ speed × Δt, then add them up. (Slice small, add it back — again.)'},
+  p2_sub:{zh:'如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。可速度一直在变 —— 那就把时间切成很多小段（每段时长记作 <b>Δt</b>），每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。（又是「切小、加回去」。）',en:'If speed were constant, distance = speed × time — the area of one rectangle. But speed keeps changing, so slice time into many tiny bits (each of length <b>Δt</b>); within each bit speed is <b>almost constant</b>, distance ≈ speed × Δt, then add them up. (Slice small, add it back — again.)'},
   p3_kicker:{zh:'逼近',en:'Approach'},
   p3_q:{zh:'数<em>小矩形</em>',en:'Count <em>rectangles</em>'},
   p3_sub:{zh:'把时间切成 n 段，每段竖一个矩形（高 = 那一刻的速度，宽 = Δt）。矩形面积之和 ≈ 速度曲线下的面积。切得越多，越贴近真实路程。',en:'Cut time into n pieces; on each, stand a rectangle (height = the speed there, width = Δt). The sum of the rectangles ≈ the area under the speed curve. More pieces, closer to the true distance.'},

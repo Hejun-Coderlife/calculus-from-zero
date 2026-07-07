@@ -78,7 +78,7 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p3_kicker">逼近</div>
   <div class="q reveal" data-i18n="p3_q">缩小<em>时间间隔</em></div>
-  <div class="sub reveal" data-i18n="p3_sub">取此刻 t、和一会儿之后 t+Δt。两点连一条线，它的斜率 = 这一小段的平均速度 = Δ路程 ÷ Δ时间。把 Δt 越缩越小，看这个数停在哪。</div>
+  <div class="sub reveal" data-i18n="p3_sub">取此刻 t、和一会儿之后 t+Δt（<b>Δ 读作 delta，表示「一小段」</b>）。两点连线的斜率 = 平均速度 = 多走的路程 <b>Δs</b> ÷ 经过的时间 <b>Δt</b>。把 Δt 越缩越小，看这个数停在哪。</div>
   <div class="fig reveal"><canvas id="cSec" height="430"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p3_lt">此刻 t</label>
     <input id="secT0" type="range" min="5" max="35" value="20" step="1">
@@ -171,15 +171,15 @@ function drawSec(){
   ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.3;ctx.setLineDash([4,3]);
   ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(C[0],C[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText('Δt',(A[0]+C[0])/2,C[1]+5);
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('Δs',C[0]+6,(C[1]+B[1])/2);
+  ctx.fillText(TT('Δt = 经过的时间','Δt = time elapsed'),(A[0]+C[0])/2,C[1]+5);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('Δs = 多走的路程','Δs = distance gained'),C[0]+7,(C[1]+B[1])/2);
   // 点
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(A[0],A[1],5.5,0,TAU);ctx.fill();
   ctx.fillStyle=IND;ctx.beginPath();ctx.arc(B[0],B[1],5,0,TAU);ctx.fill();
-  const avg=(S(t0+dt)-S(t0))/dt;
+  const ds=S(t0+dt)-S(t0), avg=ds/dt;
   document.getElementById('secOut').innerHTML=
-    TT('间隔 Δt = <b>'+dt.toFixed(2)+'</b> 秒　·　平均速度 = Δs/Δt = <b class="bl">'+avg.toFixed(2)+'</b> m/s',
-       'interval Δt = <b>'+dt.toFixed(2)+'</b> s　·　avg speed = Δs/Δt = <b class="bl">'+avg.toFixed(2)+'</b> m/s')
+    TT('多走了 Δs = <b>'+ds.toFixed(2)+'</b> 米，用了 Δt = <b>'+dt.toFixed(2)+'</b> 秒　→　平均速度 = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s',
+       'gained Δs = <b>'+ds.toFixed(2)+'</b> m in Δt = <b>'+dt.toFixed(2)+'</b> s　→　avg speed = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b> m/s')
     +'<br><span class="note">'+TT('把 Δt 拖到最小，看这个数稳定到哪 —— 那就是此刻速度','drag Δt to the smallest and watch it settle — that is the speed right now')+'</span>';
 }
 
@@ -225,7 +225,7 @@ const I18N={
   p2_sub:{zh:'速度 = 路程 ÷ 时间。可「就在这一刻」，时间没走（= 0），路程也没动（= 0）。0 ÷ 0 什么都说不清。于是退一步：不取一瞬间，先取<b>一小段</b>。',en:'Speed = distance ÷ time. But at a single instant, no time passes (= 0) and no distance is covered (= 0). 0 ÷ 0 tells us nothing. So we step back: not an instant — a <b>tiny interval</b> first.'},
   p3_kicker:{zh:'逼近',en:'Approach'},
   p3_q:{zh:'缩小<em>时间间隔</em>',en:'Shrink the <em>interval</em>'},
-  p3_sub:{zh:'取此刻 t、和一会儿之后 t+Δt。两点连一条线，它的斜率 = 这一小段的平均速度 = Δ路程 ÷ Δ时间。把 Δt 越缩越小，看这个数停在哪。',en:'Take now (t) and a moment later (t+Δt). The line through the two points has a slope = the average speed over that bit = Δdistance ÷ Δtime. Shrink Δt and watch where the number settles.'},
+  p3_sub:{zh:'取此刻 t、和一会儿之后 t+Δt（<b>Δ 读作 delta，表示「一小段」</b>）。两点连线的斜率 = 平均速度 = 多走的路程 <b>Δs</b> ÷ 经过的时间 <b>Δt</b>。把 Δt 越缩越小，看这个数停在哪。',en:'Take now (t) and a moment later t+Δt (<b>Δ, “delta,” means “a little bit of”</b>). The slope through the two points = the average speed = distance gained <b>Δs</b> ÷ time elapsed <b>Δt</b>. Shrink Δt and watch where the number settles.'},
   p3_lt:{zh:'此刻 t',en:'now t'},
   p3_ldt:{zh:'间隔 Δt',en:'interval Δt'},
   p4_kicker:{zh:'给它一个名字',en:'Give it a name'},
