@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>瞬时速度 — 从 0 开始的微积分</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%230071e3' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#6e6e73; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --indigo:#5e5ce6;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--blue)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05}
+  .q em{font-style:normal;color:var(--blue)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:32em;line-height:1.5}
+  .tag{font-size:13px;font-weight:600;color:var(--indigo);background:#eeecff;border:1px solid #ddd8ff;border-radius:99px;padding:5px 14px}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .homelink,.langbtn,.prevbtn{position:fixed;top:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .homelink{left:16px}.langbtn{right:16px}
+  .prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
+  .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+</style></head>
+<body>
+<a href="index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<a href="ch01.html" class="prevbtn" data-i18n="nav_prev">← 上一章</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="tag reveal" data-i18n="tag">第 2 章 · 建设中</div>
+  <div class="kicker reveal" data-i18n="kicker">从 0 开始的微积分 · 第二章</div>
+  <div class="q reveal" data-i18n="q">变速的车，<em>某一刻</em>多快？</div>
+  <div class="sub reveal" data-i18n="sub">路程一直在变。要问「就在这一瞬间，车有多快」—— 这一章，我们用同样的办法：切小，逼近，看它逼近哪个数。</div>
+</section>
+
+<script>
+let LANG='zh';
+const I18N={
+  title:{zh:'瞬时速度 — 从 0 开始的微积分',en:'Instant Speed — Calculus from Zero'},
+  nav_home:{zh:'← 目录',en:'← Contents'},
+  nav_prev:{zh:'← 上一章',en:'← Previous'},
+  tag:{zh:'第 2 章 · 建设中',en:'Chapter 2 · Work in progress'},
+  kicker:{zh:'从 0 开始的微积分 · 第二章',en:'Calculus from Zero · Chapter 2'},
+  q:{zh:'变速的车，<em>某一刻</em>多快？',en:'A speeding car — how fast <em>right now</em>?'},
+  sub:{zh:'路程一直在变。要问「就在这一瞬间，车有多快」—— 这一章，我们用同样的办法：切小，逼近，看它逼近哪个数。',en:'Distance keeps changing. To ask “how fast, at this very instant” — same trick as before: slice small, approximate, watch which number it homes in on.'}
+};
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.title=I18N.title[LANG];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+}
+document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+applyLang();
+</script>
+</body></html>

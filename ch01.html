@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>圆的面积 — 从 0 开始的微积分</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%230071e3' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#6e6e73; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --blue-2:#409cff; --indigo:#5e5ce6; --tint:#eaf2fe;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--blue)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05;color:var(--ink)}
+  .q em{font-style:normal;color:var(--blue)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:32em;line-height:1.5}
+  .fig{width:min(720px,92vw);margin-top:6px}
+  canvas{display:block;width:100%}
+  .ctrl{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  .btn{font-size:14px;font-weight:600;color:#fff;background:var(--blue);border:none;border-radius:980px;padding:9px 20px;cursor:pointer;transition:background .2s,transform .08s}
+  .btn:hover{background:#0077ed}.btn:active{transform:scale(.96)}
+  .note{font-size:13px;color:var(--faint)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:min(340px,72vw);height:4px;border-radius:99px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+     border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 3px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.06);cursor:pointer}
+  input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 1px 3px rgba(0,0,0,.2),0 4px 12px rgba(0,0,0,.12)}
+  .readout{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--soft);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .readout b{color:var(--ink);font-weight:600}
+  .readout .bl{color:var(--blue);font-weight:600}
+  .big{font-size:clamp(44px,7vw,96px);font-weight:700;letter-spacing:-.035em;color:var(--ink)}
+  .big em{font-style:normal;color:var(--blue)}
+  .eqbox{width:100%;max-width:100%;overflow-x:auto;padding:16px 4px 4px}
+  .eqrow{display:flex;align-items:flex-start;justify-content:center;gap:clamp(12px,3vw,30px);flex-wrap:nowrap;width:max-content;min-width:100%;margin:0 auto}
+  .eqrow .tok{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .eqrow .sym{font-size:clamp(38px,8vw,82px);font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap;color:var(--ink)}
+  .eqrow .sym.blue{color:var(--blue)}
+  .eqrow .lab{font-size:clamp(12px,1.5vw,15px);font-weight:500;color:var(--faint);line-height:1.3;text-align:center;max-width:10em}
+  .eqrow .lab::before{content:"";display:block;width:1px;height:12px;background:var(--line);margin:0 auto 8px}
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
+     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
+  .hint svg{width:20px;height:20px}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .langbtn{position:fixed;top:16px;right:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .langbtn:hover{color:var(--ink)}
+  .homelink{position:fixed;top:16px;left:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;transition:color .2s}
+  .homelink:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:26px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--blue);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#0077ed}.nextbtn:active{transform:scale(.97)}
+  @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style></head>
+<body>
+
+<a href="index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第一章</div>
+  <div class="q reveal" data-i18n="p1_q">这个圆，有多大？</div>
+  <div class="sub reveal" data-i18n="p1_sub">手里只有半径 r，别的都不知道。<br>你，能算出它的面积吗？</div>
+  <div class="fig reveal" style="width:min(400px,80vw)"><canvas id="cHero" height="300"></canvas></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p2_kicker">逼近</div>
+  <div class="q reveal" data-i18n="p2_q">数<em>格子</em></div>
+  <div class="sub reveal" data-i18n="p2_sub">面积就是数小方格。里面的多边形盖住的格子一定比圆少，外面的一定比圆多 —— 圆就夹在中间。</div>
+  <div class="fig reveal"><canvas id="cPoly" height="440"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p2_ln">边数</label>
+    <input id="polyN" type="range" min="3" max="120" value="6" step="1"><span class="readout"><b id="polyNv">6</b></span><button class="btn" id="countBtn" data-i18n="p2_btn">▶ 数格子</button></div>
+  <div class="ctrl reveal"><label data-i18n="p2_lg">格子精细度</label>
+    <input id="polyG" type="range" min="6" max="32" value="14" step="1"><span class="readout" data-i18n="p2_gunit">半径 <b id="polyGv">14</b> 格</span></div>
+  <div class="readout reveal" id="polyReadout">点「数格子」，让它自动数出答案 →</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p3_kicker">重排</div>
+  <div class="q reveal" data-i18n="p3_q">切<em>圆形</em></div>
+  <div class="sub reveal" data-i18n="p3_sub">把圆切成很多扇形，交错拼起来。切得越细，越像一个长方形。</div>
+  <div class="fig reveal"><canvas id="cPizza" height="470"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p3_ln">切片</label>
+    <input id="pizN" type="range" min="4" max="80" value="10" step="2"><span class="readout"><b id="pizNv">10</b></span></div>
+  <div class="readout reveal" data-i18n="p3_readout">面积 <b>≈ 半个周长 × r</b>　·　量一量：底 ÷ 高 = <b class="bl" id="pizRatio">3.16</b> <span class="note">（切片越多，越逼近一个定数）</span></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p4_kicker">给它一个名字</div>
+  <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">你已经亲手量到两件事——</div>
+  <div class="readout reveal" style="transition-delay:.4s" data-i18n="p4_l2">① 面积 ÷ 半径² ≈ <b>3.14</b>　<span class="note">第 2 屏，数格子量的</span></div>
+  <div class="readout reveal" style="transition-delay:.75s" data-i18n="p4_l3">② 底 ÷ 高 ≈ <b>3.14</b>　<span class="note">上一屏量的，也就是 半周长 ÷ 半径</span></div>
+  <div class="sub reveal" style="transition-delay:1.15s" data-i18n="p4_l4">一个来自<b>面积</b>，一个来自<b>周长</b>，却撞上同一个 <b class="bl">3.14</b>——怎么都躲不掉。<br>这个数，就叫它</div>
+  <div class="q reveal" style="transition-delay:1.55s" data-i18n="p4_q"><em>π</em> = 3.14…</div>
+  <div class="sub reveal" style="transition-delay:1.9s" data-i18n="p4_l6">于是 面积 ÷ 半径² = π。把<b>面积记作 A</b>、<b>半径记作 r</b>，就是那个著名的——</div>
+  <div class="big reveal" style="transition-delay:2.25s" data-i18n="p4_big">A = <em>π r²</em></div>
+  <div class="note reveal" style="transition-delay:2.55s" data-i18n="p4_note">A = 面积　·　r = 半径　·　π ≈ 3.14</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p5_kicker">这，就是积分</div>
+  <div class="q reveal" data-i18n="p5_q">剥<em>圆环</em></div>
+  <div class="sub reveal" data-i18n="p5_sub">这是「积分」的原型：把圆拆成无数薄圆环，<b>从圆心到边缘一圈圈加起来</b>。每圈的贡献 ≈ 周长 × 厚度，周长越往外越长——把它们累加填满，正好是个三角形。<span class="note">（严格说，每圈是换成一个面积相等的细梯形；真拿纸剪开压不平、会变形，这是个<b>思维实验</b>。）</span></div>
+  <div class="fig reveal"><canvas id="cRing" height="440"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p5_ln">剥开</label>
+    <input id="ringT" type="range" min="0" max="100" value="0" step="1"><span class="readout" id="ringMsg">拖动 →</span></div>
+  <div class="readout reveal" data-i18n="p5_readout">把每一圈的周长<b>累加</b> → 三角形　·　面积 = <b>½ · 周长 · 半径</b></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p6_kicker">微积分的骨架</div>
+  <div class="q reveal" data-i18n="p6_q">切小，逼近，<em>加回去</em>。</div>
+  <div class="sub reveal" data-i18n="p6_sub">你刚刚做的，就是微积分。</div>
+  <div class="eqbox reveal" data-i18n="p6_eq"><div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">面积</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">把每片加起来<br>（圆心 0 → 边缘 r）</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">每圈周长</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">每圈厚度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">就是圆面积</span></span></div></div>
+  <a href="ch02.html" class="nextbtn reveal" data-i18n="nav_next">下一章：瞬时速度 →</a>
+</section>
+
+<div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<script>
+const SHOT=location.search.indexOf('shot')>=0, TAU=Math.PI*2;
+const INK='#1d1d1f', BLUE='#0071e3', BLUE2='#409cff', IND='#5e5ce6', SOFT='#86868b';
+let LANG='zh';
+function TT(zh,en){return LANG==='en'?en:zh;}
+const DOWN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const I18N={
+  title:{zh:'圆的面积 — 从 0 开始的微积分',en:'Area of a Circle — Calculus from Zero'},
+  nav_home:{zh:'← 目录',en:'← Contents'},
+  nav_next:{zh:'下一章：瞬时速度 →',en:'Next: Instant Speed →'},
+  p1_kicker:{zh:'从 0 开始的微积分 · 第一章',en:'Calculus from Zero · Chapter 1'},
+  p1_q:{zh:'这个圆，有多大？',en:'How big is this circle?'},
+  p1_sub:{zh:'手里只有半径 r，别的都不知道。<br>你，能算出它的面积吗？',en:'All you have is the radius r — nothing else.<br>Can you work out its area?'},
+  p2_kicker:{zh:'逼近',en:'Approximate'},
+  p2_q:{zh:'数<em>格子</em>',en:'Count <em>squares</em>'},
+  p2_sub:{zh:'面积就是数小方格。里面的多边形盖住的格子一定比圆少，外面的一定比圆多 —— 圆就夹在中间。',en:'Area is just counting little squares. The inner polygon covers fewer than the circle, the outer one covers more — the circle is squeezed in between.'},
+  p2_ln:{zh:'边数',en:'Sides'},
+  p2_btn:{zh:'▶ 数格子',en:'▶ Count'},
+  p2_lg:{zh:'格子精细度',en:'Grid fineness'},
+  p2_gunit:{zh:'半径 <b id="polyGv">14</b> 格',en:'radius = <b id="polyGv">14</b> cells'},
+  p3_kicker:{zh:'重排',en:'Rearrange'},
+  p3_q:{zh:'切<em>圆形</em>',en:'Slice the <em>circle</em>'},
+  p3_sub:{zh:'把圆切成很多扇形，交错拼起来。切得越细，越像一个长方形。',en:'Cut the circle into many wedges and interleave them. The finer you slice, the more it looks like a rectangle.'},
+  p3_ln:{zh:'切片',en:'Slices'},
+  p3_readout:{zh:'面积 <b>≈ 半个周长 × r</b>　·　量一量：底 ÷ 高 = <b class="bl" id="pizRatio">3.16</b> <span class="note">（切片越多，越逼近一个定数）</span>',en:'Area <b>≈ ½·circumference × r</b>　·　measure it: base ÷ height = <b class="bl" id="pizRatio">3.16</b> <span class="note">(more slices → closer to a fixed number)</span>'},
+  p4_kicker:{zh:'给它一个名字',en:'Give it a name'},
+  p4_l1:{zh:'你已经亲手量到两件事——',en:'You have measured two things by hand —'},
+  p4_l2:{zh:'① 面积 ÷ 半径² ≈ <b>3.14</b>　<span class="note">第 2 屏，数格子量的</span>',en:'① area ÷ radius² ≈ <b>3.14</b>　<span class="note">screen 2, by counting squares</span>'},
+  p4_l3:{zh:'② 底 ÷ 高 ≈ <b>3.14</b>　<span class="note">上一屏量的，也就是 半周长 ÷ 半径</span>',en:'② base ÷ height ≈ <b>3.14</b>　<span class="note">last screen — i.e. ½·circumference ÷ radius</span>'},
+  p4_l4:{zh:'一个来自<b>面积</b>，一个来自<b>周长</b>，却撞上同一个 <b class="bl">3.14</b>——怎么都躲不掉。<br>这个数，就叫它',en:'One from <b>area</b>, one from <b>circumference</b> — yet the same <b class="bl">3.14</b>, impossible to escape.<br>This number, we call it'},
+  p4_q:{zh:'<em>π</em> = 3.14…',en:'<em>π</em> = 3.14…'},
+  p4_l6:{zh:'于是 面积 ÷ 半径² = π。把<b>面积记作 A</b>、<b>半径记作 r</b>，就是那个著名的——',en:'So area ÷ radius² = π. Write <b>A for area</b>, <b>r for radius</b>, and you get the famous —'},
+  p4_big:{zh:'A = <em>π r²</em>',en:'A = <em>π r²</em>'},
+  p4_note:{zh:'A = 面积　·　r = 半径　·　π ≈ 3.14',en:'A = area　·　r = radius　·　π ≈ 3.14'},
+  p5_kicker:{zh:'这，就是积分',en:'This is integration'},
+  p5_q:{zh:'剥<em>圆环</em>',en:'Peel the <em>rings</em>'},
+  p5_sub:{zh:'这是「积分」的原型：把圆拆成无数薄圆环，<b>从圆心到边缘一圈圈加起来</b>。每圈的贡献 ≈ 周长 × 厚度，周长越往外越长——把它们累加填满，正好是个三角形。<span class="note">（严格说，每圈是换成一个面积相等的细梯形；真拿纸剪开压不平、会变形，这是个<b>思维实验</b>。）</span>',en:'This is the essence of integration: split the circle into countless thin rings and <b>add them up, from center to edge</b>. Each ring contributes ≈ circumference × thickness; the farther out, the longer — stack them all and they fill exactly a triangle. <span class="note">(Strictly, each ring becomes an equal-area thin trapezoid; a real paper ring can not be flattened without distortion — this is a <b>thought experiment</b>.)</span>'},
+  p5_ln:{zh:'剥开',en:'Peel'},
+  p5_readout:{zh:'把每一圈的周长<b>累加</b> → 三角形　·　面积 = <b>½ · 周长 · 半径</b>',en:'<b>Add up</b> every ring&#39;s circumference → a triangle　·　Area = <b>½ · circumference · radius</b>'},
+  p6_kicker:{zh:'微积分的骨架',en:'The skeleton of calculus'},
+  p6_q:{zh:'切小，逼近，<em>加回去</em>。',en:'Slice small, approximate, <em>add it back</em>.'},
+  p6_sub:{zh:'你刚刚做的，就是微积分。',en:'What you just did is calculus.'},
+  p6_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">面积</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">把每片加起来<br>（圆心 0 → 边缘 r）</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">每圈周长</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">每圈厚度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">就是圆面积</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">area</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">add up every slice<br>(center 0 → edge r)</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">ring circumference</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">ring thickness</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">the circle area</span></span></div>'},
+  hint:{zh:'向下滚动'+DOWN,en:'Scroll down'+DOWN}
+};
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.title=I18N.title[LANG];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  const pg=document.getElementById('polyGv');if(pg)pg.textContent=document.getElementById('polyG').value;
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  drawHero();
+  drawPoly(+document.getElementById('polyN').value,polyCounted?1:null);
+  drawPizza(+document.getElementById('pizN').value);
+  drawRing(+document.getElementById('ringT').value/100);
+}
+function dpr(){return Math.min(window.devicePixelRatio||1,2);}
+function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  const ctx=cv.getContext('2d');ctx.setTransform(r,0,0,r,0,0);return{ctx,w:cssW,h:cssH};}
+
+let heroAngle=-Math.PI/6,heroTouched=false;
+function drawHero(){
+  const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)*0.34,a=heroAngle,ex=cx+R*Math.cos(a),ey=cy+R*Math.sin(a),ff=getComputedStyle(document.body).fontFamily;
+  ctx.lineWidth=2.5;ctx.strokeStyle=BLUE;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();
+  ctx.font='600 44px '+ff;ctx.fillStyle='rgba(0,0,0,.13)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',cx,cy+2);
+  ctx.strokeStyle=IND;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ex,ey);ctx.stroke();
+  ctx.fillStyle=INK;ctx.beginPath();ctx.arc(cx,cy,3.5,0,TAU);ctx.fill();
+  ctx.fillStyle='#fff';ctx.strokeStyle=IND;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ex,ey,7,0,TAU);ctx.fill();ctx.stroke();
+  ctx.font='600 15px '+ff;ctx.fillStyle=IND;ctx.textBaseline='middle';ctx.fillText('r',cx+R*0.5*Math.cos(a)-11*Math.sin(a),cy+R*0.5*Math.sin(a)+11*Math.cos(a));
+}
+
+let polyCounted=false, polyCache={key:'',inside:[],ring:[]};
+function pip(px,py,v){let c=false;for(let i=0,j=v.length-1;i<v.length;j=i++){const xi=v[i][0],yi=v[i][1],xj=v[j][0],yj=v[j][1];
+  if(((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi))c=!c;}return c;}
+function polyCells(n,cx,cy,R,Ro,cell,w){
+  const key=n+'|'+Math.round(w)+'|'+Math.round(R)+'|'+Math.round(cell*8);if(polyCache.key===key)return polyCache;
+  const vin=[],vout=[];
+  for(let k=0;k<n;k++){const a=-Math.PI/2+k*TAU/n;vin.push([cx+R*Math.cos(a),cy+R*Math.sin(a)]);}
+  for(let k=0;k<n;k++){const a=-Math.PI/2+(k+0.5)*TAU/n;vout.push([cx+Ro*Math.cos(a),cy+Ro*Math.sin(a)]);}
+  const cells=[];let tin=0,tout=0;const gx=cx-Math.ceil((Ro+cell)/cell)*cell,gy=cy-Math.ceil((Ro+cell)/cell)*cell;
+  for(let Y=gy;Y<=cy+Ro+cell;Y+=cell)for(let X=gx;X<=cx+Ro+cell;X+=cell){
+    let ci=0,co=0;const S=6;
+    for(let a=0;a<S;a++)for(let b=0;b<S;b++){const px=X+(a+.5)/S*cell,py=Y+(b+.5)/S*cell;
+      if(pip(px,py,vin))ci++;if(pip(px,py,vout))co++;}
+    const wi=ci/(S*S),wo=co/(S*S);
+    if(wo>0){cells.push([X,Y,wi,wo]);tin+=wi;tout+=wo;}}
+  polyCache={key,cells,tin,tout};return polyCache;}
+function drawPoly(n,reveal){
+  const cv=document.getElementById('cPoly');const {ctx,w,h}=setup(cv,440);ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)*0.36,Ro=R/Math.cos(Math.PI/n),per=+(document.getElementById('polyG')?.value||14),cell=R/per;let rNow=null,rHi=null;
+  ctx.strokeStyle='rgba(0,60,120,.07)';ctx.lineWidth=1;
+  for(let x=cx-Math.ceil(cx/cell)*cell;x<=w;x+=cell){ctx.beginPath();ctx.moveTo(Math.round(x)+.5,0);ctx.lineTo(Math.round(x)+.5,h);ctx.stroke();}
+  for(let y=cy-Math.ceil(cy/cell)*cell;y<=h;y+=cell){ctx.beginPath();ctx.moveTo(0,Math.round(y)+.5);ctx.lineTo(w,Math.round(y)+.5);ctx.stroke();}
+  const cnt=(reveal!=null);
+  if(cnt){const cc=polyCells(n,cx,cy,R,Ro,cell,w),rev=Math.round(reveal*cc.cells.length);let sin=0,sout=0;
+    for(let i=0;i<rev;i++){const c=cc.cells[i],wi=c[2],wo=c[3];sin+=wi;sout+=wo;
+      ctx.fillStyle=wi>0?('rgba(0,113,227,'+(0.12+wi*0.30)+')'):'rgba(0,113,227,0.09)';
+      ctx.fillRect(c[0],c[1],cell-.5,cell-.5);}
+    rNow=sin/(per*per);rHi=sout/(per*per);const inN=Math.round(sin),outN=Math.round(sout),rin=rNow.toFixed(2),rout=rHi.toFixed(2);let ro;
+    if(reveal<1)ro=TT('数格子中…　里 '+inN+' · 外 '+outN+' 格','counting…　in '+inN+' · out '+outN);
+    else ro=TT('格数：里 <b>'+inN+'</b> · 外 <b>'+outN+'</b>　<span class="note">（拖「格子精细度」会大变）</span>　→　面积 ÷ 半径² ≈ <b>'+rin+'</b> ~ <b>'+rout+'</b>　<span class="note">（几乎不动）</span>',
+      'squares: in <b>'+inN+'</b> · out <b>'+outN+'</b>　<span class="note">(drag grid fineness — swings a lot)</span>　→　area ÷ radius² ≈ <b>'+rin+'</b> ~ <b>'+rout+'</b>　<span class="note">(barely moves)</span>');
+    document.getElementById('polyReadout').innerHTML=ro;
+  }else{document.getElementById('polyReadout').innerHTML=TT('点「数格子」，让它自动数出答案 →','Press “Count” and let it count for you →');}
+  ctx.beginPath();for(let k=0;k<=n;k++){const a=-Math.PI/2+(k+0.5)*TAU/n;const x=cx+Ro*Math.cos(a),y=cy+Ro*Math.sin(a);k?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.closePath();ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.4;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.strokeStyle=BLUE;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.beginPath();for(let k=0;k<=n;k++){const a=-Math.PI/2+k*TAU/n;const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);k?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.closePath();ctx.strokeStyle=INK;ctx.lineWidth=1.8;ctx.stroke();
+  ctx.fillStyle=INK;for(let k=0;k<n;k++){const a=-Math.PI/2+k*TAU/n;ctx.beginPath();ctx.arc(cx+R*Math.cos(a),cy+R*Math.sin(a),2.4,0,TAU);ctx.fill();}
+  document.getElementById('polyNv').textContent=n;
+  const ff=getComputedStyle(document.body).fontFamily;ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.font='500 13px '+ff;ctx.fillStyle=INK;ctx.fillText(TT('里面 · 比圆小','inside · < circle'),cx,cy+R*0.52);
+  ctx.fillStyle=SOFT;ctx.fillText(TT('外面 · 比圆大','outside · > circle'),cx,cy-R-14);
+  ctx.strokeStyle=IND;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R,cy);ctx.stroke();
+  ctx.lineWidth=1.2;for(let k=0;k<=per;k++){const tx=cx+k*cell;ctx.beginPath();ctx.moveTo(tx,cy-4);ctx.lineTo(tx,cy+4);ctx.stroke();}
+  ctx.fillStyle=IND;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.fillText(TT('半径 = '+per+' 格','radius = '+per+' cells'),cx+R/2,cy-9);
+  if(rNow!=null){const inNow=Math.round(rNow*per*per);ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.fillText(TT('面积 ÷ 半径²','Area ÷ radius²'),12,10);
+    ctx.fillStyle=INK;ctx.font='700 32px '+ff;ctx.fillText(rNow.toFixed(2),12,25);
+    ctx.fillStyle=SOFT;ctx.font='500 11px '+ff;ctx.fillText('= '+inNow+TT(' 格 ÷ ',' cells ÷ ')+per+'²',12,63);
+    ctx.textAlign='center';ctx.textBaseline='alphabetic';}
+}
+function countPoly(){polyCounted=true;const n=+document.getElementById('polyN').value;let t0=null;
+  const step=(ts)=>{if(t0==null)t0=ts;const p=Math.min(1,(ts-t0)/1000);drawPoly(n,p);if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
+
+function drawPizza(n){
+  const cv=document.getElementById('cPizza');const {ctx,w,h}=setup(cv,470);ctx.clearRect(0,0,w,h);
+  const cA='rgba(0,113,227,.9)',cB='rgba(0,113,227,.34)',edge='#fbfbfd';
+  const R=Math.min(w*0.4,150)*0.6,fx=w*0.24,fy=148;
+  for(let k=0;k<n;k++){const a0=-Math.PI/2+k*TAU/n,a1=a0+TAU/n;
+    ctx.beginPath();ctx.moveTo(fx,fy);ctx.arc(fx,fy,R,a0,a1);ctx.closePath();
+    ctx.fillStyle=(k%2)?cB:cA;ctx.fill();ctx.strokeStyle=edge;ctx.lineWidth=1;ctx.stroke();}
+  ctx.fillStyle=SOFT;ctx.font='300 30px '+getComputedStyle(document.body).fontFamily;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('→',w*0.5,fy);
+  const phi=Math.PI/n,s=Math.sin(phi),Hf=Math.cos(phi);
+  const scale=Math.min((w*0.9)/((n+1)*s),116),stripW=(n+1)*s*scale,stripH=Hf*scale,ox=(w-stripW)/2,oy=310-stripH/2;
+  for(let i=0;i<n;i++){const apexX=ox+(i+1)*s*scale,up=(i%2===0),apexY=up?oy:oy+stripH,center=up?Math.PI/2:-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(apexX,apexY);ctx.arc(apexX,apexY,scale,center-phi,center+phi);ctx.closePath();
+    ctx.fillStyle=up?cA:cB;ctx.fill();ctx.strokeStyle=edge;ctx.lineWidth=1;ctx.stroke();}
+  const apo=Hf,halfP=n*s,ratio=halfP/apo,rectH=apo*scale,rectW=halfP*scale,rx=ox,ry=310-rectH/2;
+  const ff2=getComputedStyle(document.body).fontFamily;
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.setLineDash([5,4]);ctx.lineWidth=1.4;ctx.strokeRect(rx,ry,rectW,rectH);ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='500 13px '+ff2;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.fillText(TT('底 ≈ 半个周长','base ≈ ½·circumf.'),w/2,ry+rectH+20);
+  ctx.save();ctx.translate(rx-14,ry+rectH/2);ctx.rotate(-Math.PI/2);ctx.fillText(TT('高 ≈ r','height ≈ r'),0,0);ctx.restore();
+  const unit=rectH,full=Math.floor(rectW/unit);
+  for(let i=1;i<=full;i++){const gx=rx+i*unit;ctx.strokeStyle='rgba(0,0,0,.34)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(gx,ry);ctx.lineTo(gx,ry+rectH);ctx.stroke();}
+  const rem=rectW-full*unit;if(rem>1){ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(rx+full*unit,ry,rem,rectH);}
+  ctx.fillStyle=INK;ctx.font='600 12px '+ff2;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<full;i++)ctx.fillText(TT('高','h'),rx+(i+0.5)*unit,ry+rectH/2);
+  ctx.textBaseline='alphabetic';ctx.fillStyle=SOFT;ctx.font='500 12px '+ff2;
+  ctx.fillText(TT('底 ÷ 高 = ','base ÷ height = ')+ratio.toFixed(2),w/2,ry-12);
+  document.getElementById('pizNv').textContent=n;document.getElementById('pizRatio').textContent=ratio.toFixed(2);
+}
+
+function drawRing(t){
+  const cv=document.getElementById('cRing');const {ctx,w,h}=setup(cv,440);ctx.clearRect(0,0,w,h);
+  const N=22,gap=Math.max(24,w*0.045),R=Math.min(72,(w*0.94-gap)/(2+TAU)),cx=w*0.03+R,cy=h*0.5,dr=R/N,rh=R/N;
+  const TX=cx+R+gap,TY=cy-R/2,ff=getComputedStyle(document.body).fontFamily;
+  for(let k=0;k<N;k++){
+    const ri=k*dr,ro=(k+1)*dr,f=k/N,col=`hsl(${214-f*20},${74-f*4}%,${50+f*18}%)`;
+    const prog=Math.min(1,Math.max(0,t*N-(N-1-k)));
+    if(prog<1){ctx.beginPath();ctx.arc(cx,cy,(ri+ro)/2,0,TAU);
+      ctx.strokeStyle=col;ctx.globalAlpha=(1-prog)*0.95+0.05;ctx.lineWidth=dr+0.6;ctx.stroke();ctx.globalAlpha=1;}
+    if(prog>0){const yT=TY+k*rh,yB=TY+(k+1)*rh,wT=TAU*ri,wB=TAU*ro,dx=(1-prog)*-60;
+      ctx.beginPath();ctx.moveTo(TX+dx,yT);ctx.lineTo(TX+dx+wT,yT);ctx.lineTo(TX+dx+wB,yB);ctx.lineTo(TX+dx,yB);ctx.closePath();
+      ctx.fillStyle=col;ctx.globalAlpha=prog;ctx.fill();ctx.globalAlpha=1;}
+  }
+  ctx.textBaseline='alphabetic';
+  if(t>0.02&&t<0.6){ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.fillText(TT('内圈短 · 外圈长 → 剪开是梯形','inner short · outer long → a trapezoid'),cx,cy+R+24);}
+  if(t>0.55){const base=TAU*R;ctx.globalAlpha=Math.min(1,(t-0.55)/0.35);
+    ctx.fillStyle='rgba(0,0,0,.05)';ctx.beginPath();ctx.moveTo(TX,TY);ctx.lineTo(TX+base,TY);ctx.lineTo(TX+base,TY+R);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.32)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
+    ctx.strokeRect(TX,TY,base,R);
+    ctx.beginPath();ctx.moveTo(TX,TY);ctx.lineTo(TX+base,TY+R);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='500 13px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText(TT('底 = 周长','base = circumference'),TX+base/2,TY+R+20);
+    ctx.save();ctx.translate(TX+base/2,TY+R/2);ctx.rotate(Math.atan2(R,base));ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle=IND;ctx.font='600 12px '+ff;ctx.fillText(TT('斜边 = 每圈的周长','edge = ring circumference'),0,-4);ctx.restore();
+    ctx.save();ctx.translate(TX-14,TY+R/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillStyle=SOFT;ctx.font='500 13px '+ff;ctx.fillText(TT('高 = 半径','height = radius'),0,0);ctx.restore();
+    ctx.fillStyle=INK;ctx.font='600 12px '+ff;ctx.fillText(TT('长方形 = 底 × 高，圆 = 它的一半','rectangle = base × height, circle = half of it'),TX+base/2,TY-12);
+    ctx.globalAlpha=1;}
+  document.getElementById('ringMsg').textContent=t<0.05?TT('拖动 →','drag →'):(t<0.97?TT('一圈圈剥下来，累加…','peeling & adding up…'):TT('每圈周长累加 → 三角形','rings add up → a triangle'));
+}
+
+function tweenSlider(input,drawFn,getVal){let cur=getVal(input.value),target=cur,raf=null;
+  const step=()=>{cur+=(target-cur)*0.25;if(Math.abs(target-cur)<0.4)cur=target;drawFn(Math.round(cur));if(cur!==target)raf=requestAnimationFrame(step);else raf=null;};
+  input.addEventListener('input',()=>{target=getVal(input.value);if(!raf)raf=requestAnimationFrame(step);});drawFn(Math.round(cur));}
+function initAll(){
+  drawHero();
+  {const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
+   const aim=e=>{const rc=hero.getBoundingClientRect();heroAngle=Math.atan2((e.clientY-rc.top)-150,(e.clientX-rc.left)-hero.clientWidth/2);heroTouched=true;drawHero();};
+   let drag=false;
+   hero.addEventListener('pointerdown',e=>{drag=true;hero.setPointerCapture(e.pointerId);aim(e);});
+   hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
+   hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);}
+  tweenSlider(document.getElementById('polyN'),n=>drawPoly(n,polyCounted?1:null),v=>+v);
+  document.getElementById('countBtn').addEventListener('click',countPoly);
+  const polyG=document.getElementById('polyG');document.getElementById('polyGv').textContent=polyG.value;
+  let gRaf=null;polyG.addEventListener('input',()=>{document.getElementById('polyGv').textContent=polyG.value;
+    if(gRaf)return;gRaf=requestAnimationFrame(()=>{gRaf=null;drawPoly(+document.getElementById('polyN').value,polyCounted?1:null);});});
+  tweenSlider(document.getElementById('pizN'),n=>drawPizza(Math.max(4,Math.round(n/2)*2)),v=>+v);
+  const ring=document.getElementById('ringT'),drawR=()=>drawRing(+ring.value/100);ring.addEventListener('input',drawR);drawR();
+  document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const lastPanel=document.querySelector('.panel:last-of-type');
+  new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
+  addEventListener('resize',()=>{drawHero();drawPoly(+document.getElementById('polyN').value,polyCounted?1:null);drawPizza(+document.getElementById('pizN').value);drawR();});
+  addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint)hint.style.opacity=scrollY>200?'0':'';},{passive:true});
+  applyLang();
+}
+if(SHOT)document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+initAll();
+</script>
+</body></html>
