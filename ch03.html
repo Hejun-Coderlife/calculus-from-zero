@@ -23,6 +23,9 @@
   canvas{display:block;width:100%}
   .ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:6px}
   .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  .seg{display:inline-flex;background:var(--line);border-radius:999px;padding:3px}
+  .segb{border:none;background:transparent;color:var(--soft);font-size:13px;font-weight:600;padding:7px 16px;border-radius:999px;cursor:pointer;font-family:inherit;transition:color .15s,background .15s}
+  .segb.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .note{font-size:13px;color:var(--faint)}
   input[type=range]{-webkit-appearance:none;appearance:none;width:min(300px,66vw);height:4px;border-radius:99px;background:var(--line);outline:none}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
@@ -76,6 +79,10 @@
   <div class="kicker reveal" data-i18n="p3_kicker">逼近</div>
   <div class="q reveal" data-i18n="p3_q">数<em>小矩形</em></div>
   <div class="sub reveal" data-i18n="p3_sub">把时间切成 n 段，每段竖一个矩形（高 = 那一刻的速度，宽 = Δt）。矩形面积之和 ≈ 速度曲线下的面积。切得越多，越贴近真实路程。</div>
+  <div class="ctrl reveal" style="margin-top:2px"><span class="seg">
+    <button class="segb" data-mode="1" data-i18n="mode1">匀速</button>
+    <button class="segb on" data-mode="0" data-i18n="mode0">变速</button>
+  </span></div>
   <div class="fig reveal"><canvas id="cRie" height="430"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p3_ln">切片数 n</label>
     <input id="rieN" type="range" min="2" max="60" value="6" step="1"><span class="readout"><b id="rieNv">6</b></span></div>
@@ -85,8 +92,9 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p4_kicker">看出来了</div>
   <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">矩形加满，正好等于速度曲线下的<b>面积</b>——而这块面积，就是<b>走过的路程</b>。</div>
-  <div class="sub reveal" style="transition-delay:.4s" data-i18n="p4_l2">这个「把 速度 × Δt 一段段累加」的操作，就是<b>积分</b>（和第一章剥圆环是同一件事）：</div>
-  <div class="eqbox reveal" style="transition-delay:.75s" data-i18n="p4_eq"><div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">把 速度×一点点时间<br>一路加起来<br>（= 曲线下的面积）</span></span></div></div>
+  <div class="sub reveal" style="transition-delay:.4s" data-i18n="p4_l2">这个「把 速度 × 一小段时间 一段段加起来」的操作，就是<b>积分</b>。数学家用一个拉长的 S「<b>∫</b>」（意思就是"求和"）把它写成一个符号：</div>
+  <div class="eqbox reveal" style="transition-delay:.75s" data-i18n="p4_eq"><div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ</span><span class="lab">一段段加起来<br>（从 0 加到 T）<br><b>∫ 是「求和」，不是乘号</b></span></span><span class="tok"><span class="sym blue">v·dt</span><span class="lab">速度 × 一小段时间<br>（每一薄片的面积）</span></span></div></div>
+  <div class="note reveal" style="transition-delay:1.1s;max-width:32em" data-i18n="p4_unit">（面积为什么 = 路程？面积 = 速度 × 时间 = 米/秒 × 秒 = <b>米</b> —— 自带「米」，所以它就是距离。）</div>
 </section>
 
 <section class="panel">
@@ -117,13 +125,20 @@
 const TAU=Math.PI*2;
 const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',SOFT='#86868b';
 const TMAX=5, S=t=>t*t, V=t=>2*t, SMAX=25, VMAX=10;   // 同一辆车：s=t², v=2t
-let LANG='zh', heroT=3.4;
+let LANG='zh', heroT=3.4, rieMode=0, hoverId=null;   // rieMode: 0 变速, 1 匀速
 function TT(zh,en){return LANG==='en'?en:zh;}
 function dpr(){return Math.min(window.devicePixelRatio||1,2);}
 function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
   const ctx=cv.getContext('2d');ctx.setTransform(r,0,0,r,0,0);return{ctx,w:cssW,h:cssH};}
 function ffont(){return getComputedStyle(document.body).fontFamily;}
-function axesBox(ctx,X,Y,W,H,xl,yl){const ff=ffont();
+function axesBox(ctx,X,Y,W,H,xl,yl,xmax,ymax,xstep,ystep,ticks){const ff=ffont();
+  if(ticks){ctx.font='500 10px '+ff;ctx.lineWidth=1;
+    if(xmax)for(let v=xstep;v<xmax-1e-6;v+=xstep){const x=X+v/xmax*W;
+      ctx.strokeStyle='rgba(0,0,0,.07)';ctx.beginPath();ctx.moveTo(x,Y);ctx.lineTo(x,Y+H);ctx.stroke();
+      ctx.fillStyle=SOFT;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(''+(+v.toFixed(1)),x,Y+H+4);}
+    if(ymax)for(let v=ystep;v<ymax-1e-6;v+=ystep){const y=Y+H-v/ymax*H;
+      ctx.strokeStyle='rgba(0,0,0,.07)';ctx.beginPath();ctx.moveTo(X,y);ctx.lineTo(X+W,y);ctx.stroke();
+      ctx.fillStyle=SOFT;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(''+(+v.toFixed(1)),X-5,y);}}
   ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.4;ctx.setLineDash([]);
   ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
   ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X-4,Y+9);ctx.moveTo(X,Y);ctx.lineTo(X+4,Y+9);ctx.stroke();
@@ -135,7 +150,7 @@ function drawHero(){
   const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
   const X=46,Y=26,W=w-70,H=h-64,ff=ffont();
   const mx=t=>X+t/TMAX*W, my=v=>Y+H-v/VMAX*H;
-  axesBox(ctx,X,Y,W,H,TT('时间','time'),TT('速度','speed'));
+  axesBox(ctx,X,Y,W,H,TT('时间','time'),TT('速度','speed'),TMAX,VMAX,1,2,hoverId==='cHero');
   // 面积（0..heroT）
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my(0));
   for(let i=0;i<=40;i++){const t=heroT*i/40;ctx.lineTo(mx(t),my(V(t)));}
@@ -154,20 +169,27 @@ function drawRie(){
   const X=48,Y=26,W=w-74,H=h-70,ff=ffont();const TR=4, vmax=9;
   const mx=t=>X+t/TR*W, my=v=>Y+H-v/vmax*H;
   const n=+document.getElementById('rieN').value, dt=TR/n;
-  axesBox(ctx,X,Y,W,H,TT('时间 t','time t'),TT('速度 v','speed v'));
-  // 矩形（左端取值，欠一点，随 n 增大而逼近）
+  const uniform=(rieMode===1), vf=uniform?(t=>4):V, trueA=16;   // 匀速 4m/s·4s=16 ; 变速 v=2t 面积也是 16
+  axesBox(ctx,X,Y,W,H,TT('时间 t','time t'),TT('速度 v','speed v'),TR,vmax,1,2,hoverId==='cRie');
+  // 矩形（左端取值）
   let sum=0;
-  for(let i=0;i<n;i++){const t=i*dt,vt=V(t);sum+=vt*dt;
+  for(let i=0;i<n;i++){const t=i*dt,vt=vf(t);sum+=vt*dt;
     ctx.fillStyle='rgba(0,113,227,.18)';ctx.strokeStyle='rgba(0,113,227,.55)';ctx.lineWidth=1;
     ctx.fillRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));ctx.strokeRect(mx(t),my(vt),mx(dt)-mx(0),my(0)-my(vt));}
-  // 速度直线
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TR),my(V(TR)));ctx.stroke();
-  const trueA=TR*TR;
+  // 速度线（变速=斜线，匀速=平线）
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();
+  if(uniform){ctx.moveTo(mx(0),my(4));ctx.lineTo(mx(TR),my(4));}else{ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TR),my(V(TR)));}
+  ctx.stroke();
+  ctx.fillStyle=BLUE;ctx.font='600 13px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('矩形和 = ','sum = ')+sum.toFixed(2),X+8,Y+6);
   document.getElementById('rieNv').textContent=n;
-  document.getElementById('rieOut').innerHTML=
-    TT('矩形面积之和 = <b class="bl">'+sum.toFixed(2)+'</b>　→　真实路程 = <b>'+trueA.toFixed(0)+'</b> 米',
-       'sum of rectangles = <b class="bl">'+sum.toFixed(2)+'</b>　→　true distance = <b>'+trueA.toFixed(0)+'</b> m')
-    +'<br><span class="note">'+TT('切片越多，矩形和越贴近曲线下的面积 = 路程','more slices → the sum hugs the area under the curve = the distance')+'</span>';
+  const line1=TT('矩形面积之和 = <b class="bl">'+sum.toFixed(2)+'</b>　→　真实路程 = <b>'+trueA+'</b> 米',
+                 'sum of rectangles = <b class="bl">'+sum.toFixed(2)+'</b>　→　true distance = <b>'+trueA+'</b> m');
+  const note=uniform?TT('速度不变时，面积就是一个大矩形 = 速度 × 时间，切几刀都精确 = 路程。',
+                        'when speed is constant, the area is one big rectangle = speed × time — exact for any number of slices.')
+                    :TT('速度在变，就切成小矩形一段段加；切片越多，越贴近曲线下的面积 = 路程。',
+                        'when speed varies, add up little rectangles; more slices → closer to the area under the curve = the distance.');
+  document.getElementById('rieOut').innerHTML=line1+'<br><span class="note">'+note+'</span>';
 }
 
 function drawFtc(){
@@ -176,21 +198,21 @@ function drawFtc(){
   const mx=t=>X+t/TMAX*W, my1=s=>Y1+H1-s/SMAX*H1, my2=v=>Y2+H2-v/VMAX*H2;
   const t0=+document.getElementById('ftcT').value/10;
   // 上：路程曲线 + 切线（求导）
-  axesBox(ctx,X,Y1,W,H1,TT('时间 t','time t'),TT('路程 s','dist s'));
+  axesBox(ctx,X,Y1,W,H1,TT('时间 t','time t'),TT('路程 s','dist s'),TMAX,SMAX,1,5,hoverId==='cFtc');
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();
   for(let i=0;i<=60;i++){const t=TMAX*i/60;const x=mx(t),y=my1(S(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
   const m=V(t0),ta=Math.max(0,t0-1.3),tb=Math.min(TMAX,t0+1.3);
   ctx.strokeStyle=PINK;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(mx(ta),my1(S(t0)+m*(ta-t0)));ctx.lineTo(mx(tb),my1(S(t0)+m*(tb-t0)));ctx.stroke();
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(t0),my1(S(t0)),5,0,TAU);ctx.fill();
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillText(TT('切线斜率 = 速度（求导 ↓）','slope = speed (derivative ↓)'),mx(t0),Y1-6);
+  ctx.fillText(TT('切线斜率 = 速度 = '+V(t0).toFixed(1)+'（求导 ↓）','slope = speed = '+V(t0).toFixed(1)+' (derivative ↓)'),X+W/2,Y1-6);
   // 下：速度直线 + 面积（积分）
-  axesBox(ctx,X,Y2,W,H2,TT('时间 t','time t'),TT('速度 v','speed v'));
+  axesBox(ctx,X,Y2,W,H2,TT('时间 t','time t'),TT('速度 v','speed v'),TMAX,VMAX,1,2,hoverId==='cFtc');
   ctx.fillStyle='rgba(255,45,85,.16)';ctx.beginPath();ctx.moveTo(mx(0),my2(0));
   for(let i=0;i<=40;i++){const t=t0*i/40;ctx.lineTo(mx(t),my2(V(t)));}ctx.lineTo(mx(t0),my2(0));ctx.closePath();ctx.fill();
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my2(0));ctx.lineTo(mx(TMAX),my2(V(TMAX)));ctx.stroke();
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(t0),my2(V(t0)),5,0,TAU);ctx.fill();
-  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.fillText(TT('阴影面积 = 路程（积分 ↑）','shaded area = distance (integral ↑)'),mx(t0),Y2-6);
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.fillText(TT('阴影面积 = 路程 = '+S(t0).toFixed(1)+'（积分 ↑）','shaded area = distance = '+S(t0).toFixed(1)+' (integral ↑)'),X+W/2,Y2-6);
   // 连线
   ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(t0),my1(S(t0)));ctx.lineTo(mx(t0),my2(V(t0)));ctx.stroke();ctx.setLineDash([]);
   document.getElementById('ftcOut').innerHTML=
@@ -211,10 +233,12 @@ const I18N={
   p3_q:{zh:'数<em>小矩形</em>',en:'Count <em>rectangles</em>'},
   p3_sub:{zh:'把时间切成 n 段，每段竖一个矩形（高 = 那一刻的速度，宽 = Δt）。矩形面积之和 ≈ 速度曲线下的面积。切得越多，越贴近真实路程。',en:'Cut time into n pieces; on each, stand a rectangle (height = the speed there, width = Δt). The sum of the rectangles ≈ the area under the speed curve. More pieces, closer to the true distance.'},
   p3_ln:{zh:'切片数 n',en:'slices n'},
+  mode0:{zh:'变速',en:'varying'},mode1:{zh:'匀速',en:'constant'},
   p4_kicker:{zh:'看出来了',en:'Now you see it'},
   p4_l1:{zh:'矩形加满，正好等于速度曲线下的<b>面积</b>——而这块面积，就是<b>走过的路程</b>。',en:'Fill in the rectangles and you get the <b>area</b> under the speed curve — and that area <b>is</b> the distance travelled.'},
-  p4_l2:{zh:'这个「把 速度 × Δt 一段段累加」的操作，就是<b>积分</b>（和第一章剥圆环是同一件事）：',en:'This “add up speed × Δt, piece by piece” is <b>integration</b> — the very same move as peeling rings in Chapter 1:'},
-  p4_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">把 速度×一点点时间<br>一路加起来<br>（= 曲线下的面积）</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym">dist</span><span class="lab">how far</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ v dt</span><span class="lab">add up speed×a bit of time<br>all the way<br>(= area under the curve)</span></span></div>'},
+  p4_l2:{zh:'这个「把 速度 × 一小段时间 一段段加起来」的操作，就是<b>积分</b>。数学家用一个拉长的 S「<b>∫</b>」（意思就是"求和"）把它写成一个符号：',en:'This “add up speed × a tiny bit of time, piece by piece” is <b>integration</b>. Mathematicians write it with a stretched S, “<b>∫</b>” (meaning “sum”), as one symbol:'},
+  p4_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym">路程</span><span class="lab">走了多远</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ</span><span class="lab">一段段加起来<br>（从 0 加到 T）<br><b>∫ 是「求和」，不是乘号</b></span></span><span class="tok"><span class="sym blue">v·dt</span><span class="lab">速度 × 一小段时间<br>（每一薄片的面积）</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym">dist</span><span class="lab">how far</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ᵀ</span><span class="lab">add them all up<br>(from 0 to T)<br><b>∫ means “sum”, not times</b></span></span><span class="tok"><span class="sym blue">v·dt</span><span class="lab">speed × a tiny bit of time<br>(area of each thin slice)</span></span></div>'},
+  p4_unit:{zh:'（面积为什么 = 路程？面积 = 速度 × 时间 = 米/秒 × 秒 = <b>米</b> —— 自带「米」，所以它就是距离。）',en:'(Why area = distance? area = speed × time = (m/s) × s = <b>metres</b> — it carries the unit of distance, so it <i>is</i> how far you went.)'},
   p5_kicker:{zh:'一来一回',en:'There and back'},
   p5_q:{zh:'求导 与 积分，<em>互相抵消</em>',en:'Derivative & integral, <em>they undo each other</em>'},
   p5_sub:{zh:'上：路程曲线，某点的<b>切线斜率</b> = 那一刻的速度（第二章，求导）。下：速度曲线，到该点为止的<b>面积</b> = 走过的路程（这一章，积分）。移动 t，两个数始终对得上 —— 一个拆开，一个合起来，正好抵消。',en:'Top: the distance curve — its <b>tangent slope</b> at a point = the speed then (Chapter 2, the derivative). Bottom: the speed curve — the <b>area</b> up to that point = the distance (this chapter, the integral). Move t and the two always agree — one takes apart, one puts together, cancelling out.'},
@@ -243,8 +267,12 @@ function initAll(){
   hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
   hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
   let r1=null;document.getElementById('rieN').addEventListener('input',()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawRie();});});
+  document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
+    rieMode=+b.dataset.mode;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawRie();}));
   let r2=null;document.getElementById('ftcT').addEventListener('input',()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawFtc();});});
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+  [['cHero',drawHero],['cRie',drawRie],['cFtc',drawFtc]].forEach(([id,fn])=>{const el=document.getElementById(id);if(!el)return;
+    el.addEventListener('pointerenter',()=>{hoverId=id;fn();});el.addEventListener('pointerleave',()=>{if(hoverId===id){hoverId=null;fn();}});});
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const lastPanel=document.querySelector('.panel:last-of-type');
