@@ -163,6 +163,8 @@ function drawHero(){
   const px=mx(heroT);
   ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=1.2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(px,my(V(heroT)));ctx.lineTo(px,Y+H);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(px,my(V(heroT)),7,0,TAU);ctx.fill();ctx.stroke();
+  {const hL=heroT<TMAX*0.3;ctx.fillStyle=INK;ctx.font='600 12px '+ff;ctx.textBaseline='bottom';ctx.textAlign=hL?'left':'right';
+   ctx.fillText(TT('t='+heroT.toFixed(1)+'秒, 速度='+V(heroT).toFixed(1),'t='+heroT.toFixed(1)+'s, speed='+V(heroT).toFixed(1)),px+(hL?9:-9),my(V(heroT))-9);}
   ctx.fillStyle=PINK;ctx.font='600 30px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',mx(heroT/2),my(V(heroT)/2)+8);
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='600 15px '+ff;ctx.textBaseline='bottom';ctx.fillText(TT('走了多远？','how far?'),mx(heroT/2),my(0)-6);
 }

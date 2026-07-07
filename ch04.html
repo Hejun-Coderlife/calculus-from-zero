@@ -45,6 +45,9 @@
      border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
   .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
   .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--blue);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#0077ed}.nextbtn:active{transform:scale(.97)}
   .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
      pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
   .hint svg{width:20px;height:20px}
@@ -97,7 +100,7 @@
   <div class="kicker reveal" data-i18n="p6_kicker">导数的超能力</div>
   <div class="q reveal" data-i18n="p6_q">不只是「变多快」，<br>还能找<em>最好</em>。</div>
   <div class="sub reveal" data-i18n="p6_sub">第二章：导数告诉你「某一刻变多快」。<br>这一章：导数 = 0，帮你锁定「山顶谷底」—— 最大利润、最省材料、最短时间，全靠它。<br>这就是<b>优化</b>。</div>
-  <div class="lim reveal" data-i18n="p6_next" style="margin-top:12px">第五章 · 敬请期待</div>
+  <a href="ch05.html" class="nextbtn reveal" data-i18n="p6_next">下一章：怎么算导数 →</a>
 </section>
 
 <div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -205,7 +208,7 @@ const I18N={
   p6_kicker:{zh:'导数的超能力',en:'The derivative’s superpower'},
   p6_q:{zh:'不只是「变多快」，<br>还能找<em>最好</em>。',en:'Not just “how fast,”<br>but also the <em>best</em>.'},
   p6_sub:{zh:'第二章：导数告诉你「某一刻变多快」。<br>这一章：导数 = 0，帮你锁定「山顶谷底」—— 最大利润、最省材料、最短时间，全靠它。<br>这就是<b>优化</b>。',en:'Chapter 2: the derivative tells you “how fast, at this instant.”<br>This chapter: derivative = 0 pins down peaks and valleys — max profit, least material, shortest time.<br>That is <b>optimization</b>.'},
-  p6_next:{zh:'第五章 · 敬请期待',en:'Chapter 5 · coming soon'},
+  p6_next:{zh:'下一章：怎么算导数 →',en:'Next: Computing Derivatives →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
 function applyLang(){
