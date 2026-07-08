@@ -63,7 +63,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第四章</div>
   <div class="q reveal" data-i18n="p1_q">怎样围出<em>最大</em>的地？</div>
   <div class="sub reveal" data-i18n="p1_sub">一段固定长的篱笆（比如 20 米），围成一个矩形。<br>形状随你变——瘦高、矮胖……<br>哪一种，<b>圈住的面积最大</b>？</div>
-  <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="320"></canvas></div>
+  <div class="fig reveal" style="width:min(520px,90vw)"><canvas id="cHero" height="380"></canvas></div>
 </section>
 
 <section class="panel">
@@ -130,21 +130,27 @@ function axesBox(ctx,X,Y,W,H,xl,yl,xmax,ymax,xstep,ystep,ticks){const ff=ffont()
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textBaseline='alphabetic';
   ctx.textAlign='right';ctx.fillText(xl,X+W-2,Y+H+18);ctx.textAlign='left';ctx.fillText(yl,X-12,Y-4);}
 
+const HERO_H=380, HERO_LABEL=84, HERO_TOP=16, HERO_MAXDIM=HALF-0.6;   // 最瘦/最高时的边长≈9.4，用它定缩放，保证任何形状都不裁切
+function heroGeom(w){const usableH=HERO_H-HERO_LABEL-HERO_TOP, usableW=w-64;
+  return{sc:Math.min(usableW/HERO_MAXDIM,usableH/HERO_MAXDIM), cx:w/2, cy:HERO_TOP+usableH/2};}
 function drawHero(){
-  const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,320);ctx.clearRect(0,0,w,h);
+  const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,HERO_H);ctx.clearRect(0,0,w,h);
   const ff=ffont(),ww=heroW,hh=HALF-ww;
-  const sc=Math.min((w*0.62)/HALF,(h*0.62)/HALF),cx=w/2,cy=h/2-6;
+  const {sc,cx,cy}=heroGeom(w);
   const rw=ww*sc,rh=hh*sc,x0=cx-rw/2,y0=cy-rh/2;
   ctx.fillStyle='rgba(0,113,227,.13)';ctx.fillRect(x0,y0,rw,rh);
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.strokeRect(x0,y0,rw,rh);
   // 右边可拖手柄
   ctx.fillStyle='#fff';ctx.strokeStyle=IND;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x0+rw,cy,7,0,TAU);ctx.fill();ctx.stroke();
+  // 宽（矩形正下方）、高（矩形左侧竖排）
   ctx.fillStyle=SOFT;ctx.font='500 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(TT('宽 = '+ww.toFixed(1),'w = '+ww.toFixed(1)),cx,y0+rh+8);
-  ctx.save();ctx.translate(x0-10,cy);ctx.rotate(-Math.PI/2);ctx.fillText(TT('高 = '+hh.toFixed(1),'h = '+hh.toFixed(1)),0,0);ctx.restore();
-  ctx.fillStyle=INK;ctx.font='600 22px '+ff;ctx.textBaseline='middle';
-  ctx.fillText(TT('面积 = '+A(ww).toFixed(1),'area = '+A(ww).toFixed(1)),cx,cy-8);
-  ctx.fillStyle=PINK;ctx.font='600 16px '+ff;ctx.fillText(TT('最大？','biggest?'),cx,cy+16);
+  ctx.fillText(TT('宽 = '+ww.toFixed(1),'w = '+ww.toFixed(1)),cx,y0+rh+7);
+  ctx.save();ctx.translate(x0-13,cy);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('高 = '+hh.toFixed(1),'h = '+hh.toFixed(1)),0,0);ctx.restore();
+  // 面积 + 最大？：放在整幅图最底部居中，与矩形完全分开，绝不重叠
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=INK;ctx.font='700 24px '+ff;ctx.fillText(TT('面积 = '+A(ww).toFixed(1),'area = '+A(ww).toFixed(1)),cx,h-34);
+  ctx.fillStyle=PINK;ctx.font='600 15px '+ff;ctx.fillText(TT('最大？','biggest?'),cx,h-13);
 }
 
 function drawOpt(){
@@ -220,8 +226,8 @@ function applyLang(){
 function initAll(){
   drawHero();drawOpt();
   const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
-  const aim=e=>{const rc=hero.getBoundingClientRect(),sc=Math.min((hero.clientWidth*0.62)/HALF,(320*0.62)/HALF),cx=hero.clientWidth/2;
-    heroW=Math.max(0.6,Math.min(9.4,(e.clientX-rc.left-cx)/(sc/2)));drawHero();};
+  const aim=e=>{const rc=hero.getBoundingClientRect(),{sc,cx}=heroGeom(hero.clientWidth);
+    heroW=Math.max(0.6,Math.min(9.4,(e.clientX-rc.left-cx)*2/sc));drawHero();};
   let drag=false;
   hero.addEventListener('pointerdown',e=>{drag=true;hero.setPointerCapture(e.pointerId);aim(e);});
   hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
@@ -240,4 +246,5 @@ function initAll(){
 }
 initAll();
 </script>
+<script src="feedback.js"></script>
 </body></html>

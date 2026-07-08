@@ -59,14 +59,14 @@
 let LANG='zh';
 function TT(zh,en){return LANG==='en'?en:zh;}
 const CH=[
-  {n:'01',file:'ch01.html',done:true, zh:['圆的面积','数格子，逼近 π'],            en:['Area of a Circle','count squares → π']},
-  {n:'02',file:'ch02.html',done:true, zh:['瞬时速度','割线逼近，斜率 = 速度'],          en:['Instant Speed','secant → slope = speed']},
-  {n:'03',file:'ch03.html',done:true, zh:['面积就是路程','积分与导数，互为逆运算'],        en:['Area is Distance','integral & derivative: inverses']},
-  {n:'04',file:'ch04.html',done:true, zh:['找最大最小','导数 = 0，锁定山顶谷底'],            en:['Finding the Best','derivative = 0 → peaks & valleys']},
-  {n:'05',file:'ch05.html',done:true, zh:['怎么算导数','放大成直线，发现幂法则'],            en:['Computing Derivatives','zoom → line → the power rule']},
-  {n:'06',file:'ch06.html',done:true, zh:['怎么算积分','反过来求导，找原函数'],              en:['Computing Integrals','undo the derivative']},
-  {n:'07',file:'ch07.html',done:true, zh:['神奇的 e','导数 = 自己的那个数'],                en:['The Magic e','the number that is its own derivative']},
-  {n:'08',file:'ch08.html',done:true, zh:['套娃变化','链式法则：变化率相乘'],                en:['The Chain Rule','nested rates multiply']},
+  {n:'01',file:'ch01.html',done:true, concept:{zh:'积分',en:'Integral'},        zh:['圆的面积','数格子，逼近 π'],            en:['Area of a Circle','count squares → π']},
+  {n:'02',file:'ch02.html',done:true, concept:{zh:'导数',en:'Derivative'},      zh:['瞬时速度','割线逼近，斜率 = 速度'],          en:['Instant Speed','secant → slope = speed']},
+  {n:'03',file:'ch03.html',done:true, concept:{zh:'基本定理',en:'the FTC'},      zh:['面积就是路程','积分与导数，互为逆运算'],        en:['Area is Distance','integral & derivative: inverses']},
+  {n:'04',file:'ch04.html',done:true, concept:{zh:'优化',en:'Optimization'},    zh:['找最大最小','导数 = 0，锁定山顶谷底'],            en:['Finding the Best','derivative = 0 → peaks & valleys']},
+  {n:'05',file:'ch05.html',done:true, concept:{zh:'幂法则',en:'Power Rule'},     zh:['怎么算导数','放大成直线，发现幂法则'],            en:['Computing Derivatives','zoom → line → the power rule']},
+  {n:'06',file:'ch06.html',done:true, concept:{zh:'原函数',en:'Antiderivative'},zh:['怎么算积分','反过来求导，找原函数'],              en:['Computing Integrals','undo the derivative']},
+  {n:'07',file:'ch07.html',done:true, concept:{zh:'自然常数 e',en:'the number e'},zh:['神奇的 e','导数 = 自己的那个数'],                en:['The Magic e','the number that is its own derivative']},
+  {n:'08',file:'ch08.html',done:true, concept:{zh:'链式法则',en:'Chain Rule'},   zh:['套娃变化','链式法则：变化率相乘'],                en:['The Chain Rule','nested rates multiply']},
 ];
 const T={
   eyebrow:{zh:'FROM ZERO',en:'FROM ZERO'},
@@ -87,8 +87,9 @@ function render(){
     const el=document.createElement(c.file?'a':'div');
     if(c.file)el.href=c.file;
     el.className='card'+(c.done?'':' wip');
+    const tag=c.done?(c.concept?c.concept[LANG]:''):TT('建设中','WIP');
     el.innerHTML='<span class="cn">'+c.n+'</span><span class="ct">'+t+'</span><span class="cd">'+d+'</span>'
-      +'<span class="arrow">→</span>'+(c.done?'':'<span class="badge">'+TT('建设中','WIP')+'</span>');
+      +'<span class="arrow">→</span>'+(tag?'<span class="badge">'+tag+'</span>':'');
     g.appendChild(el);
   });
 }
@@ -154,4 +155,5 @@ render();
   document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running&&!reduce){start=performance.now()-0;requestAnimationFrame(frame);}});
 })();
 </script>
+<script src="feedback.js"></script>
 </body></html>

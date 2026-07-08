@@ -120,7 +120,7 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p6_kicker">微积分的骨架</div>
   <div class="q reveal" data-i18n="p6_q">切小，逼近，<em>加回去</em>。</div>
-  <div class="sub reveal" data-i18n="p6_sub">你刚刚做的，就是微积分。</div>
+  <div class="sub reveal" data-i18n="p6_sub">你刚刚用的这一招——<b>切小、逼近、加回去</b>——就是整个微积分的骨架。</div>
   <div class="eqbox reveal" data-i18n="p6_eq"><div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">面积</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">把每片加起来<br>（圆心 0 → 边缘 r）</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">每圈周长</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">每圈厚度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">就是圆面积</span></span></div></div>
   <a href="ch02.html" class="nextbtn reveal" data-i18n="nav_next">下一章：瞬时速度 →</a>
 </section>
@@ -168,7 +168,7 @@ const I18N={
   p5_readout:{zh:'把每一圈的周长<b>累加</b> → 三角形　·　面积 = <b>½ · 周长 · 半径</b>',en:'<b>Add up</b> every ring&#39;s circumference → a triangle　·　Area = <b>½ · circumference · radius</b>'},
   p6_kicker:{zh:'微积分的骨架',en:'The skeleton of calculus'},
   p6_q:{zh:'切小，逼近，<em>加回去</em>。',en:'Slice small, approximate, <em>add it back</em>.'},
-  p6_sub:{zh:'你刚刚做的，就是微积分。',en:'What you just did is calculus.'},
+  p6_sub:{zh:'你刚刚用的这一招——<b>切小、逼近、加回去</b>——就是整个微积分的骨架。',en:'That move you just made — <b>slice small, close in, add it back</b> — is the very skeleton of all calculus.'},
   p6_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">面积</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">把每片加起来<br>（圆心 0 → 边缘 r）</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">每圈周长</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">每圈厚度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">就是圆面积</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym">A</span><span class="lab">area</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue">∫₀ʳ</span><span class="lab">add up every slice<br>(center 0 → edge r)</span></span><span class="tok"><span class="sym blue">2πr</span><span class="lab">ring circumference</span></span><span class="tok"><span class="sym blue">dr</span><span class="lab">ring thickness</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">π r²</span><span class="lab">the circle area</span></span></div>'},
   hint:{zh:'向下滚动'+DOWN,en:'Scroll down'+DOWN}
 };
@@ -343,4 +343,5 @@ function initAll(){
 if(SHOT)document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
 initAll();
 </script>
+<script src="feedback.js"></script>
 </body></html>
