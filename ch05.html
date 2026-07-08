@@ -67,7 +67,7 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第五章</div>
   <div class="q reveal" data-i18n="p1_q">别拖了，能<em>算</em>吗？</div>
-  <div class="sub reveal" data-i18n="p1_sub">上一章靠拖滑块「看」出了：路程 = t²，它的导数（速度）= 2t。<br>可每换一个点就要重拖一次，太笨。<br>能不能<b>直接算出</b>任意一点的导数？</div>
+  <div class="sub reveal" data-i18n="p1_sub">前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？</div>
   <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="320"></canvas></div>
 </section>
 
@@ -75,17 +75,16 @@
   <div class="kicker reveal" data-i18n="p2_kicker">放大的魔法</div>
   <div class="q reveal" data-i18n="p2_q">弯的，<em>放大到极致会变直</em></div>
   <div class="sub reveal" data-i18n="p2_sub">把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。</div>
+  <div class="fig reveal" style="width:min(640px,92vw)"><canvas id="cZoomSeq" height="300"></canvas></div>
 </section>
 
 <section class="panel">
   <div class="kicker reveal" data-i18n="p3_kicker">放大，量斜率</div>
   <div class="q reveal" data-i18n="p3_q">在 x = a 处，<em>放大</em></div>
   <div class="sub reveal" data-i18n="p3_sub">这是 y = x²。把窗口越缩越小（放大倍数越拉越大），曲线肉眼就变直了。<br>在小三角形上量斜率 = <b>Δ竖 ÷ Δ横</b>；放大越狠，这个数越稳。<br>再拖动 a，看这个「稳下来的斜率」怎么随 a 变。</div>
-  <div class="fig reveal"><canvas id="cZoom" height="430"></canvas></div>
+  <div class="fig reveal" style="width:min(300px,74vw)"><canvas id="cZoom" height="440"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p3_la">位置 a</label>
-    <input id="zA" type="range" min="5" max="30" value="15" step="1">
-    <label data-i18n="p3_lz">放大</label>
-    <input id="zZoom" type="range" min="1" max="60" value="3" step="1"></div>
+    <input id="zA" type="range" min="5" max="30" value="18" step="1"></div>
   <div class="readout reveal" id="zoomOut"></div>
 </section>
 
@@ -125,7 +124,14 @@
 <script>
 const TAU=Math.PI*2;
 const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',GREEN='#28a745',SOFT='#86868b';
-const FNS=[{d:'x²',f:x=>x*x},{d:'x³',f:x=>x*x*x},{d:'√x',f:x=>Math.sqrt(x)}];
+const FNS=[
+  {d:'x²',f:x=>x*x,          df:x=>2*x,           xmax:3.2,ymax:10.5,amin:0.6,amax:2.7,xstep:1,ystep:2,
+     say:{zh:'x 乘自己（比如 3² = 3×3 = 9）',en:'x times itself (e.g. 3² = 3×3 = 9)'}},
+  {d:'x³',f:x=>x*x*x,        df:x=>3*x*x,          xmax:2.6,ymax:15,  amin:0.5,amax:2.2,xstep:1,ystep:3,
+     say:{zh:'x 乘三次（比如 2³ = 2×2×2 = 8）',en:'x cubed (e.g. 2³ = 2×2×2 = 8)'}},
+  {d:'√x',f:x=>Math.sqrt(x), df:x=>0.5/Math.sqrt(x),xmax:6, ymax:3,   amin:0.6,amax:5,  xstep:1,ystep:1,
+     say:{zh:'x 的平方根（比如 √4 = 2，因为 2×2 = 4）',en:'the square root of x (e.g. √4 = 2, since 2×2 = 4)'}}
+];
 let LANG='zh', heroA=1.4, fnIdx=0, hoverId=null;
 function TT(zh,en){return LANG==='en'?en:zh;}
 function dpr(){return Math.min(window.devicePixelRatio||1,2);}
@@ -147,6 +153,41 @@ function axesBox(ctx,X,Y,W,H,xl,yl,xmax,ymax,xstep,ystep,ticks){const ff=ffont()
   ctx.beginPath();ctx.moveTo(X+W,Y+H);ctx.lineTo(X+W-9,Y+H-4);ctx.moveTo(X+W,Y+H);ctx.lineTo(X+W-9,Y+H+4);ctx.stroke();
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textBaseline='alphabetic';
   ctx.textAlign='right';ctx.fillText(xl,X+W-2,Y+H+18);ctx.textAlign='left';ctx.fillText(yl,X-12,Y-4);}
+
+function roundRect(ctx,x,y,ww,hh,r){r=Math.min(r,ww/2,hh/2);ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+ww,y,x+ww,y+hh,r);ctx.arcTo(x+ww,y+hh,x,y+hh,r);ctx.arcTo(x,y+hh,x,y,r);ctx.arcTo(x,y,x+ww,y,r);ctx.closePath();}
+
+// 放大胶片条：同一个点，依次放大，看着弯的曲线变成直线（只讲“变直”，不量斜率——那是下一屏的事）
+function drawZoomSeq(){
+  const cv=document.getElementById('cZoomSeq');if(!cv)return;const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
+  const ff=ffont(),f=x=>x*x,a=1.4,fa=f(a);
+  const pad=6,gap=Math.min(38,w*0.07),n=3,fw=(w-2*pad-(n-1)*gap)/n,fy=32,fh=190;
+  const zooms=[1,6,40],labZh=['原样：明显是弯的','放大 6 倍','放大 40 倍'],labEn=['as-is: clearly bent','zoom 6×','zoom 40×'];
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(TT('同一个点，越放越大 →','same point, zoom in further →'),w/2,6);
+  for(let k=0;k<n;k++){
+    const vx=pad+k*(fw+gap),z=zooms[k],hw=1.3/z,hh=hw*fh/fw;
+    const mx=x=>vx+fw/2+(x-a)/(2*hw)*fw, my=y=>fy+fh/2-(y-fa)/(2*hh)*fh;
+    ctx.save();roundRect(ctx,vx,fy,fw,fh,14);ctx.clip();
+    ctx.fillStyle='#f4f6f9';ctx.fillRect(vx,fy,fw,fh);
+    ctx.strokeStyle='rgba(0,0,0,.05)';ctx.lineWidth=1;
+    for(let g=-2;g<=2;g++){const gx=vx+fw/2+g*fw/4;ctx.beginPath();ctx.moveTo(gx,fy);ctx.lineTo(gx,fy+fh);ctx.stroke();
+      const gy=fy+fh/2+g*fh/4;ctx.beginPath();ctx.moveTo(vx,gy);ctx.lineTo(vx+fw,gy);ctx.stroke();}
+    ctx.strokeStyle=BLUE;ctx.lineWidth=k===n-1?3.4:2.8;ctx.lineCap='round';ctx.beginPath();let st=false;
+    for(let i=0;i<=120;i++){const x=a-hw+2*hw*i/120,Y=my(f(x));if(Y<fy-40||Y>fy+fh+40){st=false;continue;}const Xp=mx(x);st?ctx.lineTo(Xp,Y):ctx.moveTo(Xp,Y);st=true;}
+    ctx.stroke();ctx.lineCap='butt';
+    ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(mx(a),my(fa),5.5,0,TAU);ctx.fill();ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle=k===n-1?BLUE:'rgba(0,0,0,.12)';ctx.lineWidth=k===n-1?2:1.2;roundRect(ctx,vx,fy,fw,fh,14);ctx.stroke();
+    ctx.fillStyle=k===n-1?BLUE:SOFT;ctx.font=(k===n-1?'600 ':'500 ')+'12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(TT(labZh[k],labEn[k]),vx+fw/2,fy+fh+8);
+    if(k<n-1){const ax=vx+fw+gap/2,ay=fy+fh/2;ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.moveTo(ax-gap*0.30,ay);ctx.lineTo(ax+gap*0.30,ay);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(ax+gap*0.30,ay);ctx.lineTo(ax+gap*0.10,ay-5);ctx.moveTo(ax+gap*0.30,ay);ctx.lineTo(ax+gap*0.10,ay+5);ctx.stroke();}
+  }
+  ctx.fillStyle=INK;ctx.font='600 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(TT('放到极致，弯就看不见了 —— 曲线变成一条直线','zoom far enough and the bend vanishes — the curve is now a straight line'),w/2,fy+fh+30);
+}
 
 function drawHero(){
   const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,320);ctx.clearRect(0,0,w,h);
@@ -195,22 +236,82 @@ function zoomView(cvId,cssH,f,a,zoom,accent){
   return sl;
 }
 
+// 放大后就是直线：画抛物线 + 那条直线（切线）+ 干净的「往右走/往上升」三角形，斜率 = 2a
 function drawZoom(){
-  const a=+document.getElementById('zA').value/10, zoom=+document.getElementById('zZoom').value;
-  const f=x=>x*x, sl=zoomView('cZoom',430,f,a,zoom,PINK), tgt=slopeAt(f,a);
+  const cv=document.getElementById('cZoom');const {ctx,w,h}=setup(cv,440);ctx.clearRect(0,0,w,h);
+  const ff=ffont(), f=x=>x*x, XM=3.2, YM=10.6;
+  const padL=42,padR=78,padT=16,padB=38, aW=w-padL-padR, aH=h-padT-padB;
+  const s=Math.min(aW/XM, aH/YM), W=XM*s, H=YM*s, X=padL, Y=padT+(aH-H)/2;   // 等比例：x、y 每格像素相同
+  const mx=x=>X+x*s, my=y=>Y+H-y*s;
+  const a=+document.getElementById('zA').value/10, fa=f(a), m=2*a;   // y=x²，此处切线斜率 = 2a
+  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),XM,YM,1,3,hoverId==='cZoom');
+  // 抛物线 y=x²
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();let st=false;
+  for(let i=0;i<=120;i++){const x=XM*i/120,yv=f(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
+  // 切线（放大后的那条直线）
+  const du=0.8, ta=Math.max(0,a-du), tb=Math.min(XM,a+du);ctx.strokeStyle=PINK;ctx.lineWidth=2.4;
+  ctx.beginPath();ctx.moveTo(mx(ta),my(fa+m*(ta-a)));ctx.lineTo(mx(tb),my(fa+m*(tb-a)));ctx.stroke();
+  // 斜率三角形：往右 run，往上 rise（rise 正好 = 2x，这一屏的主角）
+  const run=Math.min(1,XM-0.12-a), rise=m*run;
+  ctx.strokeStyle='rgba(0,0,0,.55)';ctx.setLineDash([5,4]);ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a+run),my(fa));ctx.lineTo(mx(a+run),my(fa+rise));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(TT('往右 '+run.toFixed(1),'right '+run.toFixed(1)),(mx(a)+mx(a+run))/2,my(fa)+5);
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(TT('往上 '+rise.toFixed(1),'up '+rise.toFixed(1)),mx(a+run)+7,(my(fa)+my(fa+rise))/2);
+  // 只投影到 x 轴标位置（不标高度 y，免得和斜率的数字撞车）
+  ctx.strokeStyle='rgba(0,0,0,.28)';ctx.setLineDash([3,3]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(a),my(0),3.2,0,TAU);ctx.fill();
+  ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+a.toFixed(1),mx(a),my(0)+6);
+  // 点
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(mx(a),my(fa),6,0,TAU);ctx.fill();ctx.stroke();
+  // 大号斜率
+  ctx.fillStyle=PINK;ctx.font='700 18px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('斜率 = '+m.toFixed(1),'slope = '+m.toFixed(1)),X+6,Y+2);
   document.getElementById('zoomOut').innerHTML=
-    TT('在 x = <b>'+a.toFixed(1)+'</b>：三角形斜率 = Δ竖 ÷ Δ横 = <b class="pk">'+sl.toFixed(2)+'</b>',
-       'At x = <b>'+a.toFixed(1)+'</b>: triangle slope = Δy ÷ Δx = <b class="pk">'+sl.toFixed(2)+'</b>')
-    +'<br><span class="note">'+TT('放大越狠，它越贴近 <b>'+tgt.toFixed(2)+'</b> —— 这就是 x² 在 x='+a.toFixed(1)+' 的导数。拖 a 看它怎么随 a 变。',
-       'zoom harder and it homes in on <b>'+tgt.toFixed(2)+'</b> — the derivative of x² at x='+a.toFixed(1)+'. Drag a to see how it changes.')+'</span>';
+    TT('位置 <b>x = '+a.toFixed(1)+'</b>　·　斜率 = 往上 ÷ 往右 = '+rise.toFixed(1)+' ÷ '+run.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b>',
+       'position <b>x = '+a.toFixed(1)+'</b> · slope = up ÷ right = '+rise.toFixed(1)+' ÷ '+run.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b>')
+    +'<br><span class="note">'+TT('这个斜率正好是 <b>2 × '+a.toFixed(1)+' = '+m.toFixed(1)+'</b>。拖动 x：斜率永远是 <b>2×x</b> —— 这才是这一屏要发现的规律。',
+       'the slope is exactly <b>2 × '+a.toFixed(1)+' = '+m.toFixed(1)+'</b>. Drag x: the slope is always <b>2×x</b> — the pattern this screen reveals.')+'</span>';
 }
 
+// 和第三屏同一套图：坐标轴 + 那条直线 + 斜率三角形，只是换函数（找规律）
 function drawPat(){
-  const a=+document.getElementById('pA').value/10, f=FNS[fnIdx].f, d=FNS[fnIdx].d;
-  const sl=zoomView('cPat',360,f,a,42,IND), tgt=slopeAt(f,a);
+  const fn=FNS[fnIdx];
+  const cv=document.getElementById('cPat');const {ctx,w,h}=setup(cv,340);ctx.clearRect(0,0,w,h);
+  const X=54,Y=24,W=w-84,H=h-60,ff=ffont(),xmax=fn.xmax,ymax=fn.ymax;
+  const mx=x=>X+x/xmax*W, my=y=>Y+H-y/ymax*H;
+  const tt=(+document.getElementById('pA').value-8)/22, x0=fn.amin+tt*(fn.amax-fn.amin), y0=fn.f(x0), m=fn.df(x0);
+  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),xmax,ymax,fn.xstep,fn.ystep,hoverId==='cPat');
+  // 曲线
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();let st=false;
+  for(let i=0;i<=120;i++){const x=xmax*i/120;if(x<=0)continue;const yv=fn.f(x);if(yv>ymax*1.02){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
+  // 坐标投影：x 轴（位置）与 y 轴（高度）
+  ctx.strokeStyle='rgba(0,0,0,.26)';ctx.setLineDash([3,3]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(x0),my(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(0),my(y0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(x0),my(0),3.2,0,TAU);ctx.fill();ctx.beginPath();ctx.arc(mx(0),my(y0),3.2,0,TAU);ctx.fill();
+  ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+x0.toFixed(1),mx(x0),my(0)+7);
+  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('y = '+y0.toFixed(2),mx(0)-7,my(y0));
+  // 那条直线（切线）
+  const du=xmax*0.17;ctx.strokeStyle=PINK;ctx.lineWidth=2.2;
+  ctx.beginPath();ctx.moveTo(mx(x0-du),my(y0-m*du));ctx.lineTo(mx(x0+du),my(y0+m*du));ctx.stroke();
+  // 斜率三角形：往右 run，往上 rise
+  let run=Math.min(xmax*0.28,xmax-0.15-x0);if(y0+m*run>ymax*0.94)run=(ymax*0.94-y0)/m;run=Math.max(run,xmax*0.06);const rise=m*run;
+  ctx.strokeStyle='rgba(0,0,0,.5)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
+  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(x0+run),my(y0));ctx.lineTo(mx(x0+run),my(y0+rise));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+run.toFixed(2),'right '+run.toFixed(2)),(mx(x0)+mx(x0+run))/2,my(y0)+5);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+rise.toFixed(2),'up '+rise.toFixed(2)),mx(x0+run)+7,(my(y0)+my(y0+rise))/2);
+  // 点
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(mx(x0),my(y0),6,0,TAU);ctx.fill();ctx.stroke();
+  // 大号斜率
+  ctx.fillStyle=IND;ctx.font='700 18px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('斜率 ≈ '+m.toFixed(2),'slope ≈ '+m.toFixed(2)),X+6,Y+2);
   document.getElementById('patOut').innerHTML=
-    TT('<b>'+d+'</b> 在 x = <b>'+a.toFixed(1)+'</b>：放大后量到斜率 ≈ <b class="bl">'+tgt.toFixed(2)+'</b>',
-       '<b>'+d+'</b> at x = <b>'+a.toFixed(1)+'</b>: after zooming, slope ≈ <b class="bl">'+tgt.toFixed(2)+'</b>');
+    TT('<b>'+fn.d+'</b> 的意思：'+fn.say.zh+'。把位置 <b>x = '+x0.toFixed(1)+'</b> 代进去，得到高 <b>y = '+fn.d.replace('x',x0.toFixed(1))+' = '+y0.toFixed(2)+'</b> —— 曲线就是把每个 x 的高 y 连起来。',
+       '<b>'+fn.d+'</b> means: '+fn.say.en+'. Plug in position <b>x = '+x0.toFixed(1)+'</b> to get height <b>y = '+y0.toFixed(2)+'</b> — the curve is just the height y at every x, joined up.')
+    +'<br><span class="note">'+TT('斜率 = 往上 ÷ 往右 = '+rise.toFixed(2)+' ÷ '+run.toFixed(2)+' ≈ <b class="bl">'+m.toFixed(2)+'</b>。换函数、拖 x，斜率就照下面那张表变。',
+       'slope = up ÷ right = '+rise.toFixed(2)+' ÷ '+run.toFixed(2)+' ≈ <b class="bl">'+m.toFixed(2)+'</b>. Switch function, drag x — the slope follows the table below.')+'</span>';
 }
 
 const I18N={
@@ -218,18 +319,18 @@ const I18N={
   nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
   p1_kicker:{zh:'从 0 开始的微积分 · 第五章',en:'Calculus from Zero · Chapter 5'},
   p1_q:{zh:'别拖了，能<em>算</em>吗？',en:'Enough dragging — can we <em>compute</em> it?'},
-  p1_sub:{zh:'上一章靠拖滑块「看」出了：路程 = t²，它的导数（速度）= 2t。<br>可每换一个点就要重拖一次，太笨。<br>能不能<b>直接算出</b>任意一点的导数？',en:'Last chapters we <i>watched</i> the slope: distance = t², its derivative (speed) = 2t.<br>But re-dragging for every point is clumsy.<br>Can we <b>compute</b> the derivative at any point directly?'},
+  p1_sub:{zh:'前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？',en:'In earlier chapters we <i>watched</i> how steep the curve is, point by point, by dragging a slider — that steepness is the derivative.<br>But re-dragging for every single point is clumsy.<br>Could we <b>skip the dragging and just compute</b> the derivative at any point?'},
   p2_kicker:{zh:'放大的魔法',en:'The zoom trick'},
   p2_q:{zh:'弯的，<em>放大到极致会变直</em>',en:'Zoom in enough, and <em>curves look straight</em>'},
   p2_sub:{zh:'把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。',en:'Zoom into a point on a curve <b>far enough</b>, and the bend fades until it looks like <b>a straight line</b>.<br>The <b>slope</b> of that line is the <b>derivative</b> there.<br>So “find the derivative” becomes “measure that line’s slope.”'},
   p3_kicker:{zh:'放大，量斜率',en:'Zoom, measure the slope'},
-  p3_q:{zh:'在 x = a 处，<em>放大</em>',en:'Zoom in at x = a'},
-  p3_sub:{zh:'这是 y = x²。把窗口越缩越小（放大倍数越拉越大），曲线肉眼就变直了。<br>在小三角形上量斜率 = <b>Δ竖 ÷ Δ横</b>；放大越狠，这个数越稳。<br>再拖动 a，看这个「稳下来的斜率」怎么随 a 变。',en:'This is y = x². Shrink the window (crank up the zoom) and the curve visibly straightens.<br>Measure the slope on the little triangle = <b>Δy ÷ Δx</b>; the harder you zoom, the steadier it gets.<br>Then drag a to see how that settled slope changes with a.'},
-  p3_la:{zh:'位置 a',en:'point a'},p3_lz:{zh:'放大',en:'zoom'},
+  p3_q:{zh:'放大后，<em>量它的斜率</em>',en:'Zoomed in, <em>measure its slope</em>'},
+  p3_sub:{zh:'先认坐标：横轴是<b>位置 x</b>，纵轴是<b>高度 y</b> —— 站在 x 处，曲线有多高就是 y（这里 y = x²）。<br>上一屏看到：放大后这一点附近就是一条<b>直线</b>。现在量它有多斜：<b>往上 ÷ 往右 = 斜率</b>。<br>拖动 x，你会发现斜率<b>永远是 2×x</b>。',en:'First, the axes: the horizontal is <b>position x</b>, the vertical is <b>height y</b> — standing at x, how high the curve reaches is y (here y = x²).<br>Last panel: zoomed in, near this point it is a <b>straight line</b>. Now measure how steep: <b>up ÷ right = slope</b>.<br>Drag x and the slope is <b>always 2×x</b>.'},
+  p3_la:{zh:'位置 x',en:'position x'},
   p4_kicker:{zh:'找规律',en:'Spot the pattern'},
-  p4_q:{zh:'换几个函数，<em>都放大量一量</em>',en:'Try a few functions — zoom & measure each'},
-  p4_sub:{zh:'同样的招：放大、量斜率。换 x²、x³、√x 试试，把每个的导数记下来 —— 一张表就露出<b>规律</b>。',en:'Same move: zoom, measure the slope. Try x², x³, √x, and jot down each derivative — a little table reveals the <b>pattern</b>.'},
-  p4_la:{zh:'位置 a',en:'point a'},
+  p4_q:{zh:'换几个函数，<em>同样量斜率</em>',en:'Other functions — <em>measure the slope the same way</em>'},
+  p4_sub:{zh:'和上一屏<b>一模一样</b>的图，只是把函数从 x² 换成 x³、√x（点上面按钮切换）。<br>同样：读出坐标 (x, y)，用三角形量斜率。把每个的斜率记下来 —— 下面那张表就露出<b>规律</b>。',en:'The <b>same</b> figure as before, just switching the function from x² to x³ or √x (tap the buttons).<br>Same steps: read the point (x, y), measure the slope with the triangle. Note each one — the table below reveals the <b>pattern</b>.'},
+  p4_la:{zh:'位置 x',en:'position x'},
   fn0:{zh:'x²',en:'x²'},fn1:{zh:'x³',en:'x³'},fn2:{zh:'√x',en:'√x'},
   p4_tbl:{zh:'<span class="a">x²</span> 的导数 = <span class="b">2x</span>　·　<span class="a">x³</span> 的导数 = <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> 的导数 = <span class="b">½·x<sup>−½</sup></span>',en:'<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>'},
   p5_kicker:{zh:'给它一个规则',en:'Give it a rule'},
@@ -247,10 +348,10 @@ function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawHero();drawZoom();drawPat();
+  drawHero();drawZoomSeq();drawZoom();drawPat();
 }
 function initAll(){
-  drawHero();drawZoom();drawPat();
+  drawHero();drawZoomSeq();drawZoom();drawPat();
   const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
   const aim=e=>{const rc=hero.getBoundingClientRect(),X=50,W=hero.clientWidth-76,xmax=3.2;
     heroA=Math.max(0.3,Math.min(3.1,(e.clientX-rc.left-X)/W*xmax));drawHero();};
@@ -259,7 +360,7 @@ function initAll(){
   hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
   hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
   let r1=null;const zRedraw=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawZoom();});};
-  document.getElementById('zA').addEventListener('input',zRedraw);document.getElementById('zZoom').addEventListener('input',zRedraw);
+  document.getElementById('zA').addEventListener('input',zRedraw);
   let r2=null;document.getElementById('pA').addEventListener('input',()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawPat();});});
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
@@ -270,7 +371,7 @@ function initAll(){
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const lastPanel=document.querySelector('.panel:last-of-type');
   new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
-  addEventListener('resize',()=>{drawHero();drawZoom();drawPat();});
+  addEventListener('resize',()=>{drawHero();drawZoomSeq();drawZoom();drawPat();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }
