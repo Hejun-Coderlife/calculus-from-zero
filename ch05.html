@@ -82,9 +82,11 @@
   <div class="kicker reveal" data-i18n="p3_kicker">放大，量斜率</div>
   <div class="q reveal" data-i18n="p3_q">在 x = a 处，<em>放大</em></div>
   <div class="sub reveal" data-i18n="p3_sub">这是 y = x²。把窗口越缩越小（放大倍数越拉越大），曲线肉眼就变直了。<br>在小三角形上量斜率 = <b>Δ竖 ÷ Δ横</b>；放大越狠，这个数越稳。<br>再拖动 a，看这个「稳下来的斜率」怎么随 a 变。</div>
-  <div class="fig reveal" style="width:min(300px,74vw)"><canvas id="cZoom" height="440"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p3_la">位置 a</label>
-    <input id="zA" type="range" min="5" max="30" value="18" step="1"></div>
+  <div class="fig reveal" style="width:min(320px,78vw)"><canvas id="cZoom" height="460"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p3_la">点 A 位置</label>
+    <input id="zA" type="range" min="6" max="15" value="10" step="1">
+    <label data-i18n="p3_lg">A、B 间距</label>
+    <input id="zGap" type="range" min="0" max="15" value="10" step="1"></div>
   <div class="readout reveal" id="zoomOut"></div>
 </section>
 
@@ -238,42 +240,65 @@ function zoomView(cvId,cssH,f,a,zoom,accent){
 
 // 放大后就是直线：画抛物线 + 那条直线（切线）+ 干净的「往右走/往上升」三角形，斜率 = 2a
 function drawZoom(){
-  const cv=document.getElementById('cZoom');const {ctx,w,h}=setup(cv,440);ctx.clearRect(0,0,w,h);
-  const ff=ffont(), f=x=>x*x, XM=3.2, YM=10.6;
-  const padL=42,padR=78,padT=16,padB=38, aW=w-padL-padR, aH=h-padT-padB;
+  const cv=document.getElementById('cZoom');const {ctx,w,h}=setup(cv,460);ctx.clearRect(0,0,w,h);
+  const ff=ffont(), f=x=>x*x, XM=3.2, YM=9.5;
+  const padL=44,padR=80,padT=16,padB=40, aW=w-padL-padR, aH=h-padT-padB;
   const s=Math.min(aW/XM, aH/YM), W=XM*s, H=YM*s, X=padL, Y=padT+(aH-H)/2;   // 等比例：x、y 每格像素相同
   const mx=x=>X+x*s, my=y=>Y+H-y*s;
-  const a=+document.getElementById('zA').value/10, fa=f(a), m=2*a;   // y=x²，此处切线斜率 = 2a
-  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),XM,YM,1,3,hoverId==='cZoom');
-  // 抛物线 y=x²
+  const a=+document.getElementById('zA').value/10, d=+document.getElementById('zGap').value/10;
+  const b=a+d, fa=f(a), fb=f(b), right=d, up=fb-fa, merged=d<1e-6, steep=merged?2*a:up/right;   // 陡度从两点量出；两点重合时 = A的x+A的x
+  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),XM,YM,1,2,hoverId==='cZoom');
+  // 曲线 y=x²
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();let st=false;
   for(let i=0;i<=120;i++){const x=XM*i/120,yv=f(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
-  // 切线（放大后的那条直线）
-  const du=0.8, ta=Math.max(0,a-du), tb=Math.min(XM,a+du);ctx.strokeStyle=PINK;ctx.lineWidth=2.4;
-  ctx.beginPath();ctx.moveTo(mx(ta),my(fa+m*(ta-a)));ctx.lineTo(mx(tb),my(fa+m*(tb-a)));ctx.stroke();
-  // 斜率三角形：往右 run，往上 rise（rise 正好 = 2x，这一屏的主角）
-  const run=Math.min(1,XM-0.12-a), rise=m*run;
-  ctx.strokeStyle='rgba(0,0,0,.55)';ctx.setLineDash([5,4]);ctx.lineWidth=1.4;
-  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a+run),my(fa));ctx.lineTo(mx(a+run),my(fa+rise));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(TT('往右 '+run.toFixed(1),'right '+run.toFixed(1)),(mx(a)+mx(a+run))/2,my(fa)+5);
-  ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillText(TT('往上 '+rise.toFixed(1),'up '+rise.toFixed(1)),mx(a+run)+7,(my(fa)+my(fa+rise))/2);
-  // 只投影到 x 轴标位置（不标高度 y，免得和斜率的数字撞车）
-  ctx.strokeStyle='rgba(0,0,0,.28)';ctx.setLineDash([3,3]);ctx.lineWidth=1.2;
-  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(a),my(0),3.2,0,TAU);ctx.fill();
-  ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+a.toFixed(1),mx(a),my(0)+6);
-  // 点
-  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(mx(a),my(fa),6,0,TAU);ctx.fill();ctx.stroke();
-  // 大号斜率
-  ctx.fillStyle=PINK;ctx.font='700 18px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillText(TT('斜率 = '+m.toFixed(1),'slope = '+m.toFixed(1)),X+6,Y+2);
-  document.getElementById('zoomOut').innerHTML=
-    TT('位置 <b>x = '+a.toFixed(1)+'</b>　·　斜率 = 往上 ÷ 往右 = '+rise.toFixed(1)+' ÷ '+run.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b>',
-       'position <b>x = '+a.toFixed(1)+'</b> · slope = up ÷ right = '+rise.toFixed(1)+' ÷ '+run.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b>')
-    +'<br><span class="note">'+TT('这个斜率正好是 <b>2 × '+a.toFixed(1)+' = '+m.toFixed(1)+'</b>。拖动 x：斜率永远是 <b>2×x</b> —— 这才是这一屏要发现的规律。',
-       'the slope is exactly <b>2 × '+a.toFixed(1)+' = '+m.toFixed(1)+'</b>. Drag x: the slope is always <b>2×x</b> — the pattern this screen reveals.')+'</span>';
+  // 斜率辅助线：过 A、B 的直线（这条线有多陡 = 我们量的"有多陡"；B 拖近 A 时它就变成 A 点的切线）
+  {const xL=Math.max(0,a-0.6),xR=Math.min(XM,b+0.6);
+   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();}
+  // 楼梯（量往右走 / 往上爬）：灰色虚线，只是辅助（两点重合时没有楼梯）
+  if(!merged){
+    ctx.strokeStyle='rgba(0,0,0,.42)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(b),my(fa));ctx.lineTo(mx(b),my(fb));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(TT('往右走 '+right.toFixed(1),'right '+right.toFixed(1)),(mx(a)+mx(b))/2,my(fa)+6);
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(TT('往上爬 '+up.toFixed(1),'up '+up.toFixed(1)),mx(b)+8,(my(fa)+my(fb))/2);
+  }
+  // 重合时：直接量那条直线（切线）—— 往右 1、往上 2a，就是直接测法
+  if(merged){
+    const rr=1, rise2=steep*rr;
+    ctx.strokeStyle='rgba(0,0,0,.45)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a+rr),my(fa));ctx.lineTo(mx(a+rr),my(fa+rise2));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(TT('往右 '+rr.toFixed(1),'right '+rr.toFixed(1)),(mx(a)+mx(a+rr))/2,my(fa)+6);
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(TT('往上 '+rise2.toFixed(1),'up '+rise2.toFixed(1)),mx(a+rr)+8,(my(fa)+my(fa+rise2))/2);
+  }
+  // A、B 各自“站在横轴哪”：细线落到 位置 x 轴，标出位置（B 的标注放低一行，避免和 A 挤一起）
+  ctx.strokeStyle='rgba(0,113,227,.3)';ctx.setLineDash([2,3]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();
+  if(!merged){ctx.beginPath();ctx.moveTo(mx(b),my(fb));ctx.lineTo(mx(b),my(0));ctx.stroke();}
+  ctx.setLineDash([]);ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillStyle=BLUE;ctx.fillText(TT('A位置 '+a.toFixed(1),'A pos '+a.toFixed(1)),mx(a),my(0)+4);
+  if(!merged){ctx.fillStyle=IND;ctx.fillText(TT('B位置 '+b.toFixed(1),'B pos '+b.toFixed(1)),mx(b),my(0)+19);}
+  // A、B 两点：只标字母（坐标已由位置线+楼梯给出，避免拥挤）
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(mx(a),my(fa),5.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=INK;ctx.font='800 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(merged?'A=B':'A',mx(a)-8,my(fa)-6);
+  if(!merged){
+    ctx.fillStyle='#fff';ctx.strokeStyle=IND;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(mx(b),my(fb),5.5,0,TAU);ctx.fill();ctx.stroke();
+    ctx.fillStyle=INK;ctx.font='800 13px '+ff;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('B',mx(b)+8,my(fb)-6);
+  }
+  // 大号“有多陡”
+  ctx.fillStyle=PINK;ctx.font='700 16px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('有多陡（斜率）= '+steep.toFixed(1),'steepness = '+steep.toFixed(1)),X+6,Y+2);
+  document.getElementById('zoomOut').innerHTML = merged
+    ? TT('A、B <b>重合</b>在位置 <b>'+a.toFixed(1)+'</b>（位置<b>还是 '+a.toFixed(1)+'，没变</b>）。粉线现在是<b>贴着曲线的直线（切线）</b>。<br><b>直接量这条直线</b>：从 A 往右走 <b>1</b>，它往上 <b>'+(2*a).toFixed(1)+'</b> → 有多陡 = '+(2*a).toFixed(1)+' ÷ 1 = <b class="pk">'+(2*a).toFixed(1)+'</b>。这就是斜率，也是能<b>直接测</b>的办法（不用再两点相除、免得 0÷0）。',
+        'A and B have <b>merged</b> at position <b>'+a.toFixed(1)+'</b> (still '+a.toFixed(1)+'). The pink line is now the <b>straight line hugging the curve (the tangent)</b>.<br><b>Measure that line directly</b>: from A go right <b>1</b>, it rises <b>'+(2*a).toFixed(1)+'</b> → steepness = '+(2*a).toFixed(1)+' ÷ 1 = <b class="pk">'+(2*a).toFixed(1)+'</b>. That is the slope — a <b>direct</b> measurement (no two-point division, no 0÷0).')
+      +'<br><span class="note">'+TT('拖动「点 A 位置」，斜率永远是位置的 <b>2 倍</b>（'+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+'）—— 这就是下一屏要找的规律。',
+          'Move “point A”: the slope is always <b>twice</b> the position ('+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+') — the pattern the next screen hunts for.')+'</span>'
+    : ( TT('从 A(位置 <b>'+a.toFixed(1)+'</b>, 高 '+fa.toFixed(1)+') 走到 B(位置 <b>'+b.toFixed(1)+'</b>, 高 '+fb.toFixed(1)+')：往右走 <b>'+right.toFixed(1)+'</b>，往上爬 <b>'+up.toFixed(1)+'</b>。<br>有多陡 = 往上爬 ÷ 往右走 = '+up.toFixed(1)+' ÷ '+right.toFixed(1)+' = <b class="pk">'+steep.toFixed(1)+'</b>',
+         'From A(pos <b>'+a.toFixed(1)+'</b>, height '+fa.toFixed(1)+') to B(pos <b>'+b.toFixed(1)+'</b>, height '+fb.toFixed(1)+'): right <b>'+right.toFixed(1)+'</b>, up <b>'+up.toFixed(1)+'</b>.<br>steepness = up ÷ right = '+up.toFixed(1)+' ÷ '+right.toFixed(1)+' = <b class="pk">'+steep.toFixed(1)+'</b>')
+      +'<br><span class="note">'+TT('把「A、B 间距」<b>拖小</b>，B 慢慢靠近 A，这个「有多陡」会一路<b>降下来、稳住</b>。一直拖到间距 <b>0</b>（两点重合），看它稳在几。',
+          'Drag the <b>gap smaller</b>: as B approaches A, the steepness <b>eases down and settles</b>. Drag all the way to <b>0</b> (points merged) to see where it settles.')+'</span>' );
 }
 
 // 和第三屏同一套图：坐标轴 + 那条直线 + 斜率三角形，只是换函数（找规律）
@@ -323,10 +348,10 @@ const I18N={
   p2_kicker:{zh:'放大的魔法',en:'The zoom trick'},
   p2_q:{zh:'弯的，<em>放大到极致会变直</em>',en:'Zoom in enough, and <em>curves look straight</em>'},
   p2_sub:{zh:'把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。',en:'Zoom into a point on a curve <b>far enough</b>, and the bend fades until it looks like <b>a straight line</b>.<br>The <b>slope</b> of that line is the <b>derivative</b> there.<br>So “find the derivative” becomes “measure that line’s slope.”'},
-  p3_kicker:{zh:'放大，量斜率',en:'Zoom, measure the slope'},
-  p3_q:{zh:'放大后，<em>量它的斜率</em>',en:'Zoomed in, <em>measure its slope</em>'},
-  p3_sub:{zh:'先认坐标：横轴是<b>位置 x</b>，纵轴是<b>高度 y</b> —— 站在 x 处，曲线有多高就是 y（这里 y = x²）。<br>上一屏看到：放大后这一点附近就是一条<b>直线</b>。现在量它有多斜：<b>往上 ÷ 往右 = 斜率</b>。<br>拖动 x，你会发现斜率<b>永远是 2×x</b>。',en:'First, the axes: the horizontal is <b>position x</b>, the vertical is <b>height y</b> — standing at x, how high the curve reaches is y (here y = x²).<br>Last panel: zoomed in, near this point it is a <b>straight line</b>. Now measure how steep: <b>up ÷ right = slope</b>.<br>Drag x and the slope is <b>always 2×x</b>.'},
-  p3_la:{zh:'位置 x',en:'position x'},
+  p3_kicker:{zh:'两点，量陡度',en:'Two points, measure steepness'},
+  p3_q:{zh:'两个点，<em>量它有多陡</em>',en:'Two points — <em>measure how steep</em>'},
+  p3_sub:{zh:'蓝线是曲线 y = x²（越往右越高）。在上面取两个点 <b>A</b>、<b>B</b>。<br>从 A 走到 B：<b>往右走</b>了多少、<b>往上爬</b>了多少，都在坐标轴上量得出来。<b>有多陡 = 往上爬 ÷ 往右走</b>。<br>再把 <b>B 往 A 拖近</b>（拖小间距），这个「有多陡」会慢慢<b>稳下来</b> —— 稳住的那个数，就是这点的<b>斜率</b>（它正好是 A 位置的 <b>2 倍</b>；位置本身不变）。',en:'The blue line is the curve y = x² (higher as you go right). Put two points <b>A</b> and <b>B</b> on it.<br>From A to B: how far you go <b>right</b> and how far you climb <b>up</b> can both be read off the axes. <b>Steepness = up ÷ right</b>.<br>Now slide <b>B toward A</b> (shrink the gap): the steepness <b>settles</b> — that settled number is the curve’s slope at A (exactly 2× A’s position).'},
+  p3_la:{zh:'点 A 位置',en:'point A'},p3_lg:{zh:'A、B 间距',en:'A–B gap'},
   p4_kicker:{zh:'找规律',en:'Spot the pattern'},
   p4_q:{zh:'换几个函数，<em>同样量斜率</em>',en:'Other functions — <em>measure the slope the same way</em>'},
   p4_sub:{zh:'和上一屏<b>一模一样</b>的图，只是把函数从 x² 换成 x³、√x（点上面按钮切换）。<br>同样：读出坐标 (x, y)，用三角形量斜率。把每个的斜率记下来 —— 下面那张表就露出<b>规律</b>。',en:'The <b>same</b> figure as before, just switching the function from x² to x³ or √x (tap the buttons).<br>Same steps: read the point (x, y), measure the slope with the triangle. Note each one — the table below reveals the <b>pattern</b>.'},
@@ -360,7 +385,7 @@ function initAll(){
   hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
   hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
   let r1=null;const zRedraw=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawZoom();});};
-  document.getElementById('zA').addEventListener('input',zRedraw);
+  document.getElementById('zA').addEventListener('input',zRedraw);document.getElementById('zGap').addEventListener('input',zRedraw);
   let r2=null;document.getElementById('pA').addEventListener('input',()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawPat();});});
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
