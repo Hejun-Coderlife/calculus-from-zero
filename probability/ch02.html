@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>样本空间与事件 — 从 0 开始的概率</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%235e5ce6' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#6e6e73; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --indigo:#5e5ce6; --pink:#ff2d55; --green:#28a745; --gold:#e8a92b;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--indigo)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05;color:var(--ink)}
+  .q em{font-style:normal;color:var(--indigo)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:34em;line-height:1.5}
+  .fig{width:min(720px,92vw);margin-top:6px}
+  canvas{display:block;width:100%}
+  .ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:min(280px,64vw);height:4px;border-radius:99px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+     border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 3px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.06);cursor:pointer}
+  .readout{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--soft);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .readout b{color:var(--ink);font-weight:600}.readout .id{color:var(--indigo);font-weight:600}.readout .pk{color:var(--pink);font-weight:600}
+  .seg{display:inline-flex;background:var(--line);border-radius:999px;padding:3px;flex-wrap:wrap;justify-content:center}
+  .segb{border:none;background:transparent;color:var(--soft);font-size:14px;font-weight:600;padding:7px 15px;border-radius:999px;cursor:pointer;font-family:inherit;transition:color .15s,background .15s}
+  .segb.on{background:#fff;color:var(--indigo);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .card{max-width:32em;margin:6px auto 0;padding:14px 18px;background:#eef0fb;border:1px solid #d7daf4;border-radius:14px;font-size:clamp(15px,1.9vw,19px);color:var(--ink);line-height:1.55}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .homelink,.langbtn,.prevbtn{position:fixed;top:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
+  .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--indigo);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#4b48d6}.nextbtn:active{transform:scale(.97)}
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
+     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
+  .hint svg{width:20px;height:20px}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style></head>
+<body>
+<a href="../index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<a href="ch01.html" class="prevbtn" data-i18n="nav_prev">← 上一章</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的概率 · 第二章</div>
+  <div class="q reveal" data-i18n="p1_q">掷两颗骰子，和为 <em>7</em> 的概率？</div>
+  <div class="sub reveal" data-i18n="p1_sub">别急着套公式。先把<b>所有可能的结果</b>一个不漏地摆出来 —— 两颗骰子，一颗 6 面、另一颗 6 面，一共 <b>6 × 6 = 36</b> 种。<br>拖下面的滑块选一个「和」，看看有几格满足、占 36 格的几分之几。</div>
+  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cDice" height="360"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p1_ls">要求的「和」</label>
+    <input id="sumT" type="range" min="2" max="12" value="7" step="1"></div>
+  <div class="readout reveal" id="diceOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p2_kicker">样本空间 Ω</div>
+  <div class="q reveal" data-i18n="p2_q">「所有可能」<em>摆成一张图</em></div>
+  <div class="sub reveal" data-i18n="p2_sub">上面那 <b>36 个格子</b>，就是这次掷骰子的<b>样本空间</b>，记作 <b>Ω</b> —— 它装着<b>每一个可能发生的结果</b>，一个不多、一个不少。<br>每个格子是一个<b>结果</b>：比如「A=2, B=5」。所有结果<b>等可能</b>（骰子是公平的），各占 <b>1/36</b>。</div>
+  <div class="card reveal" data-i18n="p2_card">🔑 数概率的第一步，永远是：<b>把 Ω 写清楚 —— 到底有哪些结果、共几个</b>。Ω 定错了，后面全错。</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p3_kicker">事件</div>
+  <div class="q reveal" data-i18n="p3_q">事件 = <em>圈出来的一堆格子</em></div>
+  <div class="sub reveal" data-i18n="p3_sub">一个<b>事件</b>，就是从 Ω 里<b>挑出的一部分结果</b>（一个子集）。「和为 7」是事件、「点数相同」也是事件。<br>结果等可能时：<b>P(事件) = 圈中的格子数 ÷ 36</b>。换个事件看看圈出哪些格。</div>
+  <div class="ctrl reveal"><span class="seg" id="evSeg">
+    <button class="segb on" data-ev="sum7" data-i18n="ev_sum7">和为 7</button>
+    <button class="segb" data-ev="same" data-i18n="ev_same">点数相同</button>
+    <button class="segb" data-ev="one6" data-i18n="ev_one6">至少一个 6</button>
+    <button class="segb" data-ev="ge10" data-i18n="ev_ge10">和 ≥ 10</button>
+  </span></div>
+  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cEvt" height="360"></canvas></div>
+  <div class="readout reveal" id="evtOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p4_kicker">且 · 或 · 非</div>
+  <div class="q reveal" data-i18n="p4_q">两个事件，<em>还能拼起来</em></div>
+  <div class="sub reveal" data-i18n="p4_sub">设 <b style="color:var(--indigo)">A = 和为 7</b>、<b style="color:var(--green)">B = 至少一个 6</b>。它们能组合出新事件：<br><b>A 或 B（并 ∪）</b>=落进任意一个；<b>A 且 B（交 ∩）</b>=两个都落进；<b>非 A（补 Aᶜ）</b>=A 之外的全部。<br>点一下，看它在图上圈的是哪些格。</div>
+  <div class="ctrl reveal"><span class="seg" id="opSeg">
+    <button class="segb on" data-op="union" data-i18n="op_union">A 或 B（∪）</button>
+    <button class="segb" data-op="inter" data-i18n="op_inter">A 且 B（∩）</button>
+    <button class="segb" data-op="compA" data-i18n="op_compA">非 A（Aᶜ）</button>
+  </span></div>
+  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cSet" height="360"></canvas></div>
+  <div class="readout reveal" id="setOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p5_kicker">回到开头那道题</div>
+  <div class="q reveal" data-i18n="p5_q">和为 7 → <em>6 格 ÷ 36 = 1/6</em></div>
+  <div class="sub reveal" data-i18n="p5_sub">「和为 7」的格子是那条对角线：(1,6)(2,5)(3,4)(4,3)(5,2)(6,1)，正好 <b>6 格</b>。<br>所以 <b>P(和=7) = 6 / 36 = 1/6 ≈ 0.167</b>。<br>—— 顺带看出：和为 7 是最容易出现的，因为它的对角线最长（比和为 2 只有 1 格多得多）。</div>
+  <div class="card reveal" data-i18n="p5_card">🧰 这一章的招式：<b>把样本空间 Ω 全摆出来 → 圈出事件那几格 → 数一数、除以总数</b>。下一章，格子多到画不下时（比如抽扑克、排队），我们用<b>排列组合</b>来数。</div>
+  <a href="ch03.html" class="nextbtn reveal" data-i18n="p5_next">第三章：古典概型与计数 →</a>
+</section>
+
+<div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<script>
+const TAU=Math.PI*2;
+const INK='#1d1d1f',IND='#5e5ce6',GREEN='#28a745',SOFT='#86868b',LINE='#e4e4e9',FAINT='#c7c9d3';
+let LANG='zh';
+function TT(zh,en){return LANG==='en'?en:zh;}
+function dpr(){return Math.min(window.devicePixelRatio||1,2);}
+function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  const ctx=cv.getContext('2d');ctx.setTransform(r,0,0,r,0,0);return{ctx,w:cssW,h:cssH};}
+function ffont(){return getComputedStyle(document.body).fontFamily;}
+
+// 通用 6×6 骰子网格；color(a,b) 返回 null(不选) 或 {bg,br,tx}
+function grid(cv,cssH,color){
+  const {ctx,w,h}=setup(cv,cssH);ctx.clearRect(0,0,w,h);
+  const ff=ffont(),top=30,size=Math.min((w-38)/6,(h-top-8)/6,52);
+  const gw=size*6,ox=(w-gw)/2+8,oy=top;
+  ctx.font='600 12px '+ff;ctx.fillStyle=SOFT;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(TT('骰子 B（横）→','die B (across) →'),ox+gw/2,12);
+  ctx.save();ctx.translate(ox-20,oy+gw/2);ctx.rotate(-Math.PI/2);ctx.fillText(TT('骰子 A（竖）→','die A (down) →'),0,0);ctx.restore();
+  let cnt=0;
+  for(let a=1;a<=6;a++)for(let b=1;b<=6;b++){
+    const x=ox+(b-1)*size,y=oy+(a-1)*size,col=color(a,b);
+    if(col&&col.br===IND)cnt++;
+    ctx.fillStyle=col?col.bg:'#f4f5fa';ctx.strokeStyle=col?col.br:LINE;ctx.lineWidth=col?1.6:1;
+    ctx.beginPath();ctx.roundRect(x+2,y+2,size-4,size-4,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle=col?col.tx:FAINT;ctx.font=((col&&col.br===IND)?'700 ':'500 ')+Math.round(size*0.34)+'px '+ff;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a+b,x+size/2,y+size/2);
+  }
+  ctx.fillStyle=FAINT;ctx.font='600 11px '+ff;
+  for(let i=1;i<=6;i++){ctx.fillText(i,ox+(i-1)*size+size/2,oy-4);ctx.fillText(i,ox-11,oy+(i-1)*size+size/2);}
+  return cnt;
+}
+const HL={bg:'#e7e6fb',br:IND,tx:IND};
+const EV={ sum7:(a,b)=>a+b===7, same:(a,b)=>a===b, one6:(a,b)=>a===6||b===6, ge10:(a,b)=>a+b>=10 };
+const EVNAME={sum7:{zh:'和为 7',en:'sum = 7'},same:{zh:'点数相同',en:'same number'},one6:{zh:'至少一个 6',en:'at least one 6'},ge10:{zh:'和 ≥ 10',en:'sum ≥ 10'}};
+let curEv='sum7', curOp='union';
+
+function drawDice(){
+  const T=+document.getElementById('sumT').value;
+  const cnt=grid(document.getElementById('cDice'),360,(a,b)=>a+b===T?HL:null);
+  const out=document.getElementById('diceOut');
+  if(out)out.innerHTML=TT('和 = <b>'+T+'</b>：圈中 <b class="id">'+cnt+'</b> 格 → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>',
+                          'sum = <b>'+T+'</b>: <b class="id">'+cnt+'</b> cells → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>');
+}
+function drawEvt(){
+  const f=EV[curEv];const cnt=grid(document.getElementById('cEvt'),360,(a,b)=>f(a,b)?HL:null);
+  const out=document.getElementById('evtOut');
+  if(out)out.innerHTML=TT('事件「<b>'+EVNAME[curEv].zh+'</b>」= <b class="id">'+cnt+'</b> 格 → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>',
+                          'Event “<b>'+EVNAME[curEv].en+'</b>” = <b class="id">'+cnt+'</b> cells → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>');
+}
+function drawSet(){
+  const A=EV.sum7,B=EV.one6;
+  let f,name;
+  if(curOp==='union'){f=(a,b)=>A(a,b)||B(a,b);name=TT('A 或 B（并 ∪）','A or B (∪)');}
+  else if(curOp==='inter'){f=(a,b)=>A(a,b)&&B(a,b);name=TT('A 且 B（交 ∩）','A and B (∩)');}
+  else {f=(a,b)=>!A(a,b);name=TT('非 A（补 Aᶜ）','not A (Aᶜ)');}
+  const cnt=grid(document.getElementById('cSet'),360,(a,b)=>{
+    if(f(a,b))return HL;
+    if(curOp!=='compA'){ if(A(a,b))return {bg:'#f0effc',br:'#d9d7f6',tx:'#9a97e0'}; if(B(a,b))return {bg:'#eef7f1',br:'#d5ebdc',tx:'#7bb894'};}
+    return null;
+  });
+  const out=document.getElementById('setOut');
+  if(out)out.innerHTML=TT('<b>'+name+'</b> = <b class="id">'+cnt+'</b> 格 → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>　<span style="color:var(--faint)">（浅靛=A，浅绿=B）</span>',
+                          '<b>'+name+'</b> = <b class="id">'+cnt+'</b> cells → P = '+cnt+'/36 = <b class="id">'+(cnt/36).toFixed(3)+'</b>　<span style="color:var(--faint)">(pale indigo=A, pale green=B)</span>');
+}
+
+const I18N={
+  nav_home:{zh:'← 目录',en:'← Contents'}, nav_prev:{zh:'← 上一章',en:'← Previous'}, hint:{zh:'向下滚动',en:'Scroll down'},
+  p1_kicker:{zh:'从 0 开始的概率 · 第二章',en:'Probability from Zero · Chapter 2'},
+  p1_q:{zh:'掷两颗骰子，和为 <em>7</em> 的概率？',en:'Roll two dice — P(sum = <em>7</em>)?'},
+  p1_sub:{zh:'别急着套公式。先把<b>所有可能的结果</b>一个不漏地摆出来 —— 两颗骰子，一颗 6 面、另一颗 6 面，一共 <b>6 × 6 = 36</b> 种。<br>拖下面的滑块选一个「和」，看看有几格满足、占 36 格的几分之几。',en:'No formulas yet. First lay out <b>every possible outcome</b> — two dice, 6 faces each, <b>6 × 6 = 36</b> in all.<br>Drag the slider to pick a “sum”, and see how many cells qualify, out of 36.'},
+  p1_ls:{zh:'要求的「和」',en:'target sum'},
+  p2_kicker:{zh:'样本空间 Ω',en:'Sample space Ω'},
+  p2_q:{zh:'「所有可能」<em>摆成一张图</em>',en:'“Everything possible” <em>as one picture</em>'},
+  p2_sub:{zh:'上面那 <b>36 个格子</b>，就是这次掷骰子的<b>样本空间</b>，记作 <b>Ω</b> —— 它装着<b>每一个可能发生的结果</b>，一个不多、一个不少。<br>每个格子是一个<b>结果</b>：比如「A=2, B=5」。所有结果<b>等可能</b>（骰子是公平的），各占 <b>1/36</b>。',en:'Those <b>36 cells</b> are the <b>sample space</b> of this roll, written <b>Ω</b> — it holds <b>every possible outcome</b>, no more, no less.<br>Each cell is one <b>outcome</b>, e.g. “A=2, B=5”. All outcomes are <b>equally likely</b> (fair dice), each <b>1/36</b>.'},
+  p2_card:{zh:'🔑 数概率的第一步，永远是：<b>把 Ω 写清楚 —— 到底有哪些结果、共几个</b>。Ω 定错了，后面全错。',en:'🔑 Step one of any probability is always: <b>pin down Ω — which outcomes exist, how many</b>. Get Ω wrong and everything after is wrong.'},
+  p3_kicker:{zh:'事件',en:'Events'},
+  p3_q:{zh:'事件 = <em>圈出来的一堆格子</em>',en:'An event = <em>a circled set of cells</em>'},
+  p3_sub:{zh:'一个<b>事件</b>，就是从 Ω 里<b>挑出的一部分结果</b>（一个子集）。「和为 7」是事件、「点数相同」也是事件。<br>结果等可能时：<b>P(事件) = 圈中的格子数 ÷ 36</b>。换个事件看看圈出哪些格。',en:'An <b>event</b> is a <b>chosen part of Ω</b> (a subset). “Sum = 7” is an event; so is “same number”.<br>With equally likely outcomes: <b>P(event) = circled cells ÷ 36</b>. Switch events and watch the cells change.'},
+  ev_sum7:{zh:'和为 7',en:'sum = 7'}, ev_same:{zh:'点数相同',en:'same number'}, ev_one6:{zh:'至少一个 6',en:'at least one 6'}, ev_ge10:{zh:'和 ≥ 10',en:'sum ≥ 10'},
+  p4_kicker:{zh:'且 · 或 · 非',en:'And · Or · Not'},
+  p4_q:{zh:'两个事件，<em>还能拼起来</em>',en:'Two events, <em>combined</em>'},
+  p4_sub:{zh:'设 <b style="color:var(--indigo)">A = 和为 7</b>、<b style="color:var(--green)">B = 至少一个 6</b>。它们能组合出新事件：<br><b>A 或 B（并 ∪）</b>=落进任意一个；<b>A 且 B（交 ∩）</b>=两个都落进；<b>非 A（补 Aᶜ）</b>=A 之外的全部。<br>点一下，看它在图上圈的是哪些格。',en:'Let <b style="color:var(--indigo)">A = sum is 7</b>, <b style="color:var(--green)">B = at least one 6</b>. They combine into new events:<br><b>A or B (∪)</b> = in either; <b>A and B (∩)</b> = in both; <b>not A (Aᶜ)</b> = everything outside A.<br>Tap one and see which cells it circles.'},
+  op_union:{zh:'A 或 B（∪）',en:'A or B (∪)'}, op_inter:{zh:'A 且 B（∩）',en:'A and B (∩)'}, op_compA:{zh:'非 A（Aᶜ）',en:'not A (Aᶜ)'},
+  p5_kicker:{zh:'回到开头那道题',en:'Back to the opening'},
+  p5_q:{zh:'和为 7 → <em>6 格 ÷ 36 = 1/6</em>',en:'sum 7 → <em>6 ÷ 36 = 1/6</em>'},
+  p5_sub:{zh:'「和为 7」的格子是那条对角线：(1,6)(2,5)(3,4)(4,3)(5,2)(6,1)，正好 <b>6 格</b>。<br>所以 <b>P(和=7) = 6 / 36 = 1/6 ≈ 0.167</b>。<br>—— 顺带看出：和为 7 是最容易出现的，因为它的对角线最长（比和为 2 只有 1 格多得多）。',en:'The “sum = 7” cells form that diagonal: (1,6)(2,5)(3,4)(4,3)(5,2)(6,1) — exactly <b>6 cells</b>.<br>So <b>P(sum=7) = 6 / 36 = 1/6 ≈ 0.167</b>.<br>— And notice: 7 is the most likely sum, because its diagonal is the longest (far more than sum 2’s single cell).'},
+  p5_card:{zh:'🧰 这一章的招式：<b>把样本空间 Ω 全摆出来 → 圈出事件那几格 → 数一数、除以总数</b>。下一章，格子多到画不下时（比如抽扑克、排队），我们用<b>排列组合</b>来数。',en:'🧰 This chapter’s move: <b>lay out all of Ω → circle the event’s cells → count, divide by the total</b>. Next chapter, when there are too many cells to draw (cards, queues), we count with <b>permutations & combinations</b>.'},
+  p5_next:{zh:'第三章：古典概型与计数 →',en:'Chapter 3: Classical Probability & Counting →'},
+};
+function applyLang(){
+  document.documentElement.lang=LANG;document.title=(LANG==='en'?'Sample Space & Events — Probability from Zero':'样本空间与事件 — 从 0 开始的概率');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  drawDice();drawEvt();drawSet();
+}
+function initAll(){
+  applyLang();
+  document.getElementById('sumT').addEventListener('input',drawDice);
+  document.querySelectorAll('#evSeg .segb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#evSeg .segb').forEach(x=>x.classList.remove('on'));b.classList.add('on');curEv=b.dataset.ev;drawEvt();}));
+  document.querySelectorAll('#opSeg .segb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#opSeg .segb').forEach(x=>x.classList.remove('on'));b.classList.add('on');curOp=b.dataset.op;drawSet();}));
+  document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  addEventListener('resize',()=>{drawDice();drawEvt();drawSet();});
+}
+initAll();
+</script>
+<script src="feedback.js"></script>
+</body></html>

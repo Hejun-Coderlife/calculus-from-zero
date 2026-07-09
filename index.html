@@ -1,97 +1,135 @@
 <!doctype html>
 <html lang="zh"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>从 0 开始的微积分</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23070713'/><circle cx='50' cy='50' r='30' fill='none' stroke='%237aa2ff' stroke-width='6'/></svg>">
+<title>从 0 开始的数学</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23070713'/><circle cx='50' cy='50' r='30' fill='none' stroke='%239f8fff' stroke-width='6'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{--sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif}
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%}
+  html,body{min-height:100%}
   body{background:#05050d;color:#eef1ff;font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;
-    /* WebGL 失败时的兜底星云 */
     background-image:radial-gradient(1200px 700px at 22% 18%,rgba(90,50,180,.35),transparent 60%),
       radial-gradient(1000px 700px at 82% 78%,rgba(30,90,190,.32),transparent 60%),
       radial-gradient(900px 600px at 60% 40%,rgba(150,40,120,.18),transparent 60%),
       radial-gradient(circle at 50% 50%,#0a0a1c,#05050d 70%);}
   #sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
-  .wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:88px 22px 72px;text-align:center;gap:14px}
+  .wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:96px 22px 80px;text-align:center;gap:12px}
   .eyebrow{font-size:13px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:#9fb0ff;opacity:.9}
   h1{font-size:clamp(40px,8vw,92px);font-weight:800;letter-spacing:-.03em;line-height:1.02;
     background:linear-gradient(180deg,#ffffff,#b9c6ff 70%,#8ea0ff);-webkit-background-clip:text;background-clip:text;color:transparent;
     text-shadow:0 0 42px rgba(120,150,255,.35)}
-  .lede{font-size:clamp(16px,2.2vw,21px);font-weight:400;color:#aab3d8;max-width:24em;line-height:1.5;margin-bottom:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;width:min(940px,94vw);margin-top:6px}
+  .lede{font-size:clamp(16px,2.2vw,21px);font-weight:400;color:#aab3d8;max-width:26em;line-height:1.5;margin-bottom:8px}
+  .course{width:min(940px,94vw);margin:34px auto 4px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;justify-content:flex-start;text-align:left}
+  .course h2{font-size:clamp(22px,3.2vw,32px);font-weight:800;color:#fff;letter-spacing:-.02em}
+  .course .tag{font-size:13px;font-weight:600;color:#cdd6ff;background:rgba(140,160,255,.16);border:1px solid rgba(140,160,255,.3);border-radius:99px;padding:3px 11px}
+  .course .desc{font-size:14px;color:#98a2cc;width:100%;margin-top:-2px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;width:min(940px,94vw);margin-top:6px}
   .card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
-    padding:22px 22px 24px;border-radius:20px;text-decoration:none;color:inherit;overflow:hidden;
+    padding:20px 20px 22px;border-radius:20px;text-decoration:none;color:inherit;overflow:hidden;
     background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
     border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     box-shadow:0 10px 40px rgba(0,0,0,.35);transition:transform .3s cubic-bezier(.22,.61,.36,1),box-shadow .3s,border-color .3s}
   a.card{cursor:pointer}
   a.card:hover{transform:translateY(-6px);border-color:rgba(150,175,255,.55);box-shadow:0 18px 60px rgba(70,90,220,.4),0 0 0 1px rgba(150,175,255,.25) inset}
-  .card .cn{font-size:13px;font-weight:700;letter-spacing:.14em;color:#8ea0ff}
-  .card .ct{font-size:23px;font-weight:700;letter-spacing:-.02em;color:#fff}
-  .card .cd{font-size:14px;font-weight:400;color:#a6b0d8;line-height:1.4}
-  .card .arrow{position:absolute;right:20px;bottom:20px;font-size:18px;color:#8ea0ff;opacity:0;transform:translateX(-4px);transition:.3s}
+  .card .cn{font-size:12px;font-weight:700;letter-spacing:.14em;color:#8ea0ff}
+  .card .ct{font-size:21px;font-weight:700;letter-spacing:-.02em;color:#fff}
+  .card .cd{font-size:13.5px;font-weight:400;color:#a6b0d8;line-height:1.4}
+  .card .arrow{position:absolute;right:18px;bottom:18px;font-size:18px;color:#8ea0ff;opacity:0;transform:translateX(-4px);transition:.3s}
   a.card:hover .arrow{opacity:1;transform:none}
-  .card.wip{opacity:.62}
-  .card .badge{position:absolute;top:16px;right:16px;font-size:11px;font-weight:600;letter-spacing:.04em;color:#cdd6ff;
-    background:rgba(140,160,255,.16);border:1px solid rgba(140,160,255,.3);border-radius:99px;padding:3px 10px}
+  .card.wip{opacity:.6}
+  .card .badge{position:absolute;top:14px;right:14px;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:#cdd6ff;
+    background:rgba(140,160,255,.16);border:1px solid rgba(140,160,255,.3);border-radius:99px;padding:3px 9px}
   .langbtn{position:fixed;top:16px;right:16px;z-index:3;font-size:13px;font-weight:600;color:#cdd6ff;
     background:rgba(255,255,255,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     border:1px solid rgba(255,255,255,.2);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s,background .2s}
   .langbtn:hover{color:#fff;background:rgba(255,255,255,.16)}
-  .foot{margin-top:30px;font-size:12px;color:#6f7aa8;letter-spacing:.02em}
+  .foot{margin-top:40px;font-size:12px;color:#6f7aa8;letter-spacing:.02em}
 </style></head>
 <body>
 <canvas id="sky"></canvas>
 <button id="langBtn" class="langbtn">EN</button>
 <div class="wrap">
   <div class="eyebrow" id="eyebrow">FROM ZERO</div>
-  <h1 id="title">从 0 开始的微积分</h1>
-  <div class="lede" id="lede">不背公式。从图形出发，一步步把它长出来。</div>
-  <div class="grid" id="grid"></div>
-  <div class="foot" id="foot">拖动、滑动、亲手数一数 —— 每一章都能玩。</div>
+  <h1 id="title">从 0 开始的数学</h1>
+  <div class="lede" id="lede">两门课，一套玩法：不背公式，从图形和实验里，一步步把数学长出来。</div>
+
+  <div class="course" id="hCalc">
+    <h2 id="tCalc">微积分</h2><span class="tag" id="gCalc">8 章</span>
+    <div class="desc" id="dCalc">从数格子求圆面积，到导数、积分、e、链式法则。</div>
+  </div>
+  <div class="grid" id="gridCalc"></div>
+
+  <div class="course" id="hProb">
+    <h2 id="tProb">概率</h2><span class="tag" id="gProb">12 章</span>
+    <div class="desc" id="dProb">从抛硬币看频率稳到概率，到贝叶斯、正态、大数定律与中心极限定理。</div>
+  </div>
+  <div class="grid" id="gridProb"></div>
+
+  <div class="foot" id="foot">抛一抛、拖一拖、亲手数一数 —— 每一章都能玩。</div>
 </div>
 <script>
 let LANG='zh';
 function TT(zh,en){return LANG==='en'?en:zh;}
-const CH=[
-  {n:'01',file:'ch01.html',done:true, concept:{zh:'积分',en:'Integral'},        zh:['圆的面积','数格子，逼近 π'],            en:['Area of a Circle','count squares → π']},
-  {n:'02',file:'ch02.html',done:true, concept:{zh:'导数',en:'Derivative'},      zh:['瞬时速度','割线逼近，斜率 = 速度'],          en:['Instant Speed','secant → slope = speed']},
-  {n:'03',file:'ch03.html',done:true, concept:{zh:'基本定理',en:'the FTC'},      zh:['面积就是路程','积分与导数，互为逆运算'],        en:['Area is Distance','integral & derivative: inverses']},
-  {n:'04',file:'ch04.html',done:true, concept:{zh:'优化',en:'Optimization'},    zh:['找最大最小','导数 = 0，锁定山顶谷底'],            en:['Finding the Best','derivative = 0 → peaks & valleys']},
-  {n:'05',file:'ch05.html',done:true, concept:{zh:'幂法则',en:'Power Rule'},     zh:['怎么算导数','放大成直线，发现幂法则'],            en:['Computing Derivatives','zoom → line → the power rule']},
-  {n:'06',file:'ch06.html',done:true, concept:{zh:'原函数',en:'Antiderivative'},zh:['怎么算积分','反过来求导，找原函数'],              en:['Computing Integrals','undo the derivative']},
-  {n:'07',file:'ch07.html',done:true, concept:{zh:'自然常数 e',en:'the number e'},zh:['神奇的 e','导数 = 自己的那个数'],                en:['The Magic e','the number that is its own derivative']},
-  {n:'08',file:'ch08.html',done:true, concept:{zh:'链式法则',en:'Chain Rule'},   zh:['套娃变化','链式法则：变化率相乘'],                en:['The Chain Rule','nested rates multiply']},
+const CALC=[
+  {n:'01',file:'ch01.html',done:true, cc:{zh:'积分',en:'Integral'},       zh:['圆的面积','数格子，逼近 π'],           en:['Area of a Circle','count squares → π']},
+  {n:'02',file:'ch02.html',done:true, cc:{zh:'导数',en:'Derivative'},     zh:['瞬时速度','割线逼近，斜率 = 速度'],         en:['Instant Speed','secant → slope = speed']},
+  {n:'03',file:'ch03.html',done:true, cc:{zh:'基本定理',en:'the FTC'},     zh:['面积就是路程','积分与导数，互为逆运算'],       en:['Area is Distance','integral & derivative: inverses']},
+  {n:'04',file:'ch04.html',done:true, cc:{zh:'优化',en:'Optimization'},   zh:['找最大最小','导数 = 0，锁定山顶谷底'],           en:['Finding the Best','derivative = 0 → peaks & valleys']},
+  {n:'05',file:'ch05.html',done:true, cc:{zh:'幂法则',en:'Power Rule'},    zh:['怎么算导数','放大成直线，发现幂法则'],           en:['Computing Derivatives','zoom → line → the power rule']},
+  {n:'06',file:'ch06.html',done:true, cc:{zh:'原函数',en:'Antiderivative'},zh:['怎么算积分','反过来求导，找原函数'],             en:['Computing Integrals','undo the derivative']},
+  {n:'07',file:'ch07.html',done:true, cc:{zh:'自然常数 e',en:'the number e'},zh:['神奇的 e','导数 = 自己的那个数'],               en:['The Magic e','the number that is its own derivative']},
+  {n:'08',file:'ch08.html',done:true, cc:{zh:'链式法则',en:'Chain Rule'},  zh:['套娃变化','链式法则：变化率相乘'],               en:['The Chain Rule','nested rates multiply']},
+];
+const PROB=[
+  {n:'01',file:'ch01.html',done:true, cc:{zh:'随机与概率',en:'Randomness'},      zh:['随机与概率','抛硬币，看频率稳到概率'],       en:['Random & Probability','flip coins → frequency settles']},
+  {n:'02',file:'ch02.html',done:false,cc:{zh:'样本空间',en:'Sample Space'},      zh:['样本空间与事件','把「所有可能」画成一张图'],   en:['Sample Space & Events','draw everything that could happen']},
+  {n:'03',file:'ch03.html',done:false,cc:{zh:'古典概型',en:'Classical'},        zh:['古典概型与计数','等可能 → 数一数，排列组合'], en:['Classical & Counting','equal odds → permutations & combos']},
+  {n:'04',file:'ch04.html',done:false,cc:{zh:'几何概型',en:'Geometric'},        zh:['几何概型','数不过来了 → 量面积之比'],       en:['Geometric Probability','too many → measure area ratios']},
+  {n:'05',file:'ch05.html',done:false,cc:{zh:'条件概率',en:'Conditional'},      zh:['条件概率与独立','多一条信息，概率就变'],     en:['Conditional & Independence','new info shifts the odds']},
+  {n:'06',file:'ch06.html',done:false,cc:{zh:'贝叶斯',en:'Bayes'},              zh:['全概率与贝叶斯','反推原因，假阳性悖论'],     en:['Total Prob. & Bayes','reason backward; false positives']},
+  {n:'07',file:'ch07.html',done:false,cc:{zh:'随机变量',en:'Random Variable'},  zh:['随机变量','把结果翻译成一个数'],             en:['Random Variables','turn outcomes into numbers']},
+  {n:'08',file:'ch08.html',done:false,cc:{zh:'离散分布',en:'Discrete'},         zh:['常见离散分布','二项、泊松、几何'],           en:['Discrete Distributions','binomial, Poisson, geometric']},
+  {n:'09',file:'ch09.html',done:false,cc:{zh:'密度函数',en:'Density'},          zh:['连续随机变量与密度','面积 = 概率（接积分）'], en:['Continuous & Density','area = probability']},
+  {n:'10',file:'ch10.html',done:false,cc:{zh:'正态分布',en:'Normal'},           zh:['正态分布','到处都是的钟形曲线'],             en:['Normal Distribution','the bell curve everywhere']},
+  {n:'11',file:'ch11.html',done:false,cc:{zh:'期望·方差',en:'Expectation'},     zh:['期望与方差','长期平均 & 波动大小'],         en:['Expectation & Variance','long-run average & spread']},
+  {n:'12',file:'ch12.html',done:false,cc:{zh:'大数·中心极限',en:'LLN·CLT'},     zh:['大数定律与中心极限定理','全书大高潮'],       en:['LLN & CLT','the grand finale']},
 ];
 const T={
   eyebrow:{zh:'FROM ZERO',en:'FROM ZERO'},
-  title:{zh:'从 0 开始的微积分',en:'Calculus from Zero'},
-  lede:{zh:'不背公式。从图形出发，一步步把它长出来。',en:'No memorizing. Start from shapes and grow every formula, step by step.'},
-  foot:{zh:'拖动、滑动、亲手数一数 —— 每一章都能玩。',en:'Drag, slide, count it yourself — every chapter is interactive.'},
+  title:{zh:'从 0 开始的数学',en:'Mathematics from Zero'},
+  lede:{zh:'两门课，一套玩法：不背公式，从图形和实验里，一步步把数学长出来。',en:'Two courses, one method: no memorizing — grow the math from pictures and experiments, step by step.'},
+  tCalc:{zh:'微积分',en:'Calculus'}, dCalc:{zh:'从数格子求圆面积，到导数、积分、e、链式法则。',en:'From counting squares for a circle’s area to derivatives, integrals, e, and the chain rule.'},
+  tProb:{zh:'概率',en:'Probability'}, dProb:{zh:'从抛硬币看频率稳到概率，到贝叶斯、正态、大数定律与中心极限定理。',en:'From coin flips settling to a probability, to Bayes, the normal, the LLN and the CLT.'},
+  foot:{zh:'抛一抛、拖一拖、亲手数一数 —— 每一章都能玩。',en:'Flip, drag, count it yourself — every chapter is interactive.'},
 };
-function render(){
-  document.documentElement.lang=LANG;
-  document.getElementById('eyebrow').textContent=T.eyebrow[LANG];
-  document.getElementById('title').textContent=T.title[LANG];
-  document.getElementById('lede').textContent=T.lede[LANG];
-  document.getElementById('foot').textContent=T.foot[LANG];
-  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  const g=document.getElementById('grid');g.innerHTML='';
-  CH.forEach(c=>{
+function chapters(cn){return cn}
+function grid(id,arr,base){
+  const g=document.getElementById(id);g.innerHTML='';
+  arr.forEach(c=>{
     const t=c[LANG][0],d=c[LANG][1];
-    const el=document.createElement(c.file?'a':'div');
-    if(c.file)el.href=c.file;
+    const el=document.createElement('a');el.href=base+c.file;
     el.className='card'+(c.done?'':' wip');
-    const tag=c.done?(c.concept?c.concept[LANG]:''):TT('建设中','WIP');
+    const tag=c.done?(c.cc?c.cc[LANG]:''):TT('建设中','WIP');
     el.innerHTML='<span class="cn">'+c.n+'</span><span class="ct">'+t+'</span><span class="cd">'+d+'</span>'
       +'<span class="arrow">→</span>'+(tag?'<span class="badge">'+tag+'</span>':'');
     g.appendChild(el);
   });
+}
+function render(){
+  document.documentElement.lang=LANG;
+  ['eyebrow','title','lede','foot'].forEach(k=>document.getElementById(k).textContent=T[k][LANG]);
+  document.getElementById('tCalc').textContent=T.tCalc[LANG];
+  document.getElementById('dCalc').textContent=T.dCalc[LANG];
+  document.getElementById('tProb').textContent=T.tProb[LANG];
+  document.getElementById('dProb').textContent=T.dProb[LANG];
+  document.getElementById('gCalc').textContent=TT(CALC.length+' 章',CALC.length+' chapters');
+  document.getElementById('gProb').textContent=TT(PROB.length+' 章',PROB.length+' chapters');
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  grid('gridCalc',CALC,'calculus/');
+  grid('gridProb',PROB,'probability/');
 }
 document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');render();});
 render();
@@ -100,7 +138,7 @@ render();
 (function(){
   const cv=document.getElementById('sky');
   const gl=cv.getContext('webgl')||cv.getContext('experimental-webgl');
-  if(!gl){return;}  // 保留 CSS 兜底星云
+  if(!gl){return;}
   const vs='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
   const fs=[
   'precision highp float;',
@@ -114,19 +152,19 @@ render();
   ' vec2 p=(gl_FragCoord.xy-.5*u_res)/u_res.y;',
   ' float t=u_time*0.015;',
   ' vec2 q=p*1.4+vec2(t*0.4,t*0.15);',
-  ' float w=fbm(q+0.6*fbm(q*0.6-t));',            // 星云（域扭曲）
+  ' float w=fbm(q+0.6*fbm(q*0.6-t));',
   ' vec3 col=vec3(0.015,0.016,0.045);',
   ' vec3 neb=mix(vec3(0.16,0.06,0.34),vec3(0.62,0.16,0.5),w);',
   ' neb=mix(neb,vec3(0.10,0.28,0.66),fbm(q*1.25-t*0.4));',
   ' col+=neb*pow(w,2.2)*1.05;',
-  ' for(float l=0.;l<3.;l++){',                    // 三层星星（视差 + 闪烁）
+  ' for(float l=0.;l<3.;l++){',
   '   float sc=mix(150.,430.,l/2.);',
   '   vec2 gp=p*sc+vec2(l*23.-t*(8.+l*6.),l*17.);',
   '   vec2 id=floor(gp);float h=hash(id+l*11.3);',
   '   if(h>0.87){float d=length(fract(gp)-.5);',
   '     float tw=0.55+0.45*sin(u_time*(1.2+h*3.)+h*40.);',
   '     col+=vec3(0.85,0.9,1.0)*smoothstep(0.13,0.0,d)*tw*(0.5+0.5*h);}}',
-  ' col*=1.0-0.55*dot(p,p);',                      // 暗角
+  ' col*=1.0-0.55*dot(p,p);',
   ' col=pow(col,vec3(0.85));',
   ' gl_FragColor=vec4(col,1.0);',
   '}'].join('\n');
@@ -141,7 +179,7 @@ render();
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
   const la=gl.getAttribLocation(prog,'a');gl.enableVertexAttribArray(la);gl.vertexAttribPointer(la,2,gl.FLOAT,false,0,0);
   const uRes=gl.getUniformLocation(prog,'u_res'),uTime=gl.getUniformLocation(prog,'u_time');
-  const SCALE=0.7;  // 降分辨率渲染，弱机也流畅
+  const SCALE=0.7;
   function resize(){const w=Math.max(1,Math.floor(innerWidth*SCALE)),h=Math.max(1,Math.floor(innerHeight*SCALE));
     cv.width=w;cv.height=h;gl.viewport(0,0,w,h);}
   resize();addEventListener('resize',resize);
@@ -152,7 +190,7 @@ render();
     gl.drawArrays(gl.TRIANGLES,0,3);
     if(running&&!reduce)requestAnimationFrame(frame);}
   requestAnimationFrame(frame);
-  document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running&&!reduce){start=performance.now()-0;requestAnimationFrame(frame);}});
+  document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running&&!reduce){start=performance.now();requestAnimationFrame(frame);}});
 })();
 </script>
 <script src="feedback.js"></script>

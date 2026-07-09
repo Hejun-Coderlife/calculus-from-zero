@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>常见离散分布 — 从 0 开始的概率</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%235e5ce6' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#6e6e73; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --indigo:#5e5ce6; --pink:#ff2d55; --green:#28a745; --gold:#e8a92b;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--indigo)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05;color:var(--ink)}
+  .q em{font-style:normal;color:var(--indigo)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:34em;line-height:1.5}
+  .fig{width:min(720px,92vw);margin-top:6px}
+  canvas{display:block;width:100%}
+  .ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  .note{font-size:13px;color:var(--faint)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:min(300px,64vw);height:4px;border-radius:99px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+     border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 3px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.06);cursor:pointer}
+  .readout{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--soft);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .readout b{color:var(--ink);font-weight:600}.readout .bl{color:var(--blue);font-weight:600}.readout .pk{color:var(--pink);font-weight:600}.readout .gr{color:var(--green);font-weight:600}.readout .id{color:var(--indigo);font-weight:600}
+  .btn{border:none;font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:var(--indigo);border-radius:980px;padding:10px 20px;cursor:pointer;transition:background .2s,transform .08s}
+  .btn:hover{background:#4b48d6}.btn:active{transform:scale(.96)}
+  .btn.ghost{background:#ececf5;color:var(--indigo)}.btn.ghost:hover{background:#e3e3f0}
+  .card{max-width:32em;margin:6px auto 0;padding:14px 18px;background:#eef0fb;border:1px solid #d7daf4;border-radius:14px;font-size:clamp(15px,1.9vw,19px);color:var(--ink);line-height:1.55}
+  .deriv{max-width:40em;margin:12px auto 0;text-align:left;background:#f5f7fa;border:1px solid var(--line);border-radius:14px;padding:0 18px}
+  .deriv summary{cursor:pointer;padding:13px 0;font-size:clamp(15px,1.9vw,18px);font-weight:600;color:var(--ink);list-style:none}
+  .deriv summary::-webkit-details-marker{display:none}
+  .deriv summary::before{content:"▸ ";color:var(--indigo)}.deriv[open] summary::before{content:"▾ "}
+  .deriv .db{padding:2px 0 16px;font-size:clamp(16px,2vw,20px);line-height:1.8;color:var(--soft);font-variant-numeric:tabular-nums}
+  .deriv .db b{color:var(--ink)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .homelink,.langbtn,.prevbtn{position:fixed;top:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
+  .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--indigo);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#4b48d6}.nextbtn:active{transform:scale(.97)}
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
+     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
+  .hint svg{width:20px;height:20px}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style>
+<style>
+  .wiplist{list-style:none;max-width:30em;margin:4px auto 0;text-align:left;display:flex;flex-direction:column;gap:10px}
+  .wiplist li{position:relative;padding:12px 16px 12px 44px;background:#f5f6fb;border:1px solid var(--line);border-radius:12px;font-size:clamp(15px,1.9vw,18px);color:var(--ink);line-height:1.4}
+  .wiplist li::before{counter-increment:s;content:counter(s);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:var(--indigo);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .wiplist{counter-reset:s}
+  .wipbadge{display:inline-block;font-size:13px;font-weight:600;color:var(--indigo);background:#eef0fb;border:1px solid #d7daf4;border-radius:99px;padding:5px 14px}
+</style></head>
+<body>
+<a href="../index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<a href="ch07.html" class="prevbtn" data-i18n="nav_prev">← 上一章</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的概率 · 第 八 章</div>
+  <div class="q reveal" data-i18n="p1_q">一小时平均来 3 个顾客，这小时<em>正好来 5 个</em>的概率？</div>
+  <div class="sub reveal" data-i18n="p1_sub">几种「长得都一样」的随机现象，被打包成<b>标准分布</b>。认出模型，直接套。</div>
+  <div class="wipbadge reveal" data-i18n="wipbadge" style="margin-top:10px">🚧 本章建设中 —— 先看看要讲什么</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="p2_kicker">本章要讲</div>
+  <div class="q reveal" data-i18n="p2_q">常见离散分布</div>
+  <ol class="wiplist reveal" id="outline"></ol>
+  <a href="ch09.html" class="nextbtn reveal" data-i18n="p_next">第 九 章 →</a>
+</section>
+
+<div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<script>
+let LANG='zh';
+const OUT={zh:["0-1 分布 与 二项分布","泊松分布（稀有事件）","几何分布（第一次成功）","二项 → 泊松 的逼近","怎么选对模型"],en:["Bernoulli & binomial","Poisson (rare events)","Geometric (first success)","Binomial → Poisson approximation","Choosing the right model"]};
+const I18N={
+  nav_home:{zh:'← 目录',en:'← Contents'},
+  nav_prev:{zh:'← 上一章',en:'← Previous'},
+  hint:{zh:'向下滚动',en:'Scroll down'},
+  wipbadge:{zh:'🚧 本章建设中 —— 先看看要讲什么',en:'🚧 Chapter in progress — here’s the plan'},
+  p1_kicker:{zh:'从 0 开始的概率 · 第 八 章',en:'Probability from Zero · Chapter 8'},
+  p1_q:{zh:"一小时平均来 3 个顾客，这小时<em>正好来 5 个</em>的概率？",en:"Avg 3 customers/hour — P(<em>exactly 5</em>) this hour?"},
+  p1_sub:{zh:"几种「长得都一样」的随机现象，被打包成<b>标准分布</b>。认出模型，直接套。",en:"A few recurring patterns get packaged as <b>standard distributions</b>. Recognise the model, plug in."},
+  p2_kicker:{zh:'本章要讲',en:'In this chapter'},
+  p2_q:{zh:"常见离散分布",en:"Common Discrete Distributions"},
+  p_next:{zh:"第 九 章 →",en:"Chapter 9 →"},
+};
+function applyLang(){
+  document.documentElement.lang=LANG;
+  document.title=(LANG==='en'?"Common Discrete Distributions — Probability from Zero":"常见离散分布 — 从 0 开始的概率");
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  const ol=document.getElementById('outline');ol.innerHTML='';OUT[LANG].forEach(t=>{const li=document.createElement('li');li.textContent=t;ol.appendChild(li);});
+}
+applyLang();
+document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+<script src="feedback.js"></script>
+</body></html>
