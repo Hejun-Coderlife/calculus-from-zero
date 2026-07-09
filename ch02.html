@@ -105,15 +105,16 @@
   <div class="q reveal" data-i18n="p5_q">每一刻的速度，<em>连成一条线</em></div>
   <div class="sub reveal" data-i18n="p5_sub">把 t 从头移到尾，每一刻都量一次切线斜率（= 那一刻的速度），画在下面 —— 它们连成一条<b>新曲线</b>。路程曲线有多「陡」，本身就是一条速度曲线。这条新曲线，就是导数。<b>换辆车试试</b>，速度曲线立刻变个形状。</div>
   <div class="ctrl reveal" style="margin-top:2px"><span class="seg">
-    <button class="segb on" data-car="0" data-i18n="car0">匀加速</button>
+    <button class="segb on" data-car="0" data-i18n="car0">越开越快</button>
     <button class="segb" data-car="1" data-i18n="car1">忽快忽慢</button>
     <button class="segb" data-car="2" data-i18n="car2">先加速后刹车</button>
   </span></div>
   <div class="fig reveal"><canvas id="cDeriv" height="470"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p5_lt">移动此刻 t</label>
-    <input id="derT" type="range" min="0" max="50" value="30" step="1"></div>
+    <input id="derT" type="range" min="0" max="50" value="20" step="1"></div>
   <div class="readout reveal" id="derOut"></div>
   <div class="note reveal" data-i18n="p5_hint" style="max-width:32em">此刻速度 = 切线斜率（这一瞬间的快慢），<b>不是</b>「总路程 ÷ 总时间」—— 那算出来的是从出发到现在的<b>平均速度</b>。这辆车在加速，所以「此刻」比「平均」快。</div>
+  <div class="reveal" data-i18n="p5_ans" style="max-width:30em;margin:12px auto 0;padding:14px 18px;background:#eafaef;border:1px solid #c9edd3;border-radius:14px;font-size:clamp(15px,1.9vw,19px);color:var(--ink);line-height:1.55">🎯 回到开头那个问题 —— <b>第 2 秒，车多快？</b><br>把上面的「此刻 t」拖到 <b>2 秒</b>：速度曲线在那儿的高（= 路程曲线的切线斜率）就是答案 —— <b class="pk">10 米/秒</b>。开头的问号，答出来了（靠的是把 Δt 缩到极小、逼近，第三屏那样）。</div>
 </section>
 
 <section class="panel">
@@ -129,10 +130,10 @@
 <script>
 const TAU=Math.PI*2;
 const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',SOFT='#86868b',FAINT='#86868b';
-const TMAX=5, S=t=>t*t, SMAX=25, VMAX=10;   // 路程 s(t)=t²，匀加速
-let LANG='zh', heroT=3.4, car=0, hoverId=null;
+const TMAX=5, S=t=>3*t*t-t*t*t/6, V=t=>6*t-0.5*t*t, SMAX=56, VMAX=18;   // 路程 s=3t²−t³/6（加速度递减，真实的车）；速度 v=6t−0.5t² 是曲线，v(2)=10
+let LANG='zh', heroT=2, car=0, hoverId=null;
 const CARS=[
-  {s:t=>t*t,                    v:t=>2*t},                      // 匀加速 → 速度是直线
+  {s:t=>3*t*t-t*t*t/6,          v:t=>6*t-0.5*t*t},              // 越开越快、加速渐缓 → 速度是上升渐平的曲线（默认这辆）
   {s:t=>3*t+1.2*Math.sin(2*t),  v:t=>3+2.4*Math.cos(2*t)},      // 忽快忽慢 → 速度是波浪
   {s:t=>1.2*(2.5*t*t-t*t*t/3),  v:t=>1.2*t*(5-t)}               // 先加速后刹车 → 速度是倒 U
 ];
@@ -170,7 +171,7 @@ function drawHero(){
   ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,Y+H);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(px,py,7,0,TAU);ctx.fill();ctx.stroke();
   ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='600 22px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
-  ctx.fillText(TT('此刻多快？','how fast?'),px,py-16);
+  ctx.fillText(TT('第 '+heroT.toFixed(1)+' 秒 · 多快？','t='+heroT.toFixed(1)+'s · how fast?'),px,py-16);
   ctx.fillStyle=PINK;ctx.font='600 26px '+ff;ctx.fillText('?',px,py-40);
 }
 
@@ -183,7 +184,7 @@ function drawSec(){
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();
   for(let i=0;i<=60;i++){const t=TMAX*i/60,x=mx(t),y=my(S(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
   // 切线（极限位置，粉色淡）
-  const m=2*t0;ctx.strokeStyle='rgba(255,45,85,.35)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+  const m=V(t0);ctx.strokeStyle='rgba(255,45,85,.35)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
   const ta=Math.max(0,t0-1.4),tb=Math.min(TMAX,t0+1.4);
   ctx.beginPath();ctx.moveTo(mx(ta),my(S(t0)+m*(ta-t0)));ctx.lineTo(mx(tb),my(S(t0)+m*(tb-t0)));ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=PINK;ctx.font='500 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
@@ -203,7 +204,7 @@ function drawSec(){
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(A[0],A[1],5.5,0,TAU);ctx.fill();
   ctx.font='600 12px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(TT('此刻 t = '+t0.toFixed(1)+' 秒','now t = '+t0.toFixed(1)+' s'),A[0]-7,A[1]-3);
   ctx.fillStyle=IND;ctx.beginPath();ctx.arc(B[0],B[1],5,0,TAU);ctx.fill();
-  const avg=ds/dt, inst=avg-dt, extra=avg-inst;   // 多出的一点是速度，随 Δt→0 而消失
+  const avg=ds/dt, inst=V(t0), extra=avg-inst;   // 多出的一点，随 Δt→0 而消失
   document.getElementById('secOut').innerHTML=
     TT('平均速度 = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b><br>= <b class="pk">'+inst.toFixed(2)+'</b>（此刻速度）+ <b>'+extra.toFixed(2)+'</b>（多出的一点速度）',
        'avg speed = Δs ÷ Δt = '+ds.toFixed(2)+' ÷ '+dt.toFixed(2)+' = <b class="bl">'+avg.toFixed(2)+'</b><br>= <b class="pk">'+inst.toFixed(2)+'</b> (speed now) + <b>'+extra.toFixed(2)+'</b> (a little extra speed)')
@@ -238,7 +239,7 @@ function drawDeriv(){
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.fillText(TT('切线斜率 = 这一刻的速度','tangent slope = speed now'),X+W/2,Y1-6);
   ctx.fillStyle=PINK;ctx.font='600 12px '+ff;ctx.fillText(TT('这条速度曲线，就是导数','this speed curve is the derivative'),X+W/2,Y2-6);
-  const desc=[TT('这辆车匀加速，所以速度是一条上升的直线。','this car accelerates steadily, so its speed is a rising straight line.'),
+  const desc=[TT('这辆车一开始加速猛、后面渐渐平缓（真车都这样），所以速度是一条<b>上升、但越来越平</b>的曲线。','this car accelerates hard at first then eases off (like real cars), so its speed is a rising but flattening curve.'),
               TT('这辆车忽快忽慢，所以速度曲线是波浪形。','this car speeds up and slows down, so its speed curve is wavy.'),
               TT('这辆车先加速后刹车，所以速度先升后降。','this car speeds up then brakes, so its speed rises then falls.')][car];
   document.getElementById('derOut').innerHTML=
@@ -253,7 +254,8 @@ const I18N={
   nav_prev:{zh:'← 上一章',en:'← Previous'},
   p1_kicker:{zh:'从 0 开始的微积分 · 第二章',en:'Calculus from Zero · Chapter 2'},
   p1_q:{zh:'此刻，<em>多快</em>？',en:'How fast, <em>right now</em>?'},
-  p1_sub:{zh:'一辆车，越开越快。<br>总路程 ÷ 总时间，是「平均」速度。<br>可仪表盘指的是「就在此刻」的速度 —— 一瞬间，怎么算？',en:'A car, speeding up.<br>Total distance ÷ total time is the <i>average</i> speed.<br>But the dashboard shows the speed <i>at this very instant</i> — one moment, how do you compute that?'},
+  p1_sub:{zh:'一辆车，越开越快（加速度还在变）。<br>总路程 ÷ 总时间，只是「平均」速度。<br>可仪表盘指的是「就在此刻」的速度 —— 比如<b>第 2 秒</b>那一瞬间，车速多少？怎么算？<br><span style="font-size:.9em;color:var(--faint)">（记住这个问题，章尾我们把它算出来。）</span>',en:'A car, speeding up (its acceleration still changing).<br>Total distance ÷ total time is only the <i>average</i> speed.<br>But the dashboard shows the speed <i>right now</i> — e.g. at <b>t = 2 s</b>, how fast? How do you compute that?<br><span style="font-size:.9em;color:var(--faint)">(Hold that question — we answer it at the end.)</span>'},
+  p5_ans:{zh:'🎯 回到开头那个问题 —— <b>第 2 秒，车多快？</b><br>把上面的「此刻 t」拖到 <b>2 秒</b>：速度曲线在那儿的高（= 路程曲线的切线斜率）就是答案 —— <b class="pk">10 米/秒</b>。开头的问号，答出来了（靠的是把 Δt 缩到极小、逼近，第三屏那样）。',en:'🎯 Back to the opening question — <b>how fast at t = 2 s?</b><br>Slide “now t” to <b>2 s</b>: the height of the speed curve there (= the tangent slope of the distance curve) is the answer — <b class="pk">10 m/s</b>. The opening question, answered (by shrinking Δt to the limit, as on screen 3).'},
   p2_kicker:{zh:'一瞬间的难题',en:'The instant problem'},
   p2_q:{zh:'一瞬间，<em>0 ÷ 0</em>？',en:'One instant, <em>0 ÷ 0</em>?'},
   p2_sub:{zh:'速度 = 路程 ÷ 时间。<br>可「就在这一刻」，时间没走（= 0）、路程也没动（= 0）。<br>0 ÷ 0 什么都说不清。<br>于是退一步：不取一瞬间，先取<b>一小段</b>。',en:'Speed = distance ÷ time.<br>But at a single instant, no time passes (= 0) and no distance is covered (= 0).<br>0 ÷ 0 tells us nothing.<br>So we step back: not an instant — a <b>tiny interval</b> first.'},
@@ -273,7 +275,7 @@ const I18N={
   p5_q:{zh:'每一刻的速度，<em>连成一条线</em>',en:'Every instant’s speed, <em>as one curve</em>'},
   p5_sub:{zh:'把 t 从头移到尾，每一刻都量一次切线斜率（= 那一刻的速度），画在下面 —— 它们连成一条<b>新曲线</b>。<br>路程曲线有多「陡」，本身就是一条速度曲线。这条新曲线，就是导数。<br><b>换辆车试试</b>，速度曲线立刻变个形状。',en:'Slide t from start to end; at each moment measure the tangent slope (the speed then) and plot it below — they trace a <b>new curve</b>.<br>How steep the distance curve is <i>is</i> a speed curve. That new curve is the derivative.<br><b>Try switching cars</b> — the speed curve instantly changes shape.'},
   p5_lt:{zh:'移动此刻 t',en:'move now t'},
-  car0:{zh:'匀加速',en:'steady'},car1:{zh:'忽快忽慢',en:'uneven'},car2:{zh:'先加速后刹车',en:'speed up, brake'},
+  car0:{zh:'越开越快',en:'speeding up'},car1:{zh:'忽快忽慢',en:'uneven'},car2:{zh:'先加速后刹车',en:'speed up, brake'},
   p5_hint:{zh:'此刻速度 = 切线斜率（这一瞬间的快慢），<b>不是</b>「总路程 ÷ 总时间」—— 那算出来的是从出发到现在的<b>平均速度</b>。这辆车在加速，所以「此刻」比「平均」快。',en:'Speed now = the tangent slope (how fast at this instant), <b>not</b> total distance ÷ total time — that gives the <b>average speed</b> from the start until now. This car is accelerating, so “now” is faster than the “average.”'},
   p6_kicker:{zh:'微积分的另一半',en:'The other half of calculus'},
   p6_q:{zh:'切小时间，<em>看变化</em>。',en:'Slice time, <em>watch it change</em>.'},

@@ -231,10 +231,11 @@ function drawInt(){
   ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+run.toFixed(1),'right '+run.toFixed(1)),(mx(xv)+mx(xv+run))/2,my2(Af(xv))+4);
   ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+rise.toFixed(1),'up '+rise.toFixed(1)),mx(xv+run)+6,(my2(Af(xv))+my2(Af(xv)+rise))/2);
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(xv),my2(Af(xv)),5,0,TAU);ctx.fill();
-  {ctx.font='600 12px '+ff;ctx.textBaseline='bottom';const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';ctx.fillStyle=INK;
-   ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),mx(xv)+(L?9:-9),my2(Af(xv))-6);}
+  {ctx.font='600 12px '+ff;const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';const lx=mx(xv)+(L?9:-9);ctx.textBaseline='bottom';
+   ctx.fillStyle=INK;ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),lx,my2(Af(xv))-20);
+   ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢 = '+m.toFixed(1),'growth rate = '+m.toFixed(1)),lx,my2(Af(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillText(TT('这条曲线 = 把面积单独画出来','this curve = the area, drawn on its own'),X+W/2,Y2-6);
+  ctx.fillText(TT('这条曲线的高 = 上图那块阴影的大小','height of this curve = size of the shaded area above'),X+W/2,Y2-6);
   // 连线
   ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(xv),my1(f(xv)));ctx.lineTo(mx(xv),my2(Af(xv)));ctx.stroke();ctx.setLineDash([]);
   // 两图之间：把“边界的高 = 面积长大的快慢”直接写在图上（两个数永远相等）

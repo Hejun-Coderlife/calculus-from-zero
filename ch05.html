@@ -40,6 +40,12 @@
   .tbl{font-size:clamp(15px,1.9vw,20px);font-weight:600;line-height:2;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
   .tbl .a{color:var(--ink)}.tbl .b{color:var(--blue)}
   .lim{font-size:clamp(15px,1.9vw,20px);color:var(--soft);font-weight:500}.lim b{color:var(--ink)}
+  .deriv{max-width:34em;margin:12px auto 0;text-align:left;background:#f5f7fa;border:1px solid var(--line);border-radius:14px;padding:0 18px}
+  .deriv summary{cursor:pointer;padding:13px 0;font-size:14px;font-weight:600;color:var(--ink);list-style:none}
+  .deriv summary::-webkit-details-marker{display:none}
+  .deriv summary::before{content:"▸ ";color:var(--blue)}.deriv[open] summary::before{content:"▾ "}
+  .deriv .db{padding:2px 0 16px;font-size:14px;line-height:1.65;color:var(--soft);font-variant-numeric:tabular-nums}
+  .deriv .db b{color:var(--ink)}
   .seg{display:inline-flex;background:var(--line);border-radius:999px;padding:3px}
   .segb{border:none;background:transparent;color:var(--soft);font-size:14px;font-weight:600;padding:7px 17px;border-radius:999px;cursor:pointer;font-family:inherit;transition:color .15s,background .15s}
   .segb.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
@@ -95,15 +101,21 @@
   <div class="q reveal" data-i18n="p4_q">换几个函数，<em>都放大量一量</em></div>
   <div class="sub reveal" data-i18n="p4_sub">同样的招：放大、量斜率。换 x²、x³、√x 试试，把每个的导数记下来 —— 一张表就露出<b>规律</b>。</div>
   <div class="ctrl reveal"><span class="seg">
-    <button class="segb on" data-fn="0" data-i18n="fn0">x²</button>
-    <button class="segb" data-fn="1" data-i18n="fn1">x³</button>
+    <button class="segb" data-fn="0" data-i18n="fn0">x²</button>
+    <button class="segb on" data-fn="1" data-i18n="fn1">x³</button>
     <button class="segb" data-fn="2" data-i18n="fn2">√x</button>
   </span></div>
-  <div class="fig reveal" style="width:min(520px,90vw)"><canvas id="cPat" height="360"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p4_la">位置 a</label>
-    <input id="pA" type="range" min="8" max="30" value="16" step="1"></div>
+  <div class="fig reveal" style="width:min(320px,78vw)"><canvas id="cPat" height="440"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p4_la">点 A 位置</label>
+    <input id="pA" type="range" min="0" max="100" value="40" step="1">
+    <label data-i18n="p4_lg">A、B 间距</label>
+    <input id="pGap" type="range" min="0" max="100" value="60" step="1"></div>
   <div class="readout reveal" id="patOut"></div>
-  <div class="tbl reveal" data-i18n="p4_tbl" style="margin-top:6px"><span class="a">x²</span> 的导数 = <span class="b">2x</span>　·　<span class="a">x³</span> 的导数 = <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> 的导数 = <span class="b">½·x<sup>−½</sup></span></div>
+  <div class="tbl reveal" data-i18n="p4_tbl" style="margin-top:6px">斜率（也叫<b>导数</b>）：<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span></div>
+  <details class="deriv reveal">
+    <summary data-i18n="p4_dsum">为什么 √x 的斜率 = ½·x<sup>−½</sup> ？—— 点开看推导（用 x=4）</summary>
+    <div class="db" data-i18n="p4_dbody"></div>
+  </details>
 </section>
 
 <section class="panel">
@@ -111,12 +123,48 @@
   <div class="sub reveal" style="transition-delay:.05s" data-i18n="p5_l1">看出来了吗？<b>指数搬下来当系数，指数再减 1</b>。这就是<b>幂法则</b>：</div>
   <div class="eqbox reveal" style="transition-delay:.5s" data-i18n="p5_eq"><div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数 n 搬到前面当系数<br>指数减 1</span></span></div></div>
   <div class="lim reveal" style="transition-delay:.9s" data-i18n="p5_check">验一下：x²（n=2）→ 2·x¹ = 2x ✓　　x³（n=3）→ 3·x² ✓</div>
+  <details id="proofDetails" class="deriv reveal" style="transition-delay:1.1s">
+    <summary data-i18n="p5_dsum">为什么对<b>所有</b> n 都成立？—— 点开看证明</summary>
+    <div class="db">
+      <div data-i18n="p5_da"></div>
+      <div style="width:100%;max-width:330px;margin:10px auto"><canvas id="cProof" height="200" style="width:100%;display:block"></canvas></div>
+      <div class="ctrl" style="margin:0 0 8px"><label style="font-size:12px" data-i18n="p5_dg">把 B 拖近 A</label><input id="proofGap" type="range" min="6" max="140" value="95" step="1" style="width:min(220px,66%)"></div>
+      <div data-i18n="p5_db"></div>
+      <svg viewBox="0 0 320 148" width="100%" style="max-width:320px;display:block;margin:12px auto">
+        <text x="47" y="10" text-anchor="middle" font-size="10" fill="#86868b">大方形挖掉小方形（= b²−a²）</text>
+        <rect x="53" y="18" width="26" height="65" fill="#cfe0fb" stroke="#0071e3"/>
+        <rect x="14" y="57" width="39" height="26" fill="#cdeed6" stroke="#28a745"/>
+        <rect x="14" y="18" width="39" height="39" fill="none" stroke="#9aa0aa" stroke-dasharray="3 3"/>
+        <rect x="14" y="18" width="65" height="65" fill="none" stroke="#1d1d1f" stroke-width="1.3"/>
+        <text x="33" y="41" text-anchor="middle" font-size="11" fill="#9aa0aa">a²</text>
+        <text x="46" y="97" text-anchor="middle" font-size="11" fill="#1d1d1f">b</text>
+        <path d="M92,50 L118,50" stroke="#86868b" stroke-width="1.6"/><path d="M118,50 L112,46 M118,50 L112,54" stroke="#86868b" stroke-width="1.6" fill="none"/>
+        <text x="105" y="40" text-anchor="middle" font-size="10" fill="#86868b">蓝+绿</text>
+        <text x="105" y="66" text-anchor="middle" font-size="10" fill="#86868b">拼一拼</text>
+        <text x="163" y="10" text-anchor="middle" font-size="10" fill="#86868b">拼成一个长方形</text>
+        <rect x="150" y="18" width="26" height="65" fill="#cfe0fb" stroke="#0071e3"/>
+        <rect x="150" y="83" width="26" height="39" fill="#cdeed6" stroke="#28a745"/>
+        <rect x="150" y="18" width="26" height="104" fill="none" stroke="#1d1d1f" stroke-width="1.3"/>
+        <text x="163" y="136" text-anchor="middle" font-size="11" fill="#1d1d1f">b−a</text>
+        <text x="182" y="72" font-size="11" fill="#1d1d1f">b+a</text>
+        <text x="210" y="60" font-size="14" font-weight="700" fill="#0071e3">= (b−a)(b+a)</text>
+        <text x="210" y="82" font-size="11" fill="#86868b">例：5²−3² = 2×8 = 16</text>
+      </svg>
+      <div data-i18n="p5_db3" style="max-width:320px;margin:12px auto;padding:11px 14px;background:#fbfbfd;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.8;color:var(--soft);font-variant-numeric:tabular-nums"></div>
+      <div data-i18n="p5_db2"></div>
+    </div>
+  </details>
 </section>
 
 <section class="panel">
   <div class="kicker reveal" data-i18n="p6_kicker">从此不用拖了</div>
   <div class="q reveal" data-i18n="p6_q">导数，<em>一步算出</em></div>
-  <div class="sub reveal" data-i18n="p6_sub">以前每个点都要拖滑块看半天；<br>现在套一下幂法则，一步就出答案。<br>多项式就<b>逐项</b>来：<b>5x³ + 2x</b> 的导数 = <b>15x² + 2</b>。</div>
+  <div class="sub reveal" data-i18n="p6_s0">还记得<b>第一屏</b>那道题吗？—— y = x² 在某点，斜率是多少？那时只能拖滑块、量半天。<br>现在有了<b>幂法则</b>：x² 的斜率 = <b>2x</b>。想知道哪点，把那点的 <b>x 代进去</b>，一步就出 👇</div>
+  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cScale" height="300"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p6_lx">位置 x</label>
+    <input id="ansX" type="range" min="4" max="28" value="14" step="1"></div>
+  <div class="readout reveal" id="ansOut"></div>
+  <div class="sub reveal" style="transition-delay:.05s" data-i18n="p6_s1">拖滑块换任意 x —— 斜率永远 = <b>2×那个 x</b>，一步算出。<br><span style="color:var(--faint)">第三、四屏是「拖两点、逼近着<b>量</b>」；这里是「代公式、直接<b>算</b>」—— 这就是会求导的意义。</span></div>
   <div class="card reveal" data-i18n="p6_card">🧰 你多了一件工具：<b>幂法则</b> —— 不用再拖滑块，看一眼就写出导数。这也是「求导公式」的第一块基石。</div>
   <a href="ch06.html" class="nextbtn reveal" data-i18n="p6_next">下一章：怎么算积分 →</a>
 </section>
@@ -125,16 +173,13 @@
 
 <script>
 const TAU=Math.PI*2;
-const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',GREEN='#28a745',SOFT='#86868b';
+const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',GREEN='#28a745',SOFT='#86868b',RED='#e11d0f';
 const FNS=[
-  {d:'x²',f:x=>x*x,          df:x=>2*x,           xmax:3.2,ymax:10.5,amin:0.6,amax:2.7,xstep:1,ystep:2,
-     say:{zh:'x 乘自己（比如 3² = 3×3 = 9）',en:'x times itself (e.g. 3² = 3×3 = 9)'}},
-  {d:'x³',f:x=>x*x*x,        df:x=>3*x*x,          xmax:2.6,ymax:15,  amin:0.5,amax:2.2,xstep:1,ystep:3,
-     say:{zh:'x 乘三次（比如 2³ = 2×2×2 = 8）',en:'x cubed (e.g. 2³ = 2×2×2 = 8)'}},
-  {d:'√x',f:x=>Math.sqrt(x), df:x=>0.5/Math.sqrt(x),xmax:6, ymax:3,   amin:0.6,amax:5,  xstep:1,ystep:1,
-     say:{zh:'x 的平方根（比如 √4 = 2，因为 2×2 = 4）',en:'the square root of x (e.g. √4 = 2, since 2×2 = 4)'}}
+  {d:'x²',f:x=>x*x,           df:x=>2*x,             XM:2.8, YM:8,   amin:0.6, amax:1.6, dmax:1.0, xstep:1,   ystep:2, figW:'min(320px,80vw)', cssH:440, rule:{zh:"2 × x坐标",en:"2 × x"}},
+  {d:'x³',f:x=>x*x*x,         df:x=>3*x*x,            XM:1.9, YM:6.5, amin:0.4, amax:1.1, dmax:0.7, xstep:0.5, ystep:2, figW:'min(300px,76vw)', cssH:440, rule:{zh:"3 × x坐标 × x坐标",en:"3 × x × x"}},
+  {d:'√x',f:x=>Math.sqrt(x),  df:x=>0.5/Math.sqrt(x), XM:5.4, YM:2.6, amin:0.5, amax:4.0, dmax:1.0, xstep:1,   ystep:1, figW:'min(560px,92vw)', cssH:300, rule:{zh:"0.5 ÷ √x坐标（越往右越小）",en:"0.5 ÷ √x (smaller as x grows)"}}
 ];
-let LANG='zh', heroA=1.4, fnIdx=0, hoverId=null;
+let LANG='zh', heroA=1.4, fnIdx=1, hoverId=null;
 function TT(zh,en){return LANG==='en'?en:zh;}
 function dpr(){return Math.min(window.devicePixelRatio||1,2);}
 function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
@@ -189,6 +234,53 @@ function drawZoomSeq(){
   }
   ctx.fillStyle=INK;ctx.font='600 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
   ctx.fillText(TT('放到极致，弯就看不见了 —— 曲线变成一条直线','zoom far enough and the bend vanishes — the curve is now a straight line'),w/2,fy+fh+30);
+}
+
+// 第五屏证明里的互动图：拖滑块把 B 拖近 A，红色割线 → 切线
+function drawProof(){
+  const cv=document.getElementById('cProof');if(!cv||!cv.clientWidth)return;
+  const {ctx,w,h}=setup(cv,200);ctx.clearRect(0,0,w,h);
+  const ff=ffont(),X=20,Y=15,W=w-40,H=h-32,XM=3.0,YM=9.5,fq=x=>x*x;
+  const mx=x=>X+x/XM*W,my=y=>Y+H-y/YM*H;
+  const gs=document.getElementById('proofGap'), gap=gs?(+gs.value/100):0.9;
+  const a=1.3, b=Math.min(XM-0.1,a+gap), fa=fq(a),fb=fq(b),steep=(fb-fa)/(b-a);
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(TT('拖下面滑块把 B 拖近 A：红割线 → 切线','drag the slider: B → A, red secant → tangent'),w/2,2);
+  ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='500 10px '+ff;ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillText(TT('位置 x','x'),X+W,Y+H+11);
+  ctx.textAlign='left';ctx.fillText(TT('高度 y = xⁿ','y = xⁿ'),X-12,Y-3);
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();let st=false;
+  for(let i=0;i<=100;i++){const x=XM*i/100,yv=fq(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(b),my(fa));ctx.lineTo(mx(b),my(fb));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右走 b−a','right: b−a'),(mx(a)+mx(b))/2,my(fa)+4);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上爬 bⁿ−aⁿ','up: bⁿ−aⁿ'),mx(b)+5,(my(fa)+my(fb))/2);
+  const ext=0.6,xL=Math.max(0,a-ext),xR=Math.min(XM,b+ext);
+  ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mx(a),my(fa),4.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.strokeStyle=IND;ctx.beginPath();ctx.arc(mx(b),my(fb),4.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=INK;ctx.font='700 11px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('A (a, aⁿ)',mx(a)-6,my(fa)-4);
+  ctx.textAlign='left';ctx.fillText('B (b, bⁿ)',mx(b)+6,my(fb)-4);
+}
+
+// 第六屏：回到开篇那道题 —— y=x² 在 x=1.4，直接算出斜率 2.8（不用拖）
+function drawScale(){
+  const cv=document.getElementById('cScale');if(!cv)return;const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
+  const X=50,Y=22,W=w-84,H=h-56,ff=ffont(),xmax=3.0,ymax=9.2,f=x=>x*x;
+  const sl=document.getElementById('ansX'), a=sl?(+sl.value/10):1.4, fa=f(a), m=2*a;   // 斜率直接代幂法则 2x 算出
+  const mx=x=>X+x/xmax*W,my=y=>Y+H-y/ymax*H;
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillText('y = x²',X-14,Y-4);ctx.textAlign='right';ctx.fillText(TT('位置 x','x'),X+W,Y+H+16);
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();let st=false;
+  for(let i=0;i<=100;i++){const x=xmax*i/100,yv=f(x);if(yv>ymax){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
+  const du=Math.min(0.95,xmax-0.1-a,a);ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(a-du),my(fa-m*du));ctx.lineTo(mx(a+du),my(fa+m*du));ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,.25)';ctx.setLineDash([3,3]);ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=BLUE;ctx.font='700 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+a.toFixed(1),mx(a),my(0)+5);
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(mx(a),my(fa),6,0,TAU);ctx.fill();ctx.stroke();
+  {const L=a>xmax*0.6;ctx.fillStyle=RED;ctx.font='700 17px '+ff;ctx.textAlign=L?'right':'left';ctx.textBaseline='middle';ctx.fillText(TT('斜率 = '+m.toFixed(1),'slope = '+m.toFixed(1)),mx(a)+(L?-14:14),my(fa)+16);}
+  const out=document.getElementById('ansOut');
+  if(out)out.innerHTML=TT('位置 x = <b>'+a.toFixed(1)+'</b>　→　斜率 = 2 × '+a.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b><br><span class="note">代幂法则一步算出的 —— 没拖两点、没逼近。拖滑块换任意 x，斜率立刻 = 2×x。</span>',
+                        'x = <b>'+a.toFixed(1)+'</b>　→　slope = 2 × '+a.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b><br><span class="note">Straight from the power rule — no two points, no limit. Drag x: slope = 2×x instantly.</span>');
 }
 
 function drawHero(){
@@ -253,7 +345,7 @@ function drawZoom(){
   for(let i=0;i<=120;i++){const x=XM*i/120,yv=f(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
   // 斜率辅助线：过 A、B 的直线（这条线有多陡 = 我们量的"有多陡"；B 拖近 A 时它就变成 A 点的切线）
   {const xL=Math.max(0,a-0.6),xR=Math.min(XM,b+0.6);
-   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();}
+   ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();}
   // 楼梯（量往右走 / 往上爬）：灰色虚线，只是辅助（两点重合时没有楼梯）
   if(!merged){
     ctx.strokeStyle='rgba(0,0,0,.42)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
@@ -288,13 +380,13 @@ function drawZoom(){
     ctx.fillStyle=INK;ctx.font='800 13px '+ff;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('B',mx(b)+8,my(fb)-6);
   }
   // 大号“有多陡”
-  ctx.fillStyle=PINK;ctx.font='700 16px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
-  ctx.fillText(TT('有多陡（斜率）= '+steep.toFixed(1),'steepness = '+steep.toFixed(1)),X+6,Y+2);
+  ctx.fillStyle=RED;ctx.font='700 16px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('斜率 = '+steep.toFixed(1),'slope = '+steep.toFixed(1)),X+6,Y+2);
   document.getElementById('zoomOut').innerHTML = merged
-    ? TT('A、B <b>重合</b>在位置 <b>'+a.toFixed(1)+'</b>（位置<b>还是 '+a.toFixed(1)+'，没变</b>）。粉线现在是<b>贴着曲线的直线（切线）</b>。<br><b>直接量这条直线</b>：从 A 往右走 <b>1</b>，它往上 <b>'+(2*a).toFixed(1)+'</b> → 有多陡 = '+(2*a).toFixed(1)+' ÷ 1 = <b class="pk">'+(2*a).toFixed(1)+'</b>。这就是斜率，也是能<b>直接测</b>的办法（不用再两点相除、免得 0÷0）。',
+    ? TT('A、B <b>重合</b>在位置 <b>'+a.toFixed(1)+'</b>（位置<b>还是 '+a.toFixed(1)+'，没变</b>）。红线现在是<b>贴着曲线的直线（切线）</b>。<br><b>直接量这条直线</b>：从 A 往右走 <b>1</b>，它往上 <b>'+(2*a).toFixed(1)+'</b> → 有多陡 = '+(2*a).toFixed(1)+' ÷ 1 = <b class="pk">'+(2*a).toFixed(1)+'</b>。这就是斜率，也是能<b>直接测</b>的办法（不用再两点相除、免得 0÷0）。',
         'A and B have <b>merged</b> at position <b>'+a.toFixed(1)+'</b> (still '+a.toFixed(1)+'). The pink line is now the <b>straight line hugging the curve (the tangent)</b>.<br><b>Measure that line directly</b>: from A go right <b>1</b>, it rises <b>'+(2*a).toFixed(1)+'</b> → steepness = '+(2*a).toFixed(1)+' ÷ 1 = <b class="pk">'+(2*a).toFixed(1)+'</b>. That is the slope — a <b>direct</b> measurement (no two-point division, no 0÷0).')
-      +'<br><span class="note">'+TT('拖动「点 A 位置」，斜率永远是位置的 <b>2 倍</b>（'+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+'）—— 这就是下一屏要找的规律。',
-          'Move “point A”: the slope is always <b>twice</b> the position ('+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+') — the pattern the next screen hunts for.')+'</span>'
+      +'<br><span class="note">'+TT('拖动「点 A 位置」：<b>就 y=x² 这条曲线而言</b>，斜率永远是 x坐标的 <b>2 倍</b>（'+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+'）；<b>换条曲线就不是 2 倍了</b> —— 下一屏找的就是各条曲线各自的规律。',
+          'Move “point A”: <b>for the curve y=x²</b>, the slope is always <b>twice</b> the x-coordinate ('+(2*a).toFixed(1)+' = 2×'+a.toFixed(1)+'); <b>a different curve has a different rule</b> — that is what the next screen hunts for.')+'</span>'
     : ( TT('从 A(位置 <b>'+a.toFixed(1)+'</b>, 高 '+fa.toFixed(1)+') 走到 B(位置 <b>'+b.toFixed(1)+'</b>, 高 '+fb.toFixed(1)+')：往右走 <b>'+right.toFixed(1)+'</b>，往上爬 <b>'+up.toFixed(1)+'</b>。<br>有多陡 = 往上爬 ÷ 往右走 = '+up.toFixed(1)+' ÷ '+right.toFixed(1)+' = <b class="pk">'+steep.toFixed(1)+'</b>',
          'From A(pos <b>'+a.toFixed(1)+'</b>, height '+fa.toFixed(1)+') to B(pos <b>'+b.toFixed(1)+'</b>, height '+fb.toFixed(1)+'): right <b>'+right.toFixed(1)+'</b>, up <b>'+up.toFixed(1)+'</b>.<br>steepness = up ÷ right = '+up.toFixed(1)+' ÷ '+right.toFixed(1)+' = <b class="pk">'+steep.toFixed(1)+'</b>')
       +'<br><span class="note">'+TT('把「A、B 间距」<b>拖小</b>，B 慢慢靠近 A，这个「有多陡」会一路<b>降下来、稳住</b>。一直拖到间距 <b>0</b>（两点重合），看它稳在几。',
@@ -303,40 +395,62 @@ function drawZoom(){
 
 // 和第三屏同一套图：坐标轴 + 那条直线 + 斜率三角形，只是换函数（找规律）
 function drawPat(){
-  const fn=FNS[fnIdx];
-  const cv=document.getElementById('cPat');const {ctx,w,h}=setup(cv,340);ctx.clearRect(0,0,w,h);
-  const X=54,Y=24,W=w-84,H=h-60,ff=ffont(),xmax=fn.xmax,ymax=fn.ymax;
-  const mx=x=>X+x/xmax*W, my=y=>Y+H-y/ymax*H;
-  const tt=(+document.getElementById('pA').value-8)/22, x0=fn.amin+tt*(fn.amax-fn.amin), y0=fn.f(x0), m=fn.df(x0);
-  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),xmax,ymax,fn.xstep,fn.ystep,hoverId==='cPat');
+  const fn=FNS[fnIdx], f=fn.f, XM=fn.XM, YM=fn.YM;
+  const cv=document.getElementById('cPat');if(cv.parentElement)cv.parentElement.style.width=fn.figW;   // 画布尺寸随函数：x²/x³ 竖高、√x 宽扁
+  const {ctx,w,h}=setup(cv,fn.cssH);ctx.clearRect(0,0,w,h);
+  const ff=ffont(),padL=44,padR=80,padT=16,padB=40,aW=w-padL-padR,aH=h-padT-padB;
+  const s=Math.min(aW/XM,aH/YM),W=XM*s,H=YM*s,X=padL,Y=padT+(aH-H)/2;   // 等比例
+  const mx=x=>X+x*s, my=y=>Y+H-y*s;
+  const tA=(+document.getElementById('pA').value)/100, tG=(+document.getElementById('pGap').value)/100;
+  let a=fn.amin+tA*(fn.amax-fn.amin), d=tG*fn.dmax;
+  a=Math.round(a*10)/10; d=Math.round(d*10)/10;   // 吸附到 0.1：显示的位置=实际算的位置，避免"显示1.0其实0.97"
+  const b=a+d, fa=f(a), fb=f(b), right=d, up=fb-fa, merged=d<1e-6, steep=merged?fn.df(a):up/right;
+  axesBox(ctx,X,Y,W,H,TT('位置 x','x'),TT('高度 y','height y'),XM,YM,fn.xstep,fn.ystep,hoverId==='cPat');
   // 曲线
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();let st=false;
-  for(let i=0;i<=120;i++){const x=xmax*i/120;if(x<=0)continue;const yv=fn.f(x);if(yv>ymax*1.02){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
-  // 坐标投影：x 轴（位置）与 y 轴（高度）
-  ctx.strokeStyle='rgba(0,0,0,.26)';ctx.setLineDash([3,3]);ctx.lineWidth=1.2;
-  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(x0),my(0));ctx.stroke();
-  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(0),my(y0));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(x0),my(0),3.2,0,TAU);ctx.fill();ctx.beginPath();ctx.arc(mx(0),my(y0),3.2,0,TAU);ctx.fill();
-  ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+x0.toFixed(1),mx(x0),my(0)+7);
-  ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('y = '+y0.toFixed(2),mx(0)-7,my(y0));
-  // 那条直线（切线）
-  const du=xmax*0.17;ctx.strokeStyle=PINK;ctx.lineWidth=2.2;
-  ctx.beginPath();ctx.moveTo(mx(x0-du),my(y0-m*du));ctx.lineTo(mx(x0+du),my(y0+m*du));ctx.stroke();
-  // 斜率三角形：往右 run，往上 rise
-  let run=Math.min(xmax*0.28,xmax-0.15-x0);if(y0+m*run>ymax*0.94)run=(ymax*0.94-y0)/m;run=Math.max(run,xmax*0.06);const rise=m*run;
-  ctx.strokeStyle='rgba(0,0,0,.5)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
-  ctx.beginPath();ctx.moveTo(mx(x0),my(y0));ctx.lineTo(mx(x0+run),my(y0));ctx.lineTo(mx(x0+run),my(y0+rise));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+run.toFixed(2),'right '+run.toFixed(2)),(mx(x0)+mx(x0+run))/2,my(y0)+5);
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+rise.toFixed(2),'up '+rise.toFixed(2)),mx(x0+run)+7,(my(y0)+my(y0+rise))/2);
-  // 点
-  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(mx(x0),my(y0),6,0,TAU);ctx.fill();ctx.stroke();
-  // 大号斜率
-  ctx.fillStyle=IND;ctx.font='700 18px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('斜率 ≈ '+m.toFixed(2),'slope ≈ '+m.toFixed(2)),X+6,Y+2);
-  document.getElementById('patOut').innerHTML=
-    TT('<b>'+fn.d+'</b> 的意思：'+fn.say.zh+'。把位置 <b>x = '+x0.toFixed(1)+'</b> 代进去，得到高 <b>y = '+fn.d.replace('x',x0.toFixed(1))+' = '+y0.toFixed(2)+'</b> —— 曲线就是把每个 x 的高 y 连起来。',
-       '<b>'+fn.d+'</b> means: '+fn.say.en+'. Plug in position <b>x = '+x0.toFixed(1)+'</b> to get height <b>y = '+y0.toFixed(2)+'</b> — the curve is just the height y at every x, joined up.')
-    +'<br><span class="note">'+TT('斜率 = 往上 ÷ 往右 = '+rise.toFixed(2)+' ÷ '+run.toFixed(2)+' ≈ <b class="bl">'+m.toFixed(2)+'</b>。换函数、拖 x，斜率就照下面那张表变。',
-       'slope = up ÷ right = '+rise.toFixed(2)+' ÷ '+run.toFixed(2)+' ≈ <b class="bl">'+m.toFixed(2)+'</b>. Switch function, drag x — the slope follows the table below.')+'</span>';
+  for(let i=1;i<=140;i++){const x=XM*i/140,yv=f(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
+  // 斜率辅助线（过 A、B；重合时是切线）
+  {const ext=XM*0.18,xL=Math.max(0.001,a-ext),xR=Math.min(XM,b+ext);
+   ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();}
+  // 楼梯（拖开）/ 直接测三角形（重合）
+  if(!merged){
+    ctx.strokeStyle='rgba(0,0,0,.42)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(b),my(fa));ctx.lineTo(mx(b),my(fb));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='700 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(TT('往右走 '+right.toFixed(2),'right '+right.toFixed(2)),(mx(a)+mx(b))/2,my(fa)+6);
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(TT('往上爬 '+up.toFixed(2),'up '+up.toFixed(2)),mx(b)+8,(my(fa)+my(fb))/2);
+  } else {
+    const rr=Math.min(1,XM-0.1-a), rise2=steep*rr;
+    ctx.strokeStyle='rgba(0,0,0,.45)';ctx.lineWidth=1.6;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a+rr),my(fa));ctx.lineTo(mx(a+rr),my(fa+rise2));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='700 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(TT('往右 '+rr.toFixed(1),'right '+rr.toFixed(1)),(mx(a)+mx(a+rr))/2,my(fa)+6);
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(TT('往上 '+rise2.toFixed(2),'up '+rise2.toFixed(2)),mx(a+rr)+8,(my(fa)+my(fa+rise2))/2);
+  }
+  // 位置投影 + 点（A 蓝、B 紫；重合只剩 A=B）
+  ctx.strokeStyle='rgba(0,113,227,.3)';ctx.setLineDash([2,3]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();
+  if(!merged){ctx.beginPath();ctx.moveTo(mx(b),my(fb));ctx.lineTo(mx(b),my(0));ctx.stroke();}
+  ctx.setLineDash([]);ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillStyle=BLUE;ctx.fillText(TT('A位置 '+a.toFixed(1),'A '+a.toFixed(1)),mx(a),my(0)+4);
+  if(!merged){ctx.fillStyle=IND;ctx.fillText(TT('B位置 '+b.toFixed(1),'B '+b.toFixed(1)),mx(b),my(0)+19);}
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(mx(a),my(fa),5.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=INK;ctx.font='800 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(merged?'A=B':'A',mx(a)-8,my(fa)-6);
+  if(!merged){
+    ctx.fillStyle='#fff';ctx.strokeStyle=IND;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(mx(b),my(fb),5.5,0,TAU);ctx.fill();ctx.stroke();
+    ctx.fillStyle=INK;ctx.font='800 13px '+ff;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('B',mx(b)+8,my(fb)-6);
+  }
+  // 大号：函数 + 有多陡
+  ctx.fillStyle=RED;ctx.font='700 15px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT('斜率 = '+steep.toFixed(2),'slope = '+steep.toFixed(2)),X+6,Y+2);
+  document.getElementById('patOut').innerHTML = merged
+    ? TT('<b>'+fn.d+'</b> 在位置 <b>'+a.toFixed(1)+'</b>：两点重合，红线是切线。直接量它 → 斜率 = <b class="pk">'+steep.toFixed(2)+'</b>。<br><span class="note">多换几个位置量量看，你会<b>发现</b>：'+fn.d+' 的斜率好像<b>总是「'+fn.rule.zh+'」</b> —— 这是你自己一处处量、看出来的规律，不是套公式。三条曲线各有各的规律，都记在下面那张表里。</span>',
+        '<b>'+fn.d+'</b> at position <b>'+a.toFixed(1)+'</b>: points merged; the red line is the tangent. Measure it → slope = <b class="pk">'+steep.toFixed(2)+'</b>.<br><span class="note">Measure at a few more positions and you’ll <b>notice</b>: the slope of '+fn.d+' always seems to be <b>“'+fn.rule.en+'”</b> — a pattern you spotted by measuring, not a formula handed to you. Each curve has its own rule, noted in the table below.</span>')
+    : ( TT('<b>'+fn.d+'</b>：从 A(位置 '+a.toFixed(1)+') 到 B(位置 '+b.toFixed(1)+')：往右走 '+right.toFixed(2)+'、往上爬 '+up.toFixed(2)+' → 有多陡 = '+up.toFixed(2)+' ÷ '+right.toFixed(2)+' = <b class="pk">'+steep.toFixed(2)+'</b>',
+         '<b>'+fn.d+'</b>: A(pos '+a.toFixed(1)+') to B(pos '+b.toFixed(1)+'): right '+right.toFixed(2)+', up '+up.toFixed(2)+' → steepness = <b class="pk">'+steep.toFixed(2)+'</b>')
+      +'<br><span class="note">'+TT('把「间距」拖到 0 让两点重合，看斜率稳在几；再点上面按钮换 x²/x³/√x，对比三条曲线。','Drag the gap to 0 to merge; tap the buttons to compare x²/x³/√x.')+'</span>' );
 }
 
 const I18N={
@@ -350,22 +464,37 @@ const I18N={
   p2_sub:{zh:'把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。',en:'Zoom into a point on a curve <b>far enough</b>, and the bend fades until it looks like <b>a straight line</b>.<br>The <b>slope</b> of that line is the <b>derivative</b> there.<br>So “find the derivative” becomes “measure that line’s slope.”'},
   p3_kicker:{zh:'两点，量陡度',en:'Two points, measure steepness'},
   p3_q:{zh:'两个点，<em>量它有多陡</em>',en:'Two points — <em>measure how steep</em>'},
-  p3_sub:{zh:'蓝线是曲线 y = x²（越往右越高）。在上面取两个点 <b>A</b>、<b>B</b>。<br>从 A 走到 B：<b>往右走</b>了多少、<b>往上爬</b>了多少，都在坐标轴上量得出来。<b>有多陡 = 往上爬 ÷ 往右走</b>。<br>再把 <b>B 往 A 拖近</b>（拖小间距），这个「有多陡」会慢慢<b>稳下来</b> —— 稳住的那个数，就是这点的<b>斜率</b>（它正好是 A 位置的 <b>2 倍</b>；位置本身不变）。',en:'The blue line is the curve y = x² (higher as you go right). Put two points <b>A</b> and <b>B</b> on it.<br>From A to B: how far you go <b>right</b> and how far you climb <b>up</b> can both be read off the axes. <b>Steepness = up ÷ right</b>.<br>Now slide <b>B toward A</b> (shrink the gap): the steepness <b>settles</b> — that settled number is the curve’s slope at A (exactly 2× A’s position).'},
+  p3_sub:{zh:'蓝线是曲线 y = x²（越往右越高）。在上面取两个点 <b>A</b>、<b>B</b>。<br>从 A 走到 B：<b>往右走</b>了多少、<b>往上爬</b>了多少，都在坐标轴上量得出来。<b>有多陡 = 往上爬 ÷ 往右走</b>。<br>再把 <b>B 往 A 拖近</b>（拖小间距），这个「有多陡」会慢慢<b>稳下来</b> —— 稳住的那个数，就是这点的<b>斜率</b>（它正好是 A 的 x坐标的 <b>2 倍</b>；x坐标本身不变）。',en:'The blue line is the curve y = x² (higher as you go right). Put two points <b>A</b> and <b>B</b> on it.<br>From A to B: how far you go <b>right</b> and how far you climb <b>up</b> can both be read off the axes. <b>Steepness = up ÷ right</b>.<br>Now slide <b>B toward A</b> (shrink the gap): the steepness <b>settles</b> — that settled number is the slope at A (exactly 2× A’s x-coordinate).'},
   p3_la:{zh:'点 A 位置',en:'point A'},p3_lg:{zh:'A、B 间距',en:'A–B gap'},
   p4_kicker:{zh:'找规律',en:'Spot the pattern'},
   p4_q:{zh:'换几个函数，<em>同样量斜率</em>',en:'Other functions — <em>measure the slope the same way</em>'},
-  p4_sub:{zh:'和上一屏<b>一模一样</b>的图，只是把函数从 x² 换成 x³、√x（点上面按钮切换）。<br>同样：读出坐标 (x, y)，用三角形量斜率。把每个的斜率记下来 —— 下面那张表就露出<b>规律</b>。',en:'The <b>same</b> figure as before, just switching the function from x² to x³ or √x (tap the buttons).<br>Same steps: read the point (x, y), measure the slope with the triangle. Note each one — the table below reveals the <b>pattern</b>.'},
-  p4_la:{zh:'位置 x',en:'position x'},
+  p4_sub:{zh:'和上一屏<b>一样的玩法</b>：取两点、量「往上爬 ÷ 往右走」、把 B 拖近 A 看斜率稳住。<br>点上面按钮换 <b>x²、x³、√x</b>，各测几个 —— 你会发现<b>每条曲线的斜率规律都不一样</b>，都记在下面那张表里。',en:'The <b>same method</b> as before: take two points, measure “up ÷ right,” and slide B onto A to settle the slope.<br>Tap the buttons to switch <b>x², x³, √x</b> — you’ll find <b>each curve has its own slope rule</b>, all noted in the table below.'},
+  p4_la:{zh:'点 A 位置',en:'point A'},p4_lg:{zh:'A、B 间距',en:'A–B gap'},
   fn0:{zh:'x²',en:'x²'},fn1:{zh:'x³',en:'x³'},fn2:{zh:'√x',en:'√x'},
-  p4_tbl:{zh:'<span class="a">x²</span> 的导数 = <span class="b">2x</span>　·　<span class="a">x³</span> 的导数 = <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> 的导数 = <span class="b">½·x<sup>−½</sup></span>',en:'<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>'},
+  p4_tbl:{zh:'斜率（也叫<b>导数</b>）：<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>',en:'Slope (aka the <b>derivative</b>): <span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>'},
+  p4_dsum:{zh:'为什么 √x 的斜率 = ½·x<sup>−½</sup> ？—— 点开看推导（用 x=4）',en:'Why is √x’s slope = ½·x<sup>−½</sup>? — open for the steps (using x=4)'},
+  p4_dbody:{zh:'<b>目标</b>：证明「0.5 ÷ √x」和「½·x<sup>−½</sup>」是同一个东西，用 x=4 边算边看。<br><br><b>事实 A：右上角 ½ = 开根号。</b><br>4<sup>½</sup> 自己乘一遍：4<sup>½</sup> × 4<sup>½</sup>，右上角相加 ½+½=1 → 4<sup>1</sup>=4。所以 4<sup>½</sup> 是「自己乘自己 = 4」的数 = 2 = √4。<br>→ <b>x<sup>½</sup> = √x</b><br><br><b>事实 B：右上角带负号 = 1 ÷ 它。</b><br>4<sup>2</sup>=16 → 4<sup>1</sup>=4 → 4<sup>0</sup>=1 → 4<sup>−1</sup>=1÷4（每往下减 1，就 ÷4 一次）。<br>所以 4<sup>−½</sup> = 1 ÷ 4<sup>½</sup> = 1 ÷ √4 = 0.5。<br>→ <b>x<sup>−½</sup> = 1 ÷ √x</b><br><br><b>把 ½·x<sup>−½</sup> 翻译成大白话：</b><br>x<sup>−½</sup> 的右上角 −½：负号 → 翻成「1 ÷」（事实B），½ → 开根号（事实A），所以 x<sup>−½</sup> = 1 ÷ √x；前面还乘着 ½ = 0.5。<br>合起来：½·x<sup>−½</sup> = 0.5 × (1 ÷ √x) = <b>0.5 ÷ √x</b> —— 正是图里量的那个！<br><br><b>用 x=4 对答案：</b><br>大白话：0.5 ÷ √4 = 0.5 ÷ 2 = <b>0.25</b><br>公式版：½ · 4<sup>−½</sup> = 0.5 × 0.5 = <b>0.25</b> ✅ 一样，只是换了身衣服。<br><br>👉 上面 √x 的图里，把「点 A 位置」拖到最右 = <b>4</b>、「间距」拖到 <b>0</b>，图上就会显示 <b>斜率 = 0.25</b>，和这里对得上。',en:'<b>Goal</b>: show “0.5 ÷ √x” and “½·x<sup>−½</sup>” are the same thing. Follow along with x=4.<br><br><b>Fact A: top-right ½ = square root.</b><br>4<sup>½</sup> times itself: 4<sup>½</sup> × 4<sup>½</sup> adds the tops ½+½=1 → 4<sup>1</sup>=4. So 4<sup>½</sup> is the number that ×itself = 4 → 2 = √4.<br>→ <b>x<sup>½</sup> = √x</b><br><br><b>Fact B: a minus on top = 1 ÷ it.</b><br>4<sup>2</sup>=16 → 4<sup>1</sup>=4 → 4<sup>0</sup>=1 → 4<sup>−1</sup>=1÷4 (each step down divides by 4).<br>So 4<sup>−½</sup> = 1 ÷ 4<sup>½</sup> = 1 ÷ √4 = 0.5.<br>→ <b>x<sup>−½</sup> = 1 ÷ √x</b><br><br><b>Translate ½·x<sup>−½</sup>:</b><br>the −½ on top: minus → “1 ÷” (Fact B), ½ → a root (Fact A), so x<sup>−½</sup> = 1 ÷ √x; then the ½ in front.<br>So ½·x<sup>−½</sup> = 0.5 × (1 ÷ √x) = <b>0.5 ÷ √x</b> — exactly what the graph measures!<br><br><b>Check with x=4:</b><br>Plain: 0.5 ÷ √4 = 0.5 ÷ 2 = <b>0.25</b><br>Formula: ½ · 4<sup>−½</sup> = 0.5 × 0.5 = <b>0.25</b> ✅ same, just different clothes.<br><br>👉 In the √x graph above, drag “point A” all the way to <b>4</b> and the gap to <b>0</b> — it shows <b>slope = 0.25</b>, matching this.'},
   p5_kicker:{zh:'给它一个规则',en:'Give it a rule'},
   p5_l1:{zh:'看出来了吗？<b>指数搬下来当系数，指数再减 1</b>。这就是<b>幂法则</b>：',en:'See it? <b>Bring the exponent down as a coefficient, then subtract 1 from it.</b> That is the <b>power rule</b>:'},
   p5_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数 n 搬到前面当系数<br>指数减 1</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">a power function</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">exponent n moves front as a coefficient<br>exponent drops by 1</span></span></div>'},
   p5_check:{zh:'验一下：x²（n=2）→ 2·x¹ = 2x ✓　　x³（n=3）→ 3·x² ✓',en:'Check: x² (n=2) → 2·x¹ = 2x ✓　　x³ (n=3) → 3·x² ✓'},
+  p5_dsum:{zh:'为什么对<b>所有</b> n 都成立？—— 点开看证明',en:'Why does it hold for <b>every</b> n? — open for the proof'},
+  p5_dg:{zh:'把 B 拖近 A',en:'drag B toward A'},
+  p5_db1:{zh:'',en:''},
+  p5_da:{zh:'<b>要证</b>：xⁿ 在位置 a 的斜率（= 导数）= n·a<sup>n−1</sup>，对任意次方 n 都成立。<br><br><b>① 还是老办法「两点量斜率」（见下图）：</b>曲线 y = xⁿ 的意思是「<b>高 = 横坐标的 n 次方</b>」，所以站在位置 a，曲线的高就是 <b>aⁿ</b>（把 a 代进 xⁿ；比如 n=2 时 a=2 的高 = 2² = 4）。<br>取两点 <b>A=(a, aⁿ)</b>、<b>B=(b, bⁿ)</b>。从 A 走到 B —— 往右走了 <b>b − a</b>，往上爬了 <b>bⁿ − aⁿ</b>。斜率 = 往上爬 ÷ 往右走 = <b>(bⁿ − aⁿ) ÷ (b − a)</b>。再把 B 拖到 A（b → a），看斜率稳在几。',en:'<b>To prove</b>: the slope (= derivative) of xⁿ at position a is n·a<sup>n−1</sup>, for any power n.<br><br><b>① The two-point method (see the figure):</b> the curve y = xⁿ means “<b>height = position to the power n</b>,” so at position a the curve is <b>aⁿ</b> high (plug a into xⁿ; e.g. for n=2, at a=2 the height = 2² = 4).<br>Take A=(a, aⁿ), B=(b, bⁿ). From A to B you go <b>right b − a</b> and <b>up bⁿ − aⁿ</b>. Slope = up ÷ right = <b>(bⁿ − aⁿ) ÷ (b − a)</b>. Then slide B onto A (b → a) and see where the slope settles.'},
+  p5_db:{zh:'<b>② 关键：bⁿ − aⁿ 永远能拆成 (b−a) × 一串 n 项的和。</b>先看最简单的 n=2，用一张面积图就懂 ——',en:'<b>② Key: bⁿ − aⁿ always factors as (b−a) × a sum of n terms.</b> Start with the simplest case n=2 — one area picture makes it clear —'},
+  p5_db3:{zh:'<b style="color:var(--ink)">n=3 没法画面积，但把它乘开就懂：</b><br>(b−a)(b² + ba + a²) 乘开<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br>中间 <b style="color:#d11">b²a 和 −ab²</b> 抵消、<b style="color:#0a7d34">ba² 和 −a²b</b> 抵消（因为 b²a = ab²、ba² = a²b）<br>→ <b style="color:var(--ink)">只剩 b³ − a³</b> ✓<br><span style="color:var(--faint)">n=4、5… 一模一样：中间项<b>全部两两消掉</b>，只剩两头的 bⁿ 和 −aⁿ —— 这就是它对所有 n 都成立的原因。</span>',en:'<b style="color:var(--ink)">n=3 has no area picture — just multiply it out:</b><br>(b−a)(b² + ba + a²)<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br>the middle <b style="color:#d11">b²a and −ab²</b> cancel, <b style="color:#0a7d34">ba² and −a²b</b> cancel (since b²a = ab², ba² = a²b)<br>→ <b style="color:var(--ink)">only b³ − a³ is left</b> ✓<br><span style="color:var(--faint)">n=4, 5, … exactly the same: all middle terms cancel in pairs, leaving only bⁿ and −aⁿ — that is why it holds for every n.</span>'},
+  p5_db2:{zh:'上图：大方形 b² 挖掉小方形 a²，剩下 <b>L 形</b>（蓝条 + 绿条）。把<b>绿条转个方向</b>、拼到蓝条下面 → 正好是一个 <b>(b−a) × (b+a)</b> 的长方形。所以 b² − a² = (b−a)(b+a)。<br>往上推，项数就是 n：<br>· n=2：(b−a)(<b>b + a</b>) ← 2 项<br>· n=3：(b−a)(<b>b² + ba + a²</b>) ← 3 项<br>· 一般 n：(b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← 正好 <b>n 项</b><br><br><b>③ (b−a) 上下抵消：</b>斜率 = (bⁿ − aⁿ) ÷ (b − a) = 那 <b>n 项</b>的和。<br><br><b>④ B 拖到 A（b = a）：</b>那 n 项里，每一项都变成 a<sup>n−1</sup>（b 也成了 a）。一共 <b>n 项</b> → 加起来 = <b>n · a<sup>n−1</sup></b>。<br><br><b>结论：xⁿ 的斜率 = n·x<sup>n−1</sup>，必然。</b><br>验证：n=2 → 2a（x²→2x）✓　n=3 → 3a²（x³→3x²）✓　n=½（√x）→ ½·a<sup>−½</sup> ✓（分数/负次方结论一样，但"n 项"图景只对整数次方直接成立，其余要用别的证法 —— 见上一屏 √x 折叠块）。',en:'A big b² square minus a small a² square leaves an L-shape that rearranges into a <b>(b−a)×(b+a)</b> rectangle. So b² − a² = (b−a)(b+a).<br>Going up, the number of terms is n:<br>· n=2: (b−a)(<b>b + a</b>) ← 2 terms<br>· n=3: (b−a)(<b>b² + ba + a²</b>) ← 3 terms<br>· general n: (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← exactly <b>n terms</b><br><br><b>③ The (b−a) cancels:</b> slope = (bⁿ − aⁿ) ÷ (b − a) = that sum of <b>n terms</b>.<br><br><b>④ B slides onto A (b = a):</b> each of the n terms becomes a<sup>n−1</sup>. <b>n terms</b> → sum = <b>n · a<sup>n−1</sup></b>.<br><br><b>So the slope of xⁿ is n·x<sup>n−1</sup> — necessarily.</b><br>Check: n=2 → 2a ✓　n=3 → 3a² ✓　n=½ (√x) → ½·a<sup>−½</sup> ✓ (fractions/negatives hold too, but the "n terms" picture is only for whole powers — see the √x box on the previous screen).'},
+  p5_dbody:{zh:'<b>要证</b>：xⁿ 在位置 a 的斜率（导数）= n·a<sup>n−1</sup>，对任意次方 n 都成立。<br><br><b>① 还是"两点量斜率"：</b>取 A=(a, aⁿ)、B=(b, bⁿ)，斜率 = 往上爬 ÷ 往右走 = (bⁿ − aⁿ) ÷ (b − a)，再让 B 拖到 A（b→a）。<br><br><b>② 关键：bⁿ − aⁿ 永远能拆成 (b−a) × 一串 n 项的和。</b><br>先看你熟的：<br>· n=2：b² − a² = (b−a)(<b>b + a</b>) ← 括号里 2 项<br>· n=3：b³ − a³ = (b−a)(<b>b² + ba + a²</b>) ← 3 项<br>· n=4：b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>) ← 4 项<br>· 一般 n：bⁿ − aⁿ = (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← 正好 <b>n 项</b><br>（为什么能拆？把右边乘开，中间的项一正一负全抵消，只剩 bⁿ − aⁿ；拿 n=2、3 自己乘一遍就信了。）<br><br><b>③ (b−a) 上下抵消：</b><br>斜率 = (bⁿ − aⁿ) ÷ (b − a) = <b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>（就是那 n 项）<br><br><b>④ B 拖到 A（b = a）：</b>那 n 项里，每一项都变成 a<sup>n−1</sup>（因为 b 也成了 a）：<br>b<sup>n−1</sup> → a<sup>n−1</sup>；　b<sup>n−2</sup>·a → a<sup>n−1</sup>；　…… 每项都是 a<sup>n−1</sup>。<br>一共 <b>n 项</b>，每项 a<sup>n−1</sup> → 加起来 = <b>n · a<sup>n−1</sup></b>。<br><br><b>结论：xⁿ 的斜率 = n·x<sup>n−1</sup>，必然，跑不掉。</b><br><br><b>验证：</b><br>· n=2 → 2·a¹ = 2a（就是 x²→2x）✓<br>· n=3 → 3·a²（x³→3x²）✓<br>· n=½（√x）→ ½·a<sup>−½</sup> ✓（结论一样成立；但"n 项"这个图景只对<b>整数</b>次方直接成立，分数/负数次方要用别的证法 —— 上一屏 √x 的折叠块就是把这条单独验过的。）',en:'<b>To prove</b>: the slope (derivative) of xⁿ at position a is n·a<sup>n−1</sup>, for any power n.<br><br><b>① Same two-point method:</b> take A=(a, aⁿ), B=(b, bⁿ); slope = up ÷ right = (bⁿ − aⁿ) ÷ (b − a), then let B slide to A (b→a).<br><br><b>② Key: bⁿ − aⁿ always factors as (b−a) × a sum of n terms.</b><br>The ones you know:<br>· n=2: b² − a² = (b−a)(<b>b + a</b>) ← 2 terms<br>· n=3: b³ − a³ = (b−a)(<b>b² + ba + a²</b>) ← 3 terms<br>· n=4: b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>) ← 4 terms<br>· general n: bⁿ − aⁿ = (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← exactly <b>n terms</b><br>(Why? Multiply the right side out and the middle terms cancel in pairs, leaving bⁿ − aⁿ; check it for n=2, 3.)<br><br><b>③ The (b−a) cancels:</b><br>slope = (bⁿ − aⁿ) ÷ (b − a) = <b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b> (the n terms)<br><br><b>④ B slides onto A (b = a):</b> each of the n terms becomes a<sup>n−1</sup> (since b is now a too):<br>b<sup>n−1</sup> → a<sup>n−1</sup>; b<sup>n−2</sup>·a → a<sup>n−1</sup>; … every term is a<sup>n−1</sup>.<br><b>n terms</b>, each a<sup>n−1</sup> → the sum = <b>n · a<sup>n−1</sup></b>.<br><br><b>So the slope of xⁿ is n·x<sup>n−1</sup> — necessarily.</b><br><br><b>Check:</b><br>· n=2 → 2·a¹ = 2a (x²→2x) ✓<br>· n=3 → 3·a² (x³→3x²) ✓<br>· n=½ (√x) → ½·a<sup>−½</sup> ✓ (the result still holds; but the "n terms" picture works directly only for <b>whole-number</b> powers — fractions/negatives need another method, which is what the √x box on the previous screen did.)'},
   p6_kicker:{zh:'从此不用拖了',en:'No more dragging'},
   p6_q:{zh:'导数，<em>一步算出</em>',en:'Derivatives, <em>in one step</em>'},
-  p6_sub:{zh:'以前每个点都要拖滑块看半天；<br>现在套一下幂法则，一步就出答案。<br>多项式就<b>逐项</b>来：<b>5x³ + 2x</b> 的导数 = <b>15x² + 2</b>。',en:'Before, every point meant dragging a slider.<br>Now apply the power rule and the answer pops out in one step.<br>For polynomials, do it <b>term by term</b>: the derivative of <b>5x³ + 2x</b> = <b>15x² + 2</b>.'},
-  p6_card:{zh:'🧰 你多了一件工具：<b>幂法则</b> —— 不用再拖滑块，看一眼就写出导数。这也是「求导公式」的第一块基石。',en:'🧰 A new tool: the <b>power rule</b> — no more dragging, just read off the derivative. It’s the first building block of the differentiation rules.'},
+  p6_sub:{zh:'单个幂函数你已经会了。碰到<b>多项式</b>（几项相加、还带系数），只要再添两条<b>一看就懂</b>的规矩：',en:'You can already handle a single power. For a <b>polynomial</b> (several terms, with coefficients), just add two <b>obvious</b> rules:'},
+  p6_s0:{zh:'还记得<b>第一屏</b>那道题吗？—— y = x² 在某点，斜率是多少？那时只能拖滑块、量半天。<br>现在有了<b>幂法则</b>：x² 的斜率 = <b>2x</b>。想知道哪点，把那点的 <b>x 代进去</b>，一步就出 👇',en:'Remember the <b>very first screen</b>? — the slope of y = x² at some point. Back then you could only drag a slider and measure.<br>Now, with the <b>power rule</b>: the slope of x² = <b>2x</b>. For any point, just <b>plug its x in</b> — one step 👇'},
+  p6_s1:{zh:'拖滑块换任意 x —— 斜率永远 = <b>2×那个 x</b>，一步算出。<br><span style="color:var(--faint)">第三、四屏是「拖两点、逼近着<b>量</b>」；这里是「代公式、直接<b>算</b>」—— 这就是会求导的意义。</span>',en:'Drag x to any value — the slope is always <b>2×that x</b>, in one step.<br><span style="color:var(--faint)">Screens 3–4 <b>measured</b> it (two points, a limit); here you <b>compute</b> it (plug into the formula) — that is what differentiating buys you.</span>'},
+  p6_lx:{zh:'位置 x',en:'position x'},
+  p6_rules:{zh:'<b>① 系数照抄。</b>把整条曲线的高度都 ×5（上图），「往上爬」跟着 ×5、「往右走」没变 → <b>斜率 ×5</b>。所以 <b>5x³</b> 的斜率 = 5 ×（x³ 的斜率）。<br><b>② 加号逐项。</b>两条曲线高度相加，「往上爬」也相加、除以同一个「往右走」→ <b>斜率相加</b>。所以每项各求各的、再加起来。',en:'<b>① Copy the coefficient.</b> Scale every height ×5 (above): the “up” scales ×5 too, “right” is unchanged → <b>slope ×5</b>. So the slope of <b>5x³</b> = 5 × (slope of x³).<br><b>② Add term by term.</b> If heights add, the “up” adds, over the same “right” → <b>slopes add</b>. So differentiate each term and add.'},
+  p6_work:{zh:'<b>带你算 5x³ + 2x 的导数：</b><br>· <b>5x³</b>：系数 5 照抄；x³ 的斜率 = 3x²（指数 3 搬下来、减 1）→ 5 × 3x² = <b class="bl">15x²</b><br>· <b>2x</b>：系数 2 照抄；x 的斜率 = 1 → 2 × 1 = <b class="bl">2</b><br>· 两项相加 → <b class="bl">15x² + 2</b><br><span style="color:var(--faint)">每一步都有来历：系数照抄、幂法则搬指数、加号逐项 —— 没有一个数是凭空的。</span>',en:'<b>Let us compute the derivative of 5x³ + 2x:</b><br>· <b>5x³</b>: copy the 5; slope of x³ = 3x² (exponent 3 down, minus 1) → 5 × 3x² = <b class="bl">15x²</b><br>· <b>2x</b>: copy the 2; slope of x = 1 → 2 × 1 = <b class="bl">2</b><br>· add the two → <b class="bl">15x² + 2</b><br><span style="color:var(--faint)">Every step is earned: copy the coefficient, power rule moves the exponent, add term by term — no number out of nowhere.</span>'},
+  p6_card:{zh:'🧰 一件工具搞定：<b>幂法则 xⁿ → n·x<sup>n−1</sup></b>。任意一点的斜率（导数），把位置代进去、一步算出，再也不用拖滑块量。',en:'🧰 One tool does it: the <b>power rule xⁿ → n·x<sup>n−1</sup></b>. The slope (derivative) at any point — plug the position in, done in one step, no more dragging.'},
   p6_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
@@ -373,10 +502,10 @@ function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawHero();drawZoomSeq();drawZoom();drawPat();
+  drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
 }
 function initAll(){
-  drawHero();drawZoomSeq();drawZoom();drawPat();
+  drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
   const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
   const aim=e=>{const rc=hero.getBoundingClientRect(),X=50,W=hero.clientWidth-76,xmax=3.2;
     heroA=Math.max(0.3,Math.min(3.1,(e.clientX-rc.left-X)/W*xmax));drawHero();};
@@ -386,7 +515,8 @@ function initAll(){
   hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
   let r1=null;const zRedraw=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawZoom();});};
   document.getElementById('zA').addEventListener('input',zRedraw);document.getElementById('zGap').addEventListener('input',zRedraw);
-  let r2=null;document.getElementById('pA').addEventListener('input',()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawPat();});});
+  let r2=null;const pRedraw=()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawPat();});};
+  document.getElementById('pA').addEventListener('input',pRedraw);document.getElementById('pGap').addEventListener('input',pRedraw);
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
@@ -396,7 +526,11 @@ function initAll(){
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const lastPanel=document.querySelector('.panel:last-of-type');
   new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
-  addEventListener('resize',()=>{drawHero();drawZoomSeq();drawZoom();drawPat();});
+  const pd=document.getElementById('proofDetails');
+  if(pd)pd.addEventListener('toggle',()=>{if(pd.open)drawProof();});
+  {const pg=document.getElementById('proofGap');if(pg)pg.addEventListener('input',drawProof);}
+  {const ax=document.getElementById('ansX');if(ax)ax.addEventListener('input',drawScale);}
+  addEventListener('resize',()=>{drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();if(pd&&pd.open)drawProof();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }
