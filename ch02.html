@@ -98,6 +98,7 @@
   <div class="eqbox reveal" style="transition-delay:.75s" data-i18n="p4_eq"><div class="eqrow"><span class="tok"><span class="sym blue">v</span><span class="lab">此刻的速度</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym blue"><span class="frac"><span class="num">ds</span><span class="den">dt</span></span></span><span class="lab">路程 s 的<b>导数</b><br>= 一点点路程 ÷ 一点点时间<br>（= 切线斜率）</span></span></div></div>
   <div class="sub reveal" style="transition-delay:1.05s" data-i18n="p4_deriv">换句话说：<b>速度，就是「路程」的导数</b> —— 对路程求导，得到的就是速度。v 是它的物理名字，ds/dt 是它的数学写法，同一个东西。</div>
   <div class="lim reveal" style="transition-delay:1.35s" data-i18n="p4_lim">也就是 <b>v = Δt→0 时 Δs/Δt 奔向的那个数</b>（数学里叫「<b>极限</b>」）。</div>
+  <div class="note reveal" style="transition-delay:1.6s;max-width:33em" data-i18n="p4_geo">🖊️ 记一笔：这一章，速度（导数）都是靠<b>在图上画切线、量它的斜率</b>（再把 Δt 缩小逼近）得到的 —— 纯<b>几何测量</b>，还没有公式；换个时刻，就得重画一条线、重量一次。<br>（正因为这样太笨，后面才要发明<b>公式</b>：第五章的「幂法则」，不用画线，代进去一步就算出。）</div>
 </section>
 
 <section class="panel">
@@ -255,6 +256,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第二章',en:'Calculus from Zero · Chapter 2'},
   p1_q:{zh:'此刻，<em>多快</em>？',en:'How fast, <em>right now</em>?'},
   p1_sub:{zh:'一辆车，越开越快（加速度还在变）。<br>总路程 ÷ 总时间，只是「平均」速度。<br>可仪表盘指的是「就在此刻」的速度 —— 比如<b>第 2 秒</b>那一瞬间，车速多少？怎么算？<br><span style="font-size:.9em;color:var(--faint)">（记住这个问题，章尾我们把它算出来。）</span>',en:'A car, speeding up (its acceleration still changing).<br>Total distance ÷ total time is only the <i>average</i> speed.<br>But the dashboard shows the speed <i>right now</i> — e.g. at <b>t = 2 s</b>, how fast? How do you compute that?<br><span style="font-size:.9em;color:var(--faint)">(Hold that question — we answer it at the end.)</span>'},
+  p4_geo:{zh:'🖊️ 记一笔：这一章，速度（导数）都是靠<b>在图上画切线、量它的斜率</b>（再把 Δt 缩小逼近）得到的 —— 纯<b>几何测量</b>，还没有公式；换个时刻，就得重画一条线、重量一次。<br>（正因为这样太笨，后面才要发明<b>公式</b>：第五章的「幂法则」，不用画线，代进去一步就算出。）',en:'🖊️ Note: in this chapter, speed (the derivative) is always found by <b>drawing the tangent on the graph and measuring its slope</b> (then shrinking Δt to the limit) — pure <b>geometry/measuring</b>, no formula yet; every new instant means drawing and measuring again.<br>(Because that is tedious, we later invent a <b>formula</b>: Chapter 5’s power rule computes it in one step, no drawing.)'},
   p5_ans:{zh:'🎯 回到开头那个问题 —— <b>第 2 秒，车多快？</b><br>把上面的「此刻 t」拖到 <b>2 秒</b>：速度曲线在那儿的高（= 路程曲线的切线斜率）就是答案 —— <b class="pk">10 米/秒</b>。开头的问号，答出来了（靠的是把 Δt 缩到极小、逼近，第三屏那样）。',en:'🎯 Back to the opening question — <b>how fast at t = 2 s?</b><br>Slide “now t” to <b>2 s</b>: the height of the speed curve there (= the tangent slope of the distance curve) is the answer — <b class="pk">10 m/s</b>. The opening question, answered (by shrinking Δt to the limit, as on screen 3).'},
   p2_kicker:{zh:'一瞬间的难题',en:'The instant problem'},
   p2_q:{zh:'一瞬间，<em>0 ÷ 0</em>？',en:'One instant, <em>0 ÷ 0</em>?'},

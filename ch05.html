@@ -40,11 +40,19 @@
   .tbl{font-size:clamp(15px,1.9vw,20px);font-weight:600;line-height:2;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
   .tbl .a{color:var(--ink)}.tbl .b{color:var(--blue)}
   .lim{font-size:clamp(15px,1.9vw,20px);color:var(--soft);font-weight:500}.lim b{color:var(--ink)}
-  .deriv{max-width:34em;margin:12px auto 0;text-align:left;background:#f5f7fa;border:1px solid var(--line);border-radius:14px;padding:0 18px}
-  .deriv summary{cursor:pointer;padding:13px 0;font-size:14px;font-weight:600;color:var(--ink);list-style:none}
+  .deriv{max-width:40em;margin:12px auto 0;text-align:left;background:#f5f7fa;border:1px solid var(--line);border-radius:14px;padding:0 18px}
+  .deriv summary{cursor:pointer;padding:13px 0;font-size:clamp(15px,1.9vw,18px);font-weight:600;color:var(--ink);list-style:none}
   .deriv summary::-webkit-details-marker{display:none}
   .deriv summary::before{content:"▸ ";color:var(--blue)}.deriv[open] summary::before{content:"▾ "}
-  .deriv .db{padding:2px 0 16px;font-size:14px;line-height:1.65;color:var(--soft);font-variant-numeric:tabular-nums}
+  .deriv .db{padding:2px 0 16px;font-size:clamp(16px,2vw,21px);line-height:1.8;color:var(--soft);font-variant-numeric:tabular-nums}
+  .prooffig{position:fixed;right:14px;bottom:14px;z-index:50;width:min(350px,92vw);min-width:240px;max-width:min(700px,96vw);background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 34px rgba(0,0,0,.17);padding:0 12px 10px;display:none}
+  .prooffig.show{display:block}
+  .prooffig .pf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 2px 7px;cursor:move;user-select:none;-webkit-user-select:none;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .prooffig .pf-title{font-size:12.5px;font-weight:700;color:var(--ink)}
+  .prooffig .pf-btn{border:none;background:#eef0f3;color:var(--soft);min-width:28px;height:24px;border-radius:7px;cursor:pointer;font-size:15px;font-weight:700;line-height:1;padding:0}
+  .prooffig.min{padding-bottom:0}
+  .prooffig.min .pf-head{border-bottom:none;margin-bottom:0}
+  .prooffig.min .pf-body{display:none}
   .deriv .db b{color:var(--ink)}
   .seg{display:inline-flex;background:var(--line);border-radius:999px;padding:3px}
   .segb{border:none;background:transparent;color:var(--soft);font-size:14px;font-weight:600;padding:7px 17px;border-radius:999px;cursor:pointer;font-family:inherit;transition:color .15s,background .15s}
@@ -127,10 +135,17 @@
     <summary data-i18n="p5_dsum">为什么对<b>所有</b> n 都成立？—— 点开看证明</summary>
     <div class="db">
       <div data-i18n="p5_da"></div>
-      <div style="width:100%;max-width:330px;margin:10px auto"><canvas id="cProof" height="200" style="width:100%;display:block"></canvas></div>
-      <div class="ctrl" style="margin:0 0 8px"><label style="font-size:12px" data-i18n="p5_dg">把 B 拖近 A</label><input id="proofGap" type="range" min="6" max="140" value="95" step="1" style="width:min(220px,66%)"></div>
+      <div class="prooffig" id="proofFloat">
+        <div class="pf-head" id="pfHead"><span class="pf-title" data-i18n="p5_ftitle">互动图 · y=x²</span><span style="display:flex;gap:5px;flex:none"><button class="pf-btn" id="pfSmall" aria-label="缩小">−</button><button class="pf-btn" id="pfBig" aria-label="放大">+</button><button class="pf-btn" id="pfMin" aria-label="收起/展开">▁</button></span></div>
+        <div class="pf-body">
+          <div style="width:100%;margin:2px auto"><canvas id="cProof" height="210" style="width:100%;display:block"></canvas></div>
+          <div class="ctrl" style="margin:0 0 4px"><label style="font-size:13px" data-i18n="p5_dgA">A 的位置 a</label><input id="proofA" type="range" min="6" max="16" value="13" step="1" style="width:min(210px,58%)"></div>
+          <div class="ctrl" style="margin:0 0 4px"><label style="font-size:13px" data-i18n="p5_dg">把 B 拖近 A</label><input id="proofGap" type="range" min="0" max="140" value="95" step="1" style="width:min(210px,58%)"></div>
+          <div id="proofOut" style="margin:0 auto 2px;font-size:clamp(12px,1.5vw,14px);line-height:1.5;color:var(--soft);text-align:center;font-variant-numeric:tabular-nums"></div>
+        </div>
+      </div>
       <div data-i18n="p5_db"></div>
-      <svg viewBox="0 0 320 148" width="100%" style="max-width:320px;display:block;margin:12px auto">
+      <svg viewBox="0 0 320 148" width="100%" style="max-width:440px;display:block;margin:12px auto">
         <text x="47" y="10" text-anchor="middle" font-size="10" fill="#86868b">大方形挖掉小方形（= b²−a²）</text>
         <rect x="53" y="18" width="26" height="65" fill="#cfe0fb" stroke="#0071e3"/>
         <rect x="14" y="57" width="39" height="26" fill="#cdeed6" stroke="#28a745"/>
@@ -150,8 +165,42 @@
         <text x="210" y="60" font-size="14" font-weight="700" fill="#0071e3">= (b−a)(b+a)</text>
         <text x="210" y="82" font-size="11" fill="#86868b">例：5²−3² = 2×8 = 16</text>
       </svg>
-      <div data-i18n="p5_db3" style="max-width:320px;margin:12px auto;padding:11px 14px;background:#fbfbfd;border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.8;color:var(--soft);font-variant-numeric:tabular-nums"></div>
+      <div data-i18n="p5_db3" style="max-width:480px;margin:12px auto;padding:14px 18px;background:#fbfbfd;border:1px solid var(--line);border-radius:10px;font-size:clamp(15px,1.9vw,20px);line-height:1.8;color:var(--soft);font-variant-numeric:tabular-nums"></div>
       <div data-i18n="p5_db2"></div>
+      <div data-i18n="p5_db4a"></div>
+      <div data-i18n="p5_db4b"></div>
+      <svg viewBox="0 0 300 174" width="100%" style="max-width:460px;display:block;margin:14px auto">
+        <text x="150" y="13" text-anchor="middle" font-size="10" fill="#86868b">拿 n=3 举例　·　蓝块 = 一个 b，绿块 = 一个 a　·　b²=b·b、ba=b·a、a²=a·a</text>
+        <text x="65" y="31" text-anchor="middle" font-size="10" fill="#86868b">现在</text>
+        <text x="188" y="31" text-anchor="middle" font-size="10" fill="#86868b">b = a 之后（蓝→绿）</text>
+        <!-- row0 : b² -->
+        <text x="8" y="57" font-size="13" fill="#1d1d1f">b²</text>
+        <rect x="40" y="40" width="24" height="24" rx="4" fill="#cfe0fb" stroke="#0071e3"/><text x="52" y="57" text-anchor="middle" font-size="12" fill="#0071e3">b</text>
+        <rect x="66" y="40" width="24" height="24" rx="4" fill="#cfe0fb" stroke="#0071e3"/><text x="78" y="57" text-anchor="middle" font-size="12" fill="#0071e3">b</text>
+        <text x="120" y="57" text-anchor="middle" font-size="16" fill="#86868b">→</text>
+        <rect x="150" y="40" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="162" y="57" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <rect x="176" y="40" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="188" y="57" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <text x="208" y="57" font-size="13" fill="#1a7a33">= a²</text>
+        <!-- row1 : b·a -->
+        <text x="8" y="95" font-size="13" fill="#1d1d1f">b·a</text>
+        <rect x="40" y="78" width="24" height="24" rx="4" fill="#cfe0fb" stroke="#0071e3"/><text x="52" y="95" text-anchor="middle" font-size="12" fill="#0071e3">b</text>
+        <rect x="66" y="78" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="78" y="95" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <text x="120" y="95" text-anchor="middle" font-size="16" fill="#86868b">→</text>
+        <rect x="150" y="78" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="162" y="95" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <rect x="176" y="78" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="188" y="95" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <text x="208" y="95" font-size="13" fill="#1a7a33">= a²</text>
+        <!-- row2 : a² -->
+        <text x="8" y="133" font-size="13" fill="#1d1d1f">a²</text>
+        <rect x="40" y="116" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="52" y="133" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <rect x="66" y="116" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="78" y="133" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <text x="120" y="133" text-anchor="middle" font-size="16" fill="#86868b">→</text>
+        <rect x="150" y="116" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="162" y="133" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <rect x="176" y="116" width="24" height="24" rx="4" fill="#cdeed6" stroke="#28a745"/><text x="188" y="133" text-anchor="middle" font-size="12" fill="#1a7a33">a</text>
+        <text x="208" y="133" font-size="13" fill="#1a7a33">= a²</text>
+        <line x1="14" y1="150" x2="286" y2="150" stroke="#e5e5ea"/>
+        <text x="150" y="167" text-anchor="middle" font-size="11" fill="#1d1d1f">3 项都成了 a²： a²+a²+a² = 3a²　（一般：n 项 → n·aⁿ⁻¹）</text>
+      </svg>
+      <div data-i18n="p5_db4"></div>
     </div>
   </details>
 </section>
@@ -239,28 +288,56 @@ function drawZoomSeq(){
 // 第五屏证明里的互动图：拖滑块把 B 拖近 A，红色割线 → 切线
 function drawProof(){
   const cv=document.getElementById('cProof');if(!cv||!cv.clientWidth)return;
-  const {ctx,w,h}=setup(cv,200);ctx.clearRect(0,0,w,h);
-  const ff=ffont(),X=20,Y=15,W=w-40,H=h-32,XM=3.0,YM=9.5,fq=x=>x*x;
+  const cssH=Math.max(170,Math.min(460,Math.round(cv.clientWidth*0.62)));
+  const {ctx,w,h}=setup(cv,cssH);ctx.clearRect(0,0,w,h);
+  const ff=ffont(),X=20,Y=15,W=w-40,H=h-40,XM=3.0,YM=9.5,fq=x=>x*x;
   const mx=x=>X+x/XM*W,my=y=>Y+H-y/YM*H;
   const gs=document.getElementById('proofGap'), gap=gs?(+gs.value/100):0.9;
-  const a=1.3, b=Math.min(XM-0.1,a+gap), fa=fq(a),fb=fq(b),steep=(fb-fa)/(b-a);
+  const asl=document.getElementById('proofA'), a=asl?(+asl.value/10):1.3, b=Math.min(XM-0.1,a+gap), fa=fq(a),fb=fq(b);
+  const merged=(b-a)<0.02, steep=merged?2*a:(fb-fa)/(b-a);
   ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
   ctx.fillText(TT('拖下面滑块把 B 拖近 A：红割线 → 切线','drag the slider: B → A, red secant → tangent'),w/2,2);
   ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
   ctx.fillStyle=SOFT;ctx.font='500 10px '+ff;ctx.textAlign='right';ctx.textBaseline='alphabetic';ctx.fillText(TT('位置 x','x'),X+W,Y+H+11);
-  ctx.textAlign='left';ctx.fillText(TT('高度 y = xⁿ','y = xⁿ'),X-12,Y-3);
+  ctx.textAlign='left';ctx.fillText('y = x²',X-12,Y-3);
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();let st=false;
   for(let i=0;i<=100;i++){const x=XM*i/100,yv=fq(x);if(yv>YM){st=false;continue;}const Xp=mx(x),Yp=my(yv);st?ctx.lineTo(Xp,Yp):ctx.moveTo(Xp,Yp);st=true;}ctx.stroke();
-  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;
-  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(b),my(fa));ctx.lineTo(mx(b),my(fb));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右走 b−a','right: b−a'),(mx(a)+mx(b))/2,my(fa)+4);
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上爬 bⁿ−aⁿ','up: bⁿ−aⁿ'),mx(b)+5,(my(fa)+my(fb))/2);
+  if(!merged){
+    ctx.strokeStyle='rgba(0,0,0,.4)';ctx.setLineDash([5,4]);ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(b),my(fa));ctx.lineTo(mx(b),my(fb));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右走 b−a = ','right b−a = ')+(b-a).toFixed(2),(mx(a)+mx(b))/2,my(fa)+4);
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上爬 b²−a² = ','up b²−a² = ')+(fb-fa).toFixed(2),mx(b)+5,(my(fa)+my(fb))/2);
+  }
   const ext=0.6,xL=Math.max(0,a-ext),xR=Math.min(XM,b+ext);
   ctx.strokeStyle=RED;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(xL),my(fa+steep*(xL-a)));ctx.lineTo(mx(xR),my(fa+steep*(xR-a)));ctx.stroke();
   ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mx(a),my(fa),4.5,0,TAU);ctx.fill();ctx.stroke();
   ctx.strokeStyle=IND;ctx.beginPath();ctx.arc(mx(b),my(fb),4.5,0,TAU);ctx.fill();ctx.stroke();
-  ctx.fillStyle=INK;ctx.font='700 11px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('A (a, aⁿ)',mx(a)-6,my(fa)-4);
-  ctx.textAlign='left';ctx.fillText('B (b, bⁿ)',mx(b)+6,my(fb)-4);
+  // A、B 落到 x 轴的虚线 + x 坐标数字
+  ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(mx(a),my(fa));ctx.lineTo(mx(a),my(0));ctx.stroke();
+  if(!merged){ctx.beginPath();ctx.moveTo(mx(b),my(fb));ctx.lineTo(mx(b),my(0));ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillStyle=BLUE;ctx.fillText(a.toFixed(1),mx(a),my(0)+4);
+  if(!merged){ctx.fillStyle=IND;ctx.fillText(b.toFixed(1),mx(b),my(0)+4);}
+  // 点上的完整坐标（x, y 都是数字）
+  ctx.fillStyle=INK;ctx.font='700 12px '+ff;ctx.textBaseline='bottom';
+  if(merged){
+    ctx.textAlign='left';ctx.fillText('B＝A ('+a.toFixed(1)+', '+fa.toFixed(2)+')',mx(a)+8,my(fa)-6);
+  }else{
+    ctx.textAlign='right';ctx.fillText('A ('+a.toFixed(1)+', '+fa.toFixed(2)+')',mx(a)-7,my(fa)-5);
+    const bRight=mx(b)>X+W*0.7;ctx.textAlign=bRight?'right':'left';
+    ctx.fillText('B ('+b.toFixed(1)+', '+fb.toFixed(2)+')',mx(b)+(bRight?-7:7),my(fb)-5);
+  }
+  // 图上实时斜率数字（会随拖动变化）
+  ctx.fillStyle=RED;ctx.font='700 13px '+ff;ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText(TT((merged?'切线':'割线')+'斜率 = ','slope = ')+steep.toFixed(2),X+4,Y+2);
+  const po=document.getElementById('proofOut');
+  if(po)po.innerHTML=merged
+    ? TT('✅ B 拖到和 A <b>重合</b>了：b = a，红色割线绷成了<b>切线</b>。这条曲线是 y=x²，斜率 = 2×'+a.toFixed(1)+' = <b class="pk">'+(2*a).toFixed(2)+'</b>（正好是 x² 在 x='+a.toFixed(1)+' 的导数 2x）。<br><span style="color:var(--faint)">这只是 n=2 的例子；换别的 n 图不同、道理一样，任意 n 由下面②③④ 证。</span>',
+         '✅ B is <b>merged</b> onto A: b = a, the red secant is now the <b>tangent</b>. This curve is y=x², slope = 2×'+a.toFixed(1)+' = <b class="pk">'+(2*a).toFixed(2)+'</b> (exactly x²’s derivative 2x at x='+a.toFixed(1)+').<br><span style="color:var(--faint)">This is just the n=2 case; other n look different but work the same — general n is proved in ②③④ below.</span>')
+    : TT('此刻 b − a = <b>'+(b-a).toFixed(2)+'</b>，割线斜率 = (b²−a²)/(b−a) = <b class="pk">'+steep.toFixed(2)+'</b>　→ 把滑块拖到底，B 和 A 重合（b=a），割线变切线（斜率 '+(2*a).toFixed(2)+'）。<span style="color:var(--faint)">（这张图是 n=2 的例子）</span>',
+         'now b − a = <b>'+(b-a).toFixed(2)+'</b>, secant slope = (b²−a²)/(b−a) = <b class="pk">'+steep.toFixed(2)+'</b> → drag to the end: B merges onto A (b=a), secant → tangent (slope '+(2*a).toFixed(2)+'). <span style="color:var(--faint)">(this figure is the n=2 case)</span>');
 }
 
 // 第六屏：回到开篇那道题 —— y=x² 在 x=1.4，直接算出斜率 2.8（不用拖）
@@ -479,13 +556,16 @@ const I18N={
   p5_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数 n 搬到前面当系数<br>指数减 1</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">a power function</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">exponent n moves front as a coefficient<br>exponent drops by 1</span></span></div>'},
   p5_check:{zh:'验一下：x²（n=2）→ 2·x¹ = 2x ✓　　x³（n=3）→ 3·x² ✓',en:'Check: x² (n=2) → 2·x¹ = 2x ✓　　x³ (n=3) → 3·x² ✓'},
   p5_dsum:{zh:'为什么对<b>所有</b> n 都成立？—— 点开看证明',en:'Why does it hold for <b>every</b> n? — open for the proof'},
-  p5_dg:{zh:'把 B 拖近 A',en:'drag B toward A'},
-  p5_db1:{zh:'',en:''},
-  p5_da:{zh:'<b>要证</b>：xⁿ 在位置 a 的斜率（= 导数）= n·a<sup>n−1</sup>，对任意次方 n 都成立。<br><br><b>① 还是老办法「两点量斜率」（见下图）：</b>曲线 y = xⁿ 的意思是「<b>高 = 横坐标的 n 次方</b>」，所以站在位置 a，曲线的高就是 <b>aⁿ</b>（把 a 代进 xⁿ；比如 n=2 时 a=2 的高 = 2² = 4）。<br>取两点 <b>A=(a, aⁿ)</b>、<b>B=(b, bⁿ)</b>。从 A 走到 B —— 往右走了 <b>b − a</b>，往上爬了 <b>bⁿ − aⁿ</b>。斜率 = 往上爬 ÷ 往右走 = <b>(bⁿ − aⁿ) ÷ (b − a)</b>。再把 B 拖到 A（b → a），看斜率稳在几。',en:'<b>To prove</b>: the slope (= derivative) of xⁿ at position a is n·a<sup>n−1</sup>, for any power n.<br><br><b>① The two-point method (see the figure):</b> the curve y = xⁿ means “<b>height = position to the power n</b>,” so at position a the curve is <b>aⁿ</b> high (plug a into xⁿ; e.g. for n=2, at a=2 the height = 2² = 4).<br>Take A=(a, aⁿ), B=(b, bⁿ). From A to B you go <b>right b − a</b> and <b>up bⁿ − aⁿ</b>. Slope = up ÷ right = <b>(bⁿ − aⁿ) ÷ (b − a)</b>. Then slide B onto A (b → a) and see where the slope settles.'},
-  p5_db:{zh:'<b>② 关键：bⁿ − aⁿ 永远能拆成 (b−a) × 一串 n 项的和。</b>先看最简单的 n=2，用一张面积图就懂 ——',en:'<b>② Key: bⁿ − aⁿ always factors as (b−a) × a sum of n terms.</b> Start with the simplest case n=2 — one area picture makes it clear —'},
-  p5_db3:{zh:'<b style="color:var(--ink)">n=3 没法画面积，但把它乘开就懂：</b><br>(b−a)(b² + ba + a²) 乘开<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br>中间 <b style="color:#d11">b²a 和 −ab²</b> 抵消、<b style="color:#0a7d34">ba² 和 −a²b</b> 抵消（因为 b²a = ab²、ba² = a²b）<br>→ <b style="color:var(--ink)">只剩 b³ − a³</b> ✓<br><span style="color:var(--faint)">n=4、5… 一模一样：中间项<b>全部两两消掉</b>，只剩两头的 bⁿ 和 −aⁿ —— 这就是它对所有 n 都成立的原因。</span>',en:'<b style="color:var(--ink)">n=3 has no area picture — just multiply it out:</b><br>(b−a)(b² + ba + a²)<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br>the middle <b style="color:#d11">b²a and −ab²</b> cancel, <b style="color:#0a7d34">ba² and −a²b</b> cancel (since b²a = ab², ba² = a²b)<br>→ <b style="color:var(--ink)">only b³ − a³ is left</b> ✓<br><span style="color:var(--faint)">n=4, 5, … exactly the same: all middle terms cancel in pairs, leaving only bⁿ and −aⁿ — that is why it holds for every n.</span>'},
-  p5_db2:{zh:'上图：大方形 b² 挖掉小方形 a²，剩下 <b>L 形</b>（蓝条 + 绿条）。把<b>绿条转个方向</b>、拼到蓝条下面 → 正好是一个 <b>(b−a) × (b+a)</b> 的长方形。所以 b² − a² = (b−a)(b+a)。<br>往上推，项数就是 n：<br>· n=2：(b−a)(<b>b + a</b>) ← 2 项<br>· n=3：(b−a)(<b>b² + ba + a²</b>) ← 3 项<br>· 一般 n：(b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← 正好 <b>n 项</b><br><br><b>③ (b−a) 上下抵消：</b>斜率 = (bⁿ − aⁿ) ÷ (b − a) = 那 <b>n 项</b>的和。<br><br><b>④ B 拖到 A（b = a）：</b>那 n 项里，每一项都变成 a<sup>n−1</sup>（b 也成了 a）。一共 <b>n 项</b> → 加起来 = <b>n · a<sup>n−1</sup></b>。<br><br><b>结论：xⁿ 的斜率 = n·x<sup>n−1</sup>，必然。</b><br>验证：n=2 → 2a（x²→2x）✓　n=3 → 3a²（x³→3x²）✓　n=½（√x）→ ½·a<sup>−½</sup> ✓（分数/负次方结论一样，但"n 项"图景只对整数次方直接成立，其余要用别的证法 —— 见上一屏 √x 折叠块）。',en:'A big b² square minus a small a² square leaves an L-shape that rearranges into a <b>(b−a)×(b+a)</b> rectangle. So b² − a² = (b−a)(b+a).<br>Going up, the number of terms is n:<br>· n=2: (b−a)(<b>b + a</b>) ← 2 terms<br>· n=3: (b−a)(<b>b² + ba + a²</b>) ← 3 terms<br>· general n: (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← exactly <b>n terms</b><br><br><b>③ The (b−a) cancels:</b> slope = (bⁿ − aⁿ) ÷ (b − a) = that sum of <b>n terms</b>.<br><br><b>④ B slides onto A (b = a):</b> each of the n terms becomes a<sup>n−1</sup>. <b>n terms</b> → sum = <b>n · a<sup>n−1</sup></b>.<br><br><b>So the slope of xⁿ is n·x<sup>n−1</sup> — necessarily.</b><br>Check: n=2 → 2a ✓　n=3 → 3a² ✓　n=½ (√x) → ½·a<sup>−½</sup> ✓ (fractions/negatives hold too, but the "n terms" picture is only for whole powers — see the √x box on the previous screen).'},
-  p5_dbody:{zh:'<b>要证</b>：xⁿ 在位置 a 的斜率（导数）= n·a<sup>n−1</sup>，对任意次方 n 都成立。<br><br><b>① 还是"两点量斜率"：</b>取 A=(a, aⁿ)、B=(b, bⁿ)，斜率 = 往上爬 ÷ 往右走 = (bⁿ − aⁿ) ÷ (b − a)，再让 B 拖到 A（b→a）。<br><br><b>② 关键：bⁿ − aⁿ 永远能拆成 (b−a) × 一串 n 项的和。</b><br>先看你熟的：<br>· n=2：b² − a² = (b−a)(<b>b + a</b>) ← 括号里 2 项<br>· n=3：b³ − a³ = (b−a)(<b>b² + ba + a²</b>) ← 3 项<br>· n=4：b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>) ← 4 项<br>· 一般 n：bⁿ − aⁿ = (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← 正好 <b>n 项</b><br>（为什么能拆？把右边乘开，中间的项一正一负全抵消，只剩 bⁿ − aⁿ；拿 n=2、3 自己乘一遍就信了。）<br><br><b>③ (b−a) 上下抵消：</b><br>斜率 = (bⁿ − aⁿ) ÷ (b − a) = <b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>（就是那 n 项）<br><br><b>④ B 拖到 A（b = a）：</b>那 n 项里，每一项都变成 a<sup>n−1</sup>（因为 b 也成了 a）：<br>b<sup>n−1</sup> → a<sup>n−1</sup>；　b<sup>n−2</sup>·a → a<sup>n−1</sup>；　…… 每项都是 a<sup>n−1</sup>。<br>一共 <b>n 项</b>，每项 a<sup>n−1</sup> → 加起来 = <b>n · a<sup>n−1</sup></b>。<br><br><b>结论：xⁿ 的斜率 = n·x<sup>n−1</sup>，必然，跑不掉。</b><br><br><b>验证：</b><br>· n=2 → 2·a¹ = 2a（就是 x²→2x）✓<br>· n=3 → 3·a²（x³→3x²）✓<br>· n=½（√x）→ ½·a<sup>−½</sup> ✓（结论一样成立；但"n 项"这个图景只对<b>整数</b>次方直接成立，分数/负数次方要用别的证法 —— 上一屏 √x 的折叠块就是把这条单独验过的。）',en:'<b>To prove</b>: the slope (derivative) of xⁿ at position a is n·a<sup>n−1</sup>, for any power n.<br><br><b>① Same two-point method:</b> take A=(a, aⁿ), B=(b, bⁿ); slope = up ÷ right = (bⁿ − aⁿ) ÷ (b − a), then let B slide to A (b→a).<br><br><b>② Key: bⁿ − aⁿ always factors as (b−a) × a sum of n terms.</b><br>The ones you know:<br>· n=2: b² − a² = (b−a)(<b>b + a</b>) ← 2 terms<br>· n=3: b³ − a³ = (b−a)(<b>b² + ba + a²</b>) ← 3 terms<br>· n=4: b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>) ← 4 terms<br>· general n: bⁿ − aⁿ = (b−a)(<b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b>) ← exactly <b>n terms</b><br>(Why? Multiply the right side out and the middle terms cancel in pairs, leaving bⁿ − aⁿ; check it for n=2, 3.)<br><br><b>③ The (b−a) cancels:</b><br>slope = (bⁿ − aⁿ) ÷ (b − a) = <b>b<sup>n−1</sup> + b<sup>n−2</sup>·a + … + a<sup>n−1</sup></b> (the n terms)<br><br><b>④ B slides onto A (b = a):</b> each of the n terms becomes a<sup>n−1</sup> (since b is now a too):<br>b<sup>n−1</sup> → a<sup>n−1</sup>; b<sup>n−2</sup>·a → a<sup>n−1</sup>; … every term is a<sup>n−1</sup>.<br><b>n terms</b>, each a<sup>n−1</sup> → the sum = <b>n · a<sup>n−1</sup></b>.<br><br><b>So the slope of xⁿ is n·x<sup>n−1</sup> — necessarily.</b><br><br><b>Check:</b><br>· n=2 → 2·a¹ = 2a (x²→2x) ✓<br>· n=3 → 3·a² (x³→3x²) ✓<br>· n=½ (√x) → ½·a<sup>−½</sup> ✓ (the result still holds; but the "n terms" picture works directly only for <b>whole-number</b> powers — fractions/negatives need another method, which is what the √x box on the previous screen did.)'},
+  p5_dg:{zh:'把 B 拖近 A（拖到底 = 和 A 重合）',en:'drag B toward A (all the way = merge onto A)'},
+  p5_dgA:{zh:'A 的位置 a',en:'position a of A'},
+  p5_ftitle:{zh:'互动图 · y=x²（拖标题可移动，右上按钮收起）',en:'Interactive · y=x² (drag title to move, button to fold)'},
+  p5_da:{zh:'<b>要证</b>：xⁿ 在位置 a 的斜率（= 导数）= n·a<sup>n−1</sup>，对任意次方 n 都成立。<br><br><b>① 还是老办法「两点量斜率」（见下图）：</b>曲线 y = xⁿ 的意思是「<b>高 = 横坐标的 n 次方</b>」，所以站在位置 a，曲线的高就是 <b>aⁿ</b>（把 a 代进 xⁿ；比如 n=2 时 a=2 的高 = 2² = 4）。<br>取两点 <b>A=(a, aⁿ)</b>、<b>B=(b, bⁿ)</b>（<b>a、b 是两点的横坐标 x（位置）</b>，aⁿ、bⁿ 才是对应的高度 y；所以后面说的「b=a」指的是<b>横坐标</b>相等）。从 A 走到 B —— 往右走了 <b>b − a</b>，往上爬了 <b>bⁿ − aⁿ</b>。斜率 = 往上爬 ÷ 往右走。再把 B 拖到 A（b → a），看斜率稳在几。<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ 结论①　斜率 = (bⁿ − aⁿ) ÷ (b − a)</div><div style="margin-top:6px;color:var(--faint);font-size:.92em">👉 <b>浮窗</b>里那张互动图<b>拿 n=2（y=x²）举例</b>，让你亲眼看「两点→一点、割线→切线」；式子里我们始终用一般的 xⁿ，任意 n 的证明在②③④。</div>',en:'<b>To prove</b>: the slope (= derivative) of xⁿ at position a is n·a<sup>n−1</sup>, for any power n.<br><br><b>① The two-point method (see the figure):</b> the curve y = xⁿ means “<b>height = position to the power n</b>,” so at position a the curve is <b>aⁿ</b> high (plug a into xⁿ; e.g. for n=2, at a=2 the height = 2² = 4).<br>Take A=(a, aⁿ), B=(b, bⁿ) (<b>a, b are the x-coordinates (positions)</b> of the two points; aⁿ, bⁿ are their heights y — so “b=a” later means their <b>x-coordinates</b> match). From A to B you go <b>right b − a</b> and <b>up bⁿ − aⁿ</b>. Slope = up ÷ right. Then slide B onto A (b → a) and see where the slope settles.<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ Conclusion ①　slope = (bⁿ − aⁿ) ÷ (b − a)</div><div style="margin-top:6px;color:var(--faint);font-size:.92em">👉 The <b>floating</b> interactive figure uses <b>n=2 (y=x²)</b> as an example so you can watch “two points→one, secant→tangent”; the algebra keeps general xⁿ, and any n is proved in ②③④.</div>'},
+  p5_db:{zh:'<b>② 关键：bⁿ − aⁿ 永远能写成 (b−a) 乘上一串东西。</b>别急着看吓人的一般公式，先看几个<b>具体的</b>、自己找规律：<br>· b² − a² = (b−a)(<b>b + a</b>)<br>· b³ − a³ = (b−a)(<b>b² + ba + a²</b>)<br>· b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>)<br>括号里的规律：从「<b>全是 b</b>」起头，每往右一项就<b>把一个 b 换成一个 a</b>，直到「<b>全是 a</b>」；几次方，就有<b>几项</b>。<br>这规律靠谱吗？下面亲手验两个：<b>n=2</b> 用面积图、<b>n=3</b> 乘开对一遍 👇',en:'<b>② Key: bⁿ − aⁿ can always be written as (b−a) times a string of terms.</b> Skip the scary general formula — look at a few <b>concrete</b> ones and spot the pattern:<br>· b² − a² = (b−a)(<b>b + a</b>)<br>· b³ − a³ = (b−a)(<b>b² + ba + a²</b>)<br>· b⁴ − a⁴ = (b−a)(<b>b³ + b²a + ba² + a³</b>)<br>Pattern inside the bracket: start with <b>all b</b>, each step right <b>swaps one b for one a</b>, until <b>all a</b>; the power = the number of terms.<br>Is the pattern trustworthy? Let’s verify two by hand: <b>n=2</b> with an area picture, <b>n=3</b> by multiplying out 👇'},
+  p5_db3:{zh:'<b style="color:var(--ink)">n=3 没法画面积，那就乘开来验 —— 要证：b³ − a³ = (b−a)(b² + ba + a²)。</b><br>把右边 (b−a)(b² + ba + a²) 乘开：<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br><b style="color:#d11">b²a 和 ab²</b> 其实是<b>同一个数</b>（都是 b×b×a —— 乘法换个先后顺序结果不变，比如 3²×2 = 2×3² = 18），所以 <b style="color:#d11">+b²a − ab² = 0</b>；同理 <b style="color:#0a7d34">+ba² − a²b = 0</b>。<br>→ 中间全消，<b style="color:var(--ink)">只剩 b³ − a³</b> ✓<br><span style="color:var(--faint)">n=4、5… 一模一样：中间项<b>全部两两消掉</b>，只剩两头的 bⁿ 和 −aⁿ —— 这就是它对所有 n 都成立的原因。</span>',en:'<b style="color:var(--ink)">n=3 has no area picture, so verify by multiplying — prove: b³ − a³ = (b−a)(b² + ba + a²).</b><br>Multiply out the right side (b−a)(b² + ba + a²):<br>= b³ <b style="color:#d11">+ b²a</b> <b style="color:#0a7d34">+ ba²</b> <b style="color:#d11">− ab²</b> <b style="color:#0a7d34">− a²b</b> − a³<br><b style="color:#d11">b²a and ab²</b> are the <b>same number</b> (both = b×b×a — order of multiplication does not matter, e.g. 3²×2 = 2×3² = 18), so <b style="color:#d11">+b²a − ab² = 0</b>; likewise <b style="color:#0a7d34">+ba² − a²b = 0</b>.<br>→ the middle cancels, <b style="color:var(--ink)">only b³ − a³ remains</b> ✓<br><span style="color:var(--faint)">n=4, 5, … exactly the same: all middle terms cancel in pairs, leaving only bⁿ and −aⁿ — that is why it holds for every n.</span>'},
+  p5_db2:{zh:'上图：大方形 b² 挖掉小方形 a²，剩下 <b>L 形</b>（蓝条 + 绿条）。把<b>绿条转个方向</b>、拼到蓝条下面 → 正好是一个 <b>(b−a) × (b+a)</b> 的长方形，所以 b² − a² = (b−a)(b+a)。<br>n=2（上图）、n=3（上一个方框）都验过，规律成立 ——<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ 结论②　bⁿ − aⁿ = (b − a)(bⁿ⁻¹ + … + aⁿ⁻¹)<br><span style="font-weight:400;color:var(--faint)">括号里那串：头一项全 b、尾一项全 a、共 n 项，后面简称「那串」</span></div><br><b>③ 把结论②代进结论①，上下的 (b−a) 约掉。</b>先拿 n=3 看：<br>结论①：斜率 = (b³ − a³) ÷ (b − a)；结论②：b³ − a³ = (b−a)(b²+ba+a²)。代进去 →<br>斜率 = <b>(b−a)</b>(b²+ba+a²) ÷ <b>(b−a)</b> —— 上下都有 (b−a)，<b>约掉</b> → 斜率 = <b>b² + ba + a²</b>。<br>任意 n 都一样：把分子 bⁿ − aⁿ 换成 (b−a)(bⁿ⁻¹+…+aⁿ⁻¹)，(b−a) 一约 ——<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ 结论③　斜率 = bⁿ⁻¹ + … + aⁿ⁻¹（就是「那串」，此刻已经<b>没有 ÷(b−a)</b> 了）</div><br><b>④ 最后一步：把 B 拖到和 A 重合（b = a）。</b>',en:'The picture above: a big b² square minus a small a² square leaves an <b>L-shape</b> (blue + green bars). Turn the green bar sideways and stack it under the blue bar → exactly a <b>(b−a) × (b+a)</b> rectangle, so b² − a² = (b−a)(b+a).<br>n=2 (above) and n=3 (previous box) both check out ——<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ Conclusion ②　bⁿ − aⁿ = (b − a)(bⁿ⁻¹ + … + aⁿ⁻¹)<br><span style="font-weight:400;color:var(--faint)">the bracket: first term all b, last term all a, n terms — we call it “the string”</span></div><br><b>③ Put Conclusion ② into Conclusion ①; the (b−a) cancels.</b> Take n=3 first:<br>Conclusion ①: slope = (b³ − a³) ÷ (b − a); Conclusion ②: b³ − a³ = (b−a)(b²+ba+a²). Substitute →<br>slope = <b>(b−a)</b>(b²+ba+a²) ÷ <b>(b−a)</b> — the (b−a) <b>cancels</b> → slope = <b>b² + ba + a²</b>.<br>Any n is the same: replace bⁿ − aⁿ with (b−a)(bⁿ⁻¹+…+aⁿ⁻¹), cancel the (b−a) ——<div style="margin:9px 0 2px;padding:7px 12px;background:#eef4ff;border:1px solid #cfe0fb;border-radius:8px;color:var(--ink);font-weight:600">✅ Conclusion ③　slope = bⁿ⁻¹ + … + aⁿ⁻¹ (“the string” — now with <b>no ÷(b−a)</b>)</div><br><b>④ Last step: drag B onto A until they merge (b = a).</b>'},
+  p5_db4a:{zh:'<b>④ 最后一步，就是<span style="color:#0071e3">浮窗里那张互动图</span>在做的事：</b>把滑块「把 B 拖近 A」<b>拖到底</b>，B 落到 A 上（b=a），你会亲眼看到<b>红色割线绷成切线</b>，图上「切线斜率」那个数字<b>停下来不动了</b> —— 这条 y=x² 上，它停在 <b>2a</b>（把「A 的位置」拖到 0.9，它就显示 1.80）。<br>问题只剩一个：这个<b>停下来的斜率，到底等于几</b>？为什么对<b>任意</b>次方 xⁿ 都能算出来？③已经把它化简成「斜率 = 那串」，现在只差把 <b>b=a</b> 代进「那串」，看它坍缩成什么数。<br>「那串」有点长，还是拿 <b>n=3</b> 举例，用下面这张<b>方块图</b>数一遍（它算的，正是互动图里那个「停下来的斜率」）👇',en:'<b>④ The last step is exactly what the <span style="color:#0071e3">floating interactive figure</span> does:</b> drag “drag B toward A” <b>all the way</b>, so B lands on A (b=a), and you watch the <b>red secant tighten into the tangent</b> — the “tangent slope” number on the figure <b>stops moving</b>. On this y=x² it stops at <b>2a</b> (drag “position a of A” to 0.9 and it reads 1.80).<br>One question remains: <b>what does that settled slope equal</b>, and why can we get it for <b>any</b> power xⁿ? ③ already reduced it to “slope = the string”; all that is left is to put <b>b=a</b> into “the string” and see what number it collapses to.<br>“The string” is a bit long, so take <b>n=3</b> as the example and count it in the <b>block picture</b> below (what it computes is exactly that “settled slope” from the interactive figure) 👇'},
+  p5_db4b:{zh:'<b>下面用一张图，看 b=a 之后「那串」怎么变。先教你怎么读这张图 👇</b><br>拿 <b>n=3</b> 举例，「那串」= <b>b² + ba + a²</b>（共 3 项 —— 就是结论②③里那三项）。<br>「那串」里的每一项，其实是<b>几个 b、几个 a 乘在一起</b>。把<b>每一个因子画成一个小方块</b>：<b style="color:#0071e3">蓝块 = 一个 b</b>，<b style="color:#1a7a33">绿块 = 一个 a</b>。<br>· b² 就是 b·b → 画成 <b>[b][b]</b>（两个蓝块）<br>· b·a → <b>[b][a]</b>（一蓝一绿）<br>· a² 就是 a·a → <b>[a][a]</b>（两个绿块）<br>为什么每项都<b>正好 2 个</b>方块？因为「那串」里每一项都是 <b>n−1</b> 个因子相乘（这里 n=3，n−1=2），所以每项都是 2 个方块。',en:'<b>Below is a picture of what “the string” becomes once b=a. First, how to read it 👇</b><br>Take <b>n=3</b>: “the string” = <b>b² + ba + a²</b> (3 terms — the ones from Conclusions ②③).<br>Each term in the string is really <b>some b’s and some a’s multiplied together</b>. Draw <b>each factor as a little block</b>: <b style="color:#0071e3">blue = one b</b>, <b style="color:#1a7a33">green = one a</b>.<br>· b² is b·b → <b>[b][b]</b> (two blue)<br>· b·a → <b>[b][a]</b> (one blue, one green)<br>· a² is a·a → <b>[a][a]</b> (two green)<br>Why exactly <b>2 blocks</b> per term? Because each term in the string is a product of <b>n−1</b> factors (here n=3, n−1=2), so 2 blocks each.'},
+  p5_db4:{zh:'<b>数完了 👆</b> b=a、蓝块全变绿：n=3 时那串 = b²+ba+a² → a²+a²+a² = <b>3a²</b>；一般 n 时每项都变成 a<sup>n−1</sup>、共 n 项，加起来 = <b>n · a<sup>n−1</sup></b>。<br><b>两张图现在对上了</b> 👉 把这个结果套回浮窗里互动图那条 y=x²（n=2）：那串 = b+a，b=a → <b>a+a = 2a</b> —— <b>正是你在互动图里拖出来、亲眼看到停下的那个斜率</b>（a=0.9 时的 1.80）。<br><span style="color:#0071e3">互动图让你「看见」斜率停在某个数；方块图「算出」这个数 = n·a<sup>n−1</sup>。</span><div style="margin:9px 0 2px;padding:7px 12px;background:#e7f7ec;border:1px solid #bfe6c9;border-radius:8px;color:var(--ink);font-weight:600">🎯 最终结论　xⁿ 的斜率 = n · x<sup>n−1</sup>，对任意 n 必然成立</div>回头验第 4 屏那三个例子：n=2 → 2x ✓　n=3 → 3x² ✓　n=½（√x）→ ½·x<sup>−½</sup> ✓　<span style="color:var(--faint)">（分数/负次方结论一样，只是"数方块"这套图只对整数次方直接成立，其余要用别的证法 —— 见上一屏 √x 折叠块。）</span>',en:'<b>Done counting 👆</b> b=a, all blocks green: for n=3 the string = b²+ba+a² → a²+a²+a² = <b>3a²</b>; for general n every term becomes a<sup>n−1</sup> and, with n terms, the total is <b>n · a<sup>n−1</sup></b>.<br><b>Now the two figures line up</b> 👉 apply this to the floating interactive y=x² (n=2): the string = b+a, b=a → <b>a+a = 2a</b> — <b>exactly the settled slope you dragged out in the interactive figure</b> (1.80 at a=0.9).<br><span style="color:#0071e3">The interactive figure lets you “see” the slope settle on a number; the block figure “computes” that number = n·a<sup>n−1</sup>.</span><div style="margin:9px 0 2px;padding:7px 12px;background:#e7f7ec;border:1px solid #bfe6c9;border-radius:8px;color:var(--ink);font-weight:600">🎯 Final　the slope of xⁿ is n · x<sup>n−1</sup>, for every n</div>Back-check the three examples from screen 4: n=2 → 2x ✓　n=3 → 3x² ✓　n=½ (√x) → ½·x<sup>−½</sup> ✓　<span style="color:var(--faint)">(fractions/negatives hold too; the “count blocks” picture is only direct for whole powers — see the √x box on the previous screen.)</span>'},
   p6_kicker:{zh:'从此不用拖了',en:'No more dragging'},
   p6_q:{zh:'导数，<em>一步算出</em>',en:'Derivatives, <em>in one step</em>'},
   p6_sub:{zh:'单个幂函数你已经会了。碰到<b>多项式</b>（几项相加、还带系数），只要再添两条<b>一看就懂</b>的规矩：',en:'You can already handle a single power. For a <b>polynomial</b> (several terms, with coefficients), just add two <b>obvious</b> rules:'},
@@ -503,6 +583,7 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
   drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
+  {const pd0=document.getElementById('proofDetails');if(pd0&&pd0.open)drawProof();}
 }
 function initAll(){
   drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
@@ -527,8 +608,28 @@ function initAll(){
   const lastPanel=document.querySelector('.panel:last-of-type');
   new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
   const pd=document.getElementById('proofDetails');
-  if(pd)pd.addEventListener('toggle',()=>{if(pd.open)drawProof();});
+  const pf=document.getElementById('proofFloat');
+  let pfInView=false;
+  function pfSync(){const show=!!(pd&&pd.open&&pfInView);if(pf){pf.classList.toggle('show',show);if(show&&!pf.classList.contains('min'))requestAnimationFrame(drawProof);}}
+  if(pd){
+    pd.addEventListener('toggle',pfSync);
+    if('IntersectionObserver' in window){new IntersectionObserver(es=>{pfInView=es[0].isIntersecting;pfSync();},{rootMargin:'0px 0px -15% 0px'}).observe(pd);}
+    else{pfInView=true;}
+  }
   {const pg=document.getElementById('proofGap');if(pg)pg.addEventListener('input',drawProof);}
+  {const pa=document.getElementById('proofA');if(pa)pa.addEventListener('input',drawProof);}
+  // 浮窗：收起/展开
+  {const mb=document.getElementById('pfMin');if(mb&&pf)mb.addEventListener('click',()=>{const m=pf.classList.toggle('min');mb.textContent=m?'▢':'▁';if(!m)requestAnimationFrame(drawProof);});}
+  // 浮窗：放大 / 缩小
+  {const big=document.getElementById('pfBig'),sml=document.getElementById('pfSmall');
+   const rez=d=>{if(!pf)return;const cur=pf.getBoundingClientRect().width;const nw=Math.max(240,Math.min(Math.min(innerWidth-16,700),cur+d));pf.style.width=nw+'px';requestAnimationFrame(drawProof);};
+   if(big)big.addEventListener('click',()=>rez(70));if(sml)sml.addEventListener('click',()=>rez(-70));}
+  // 浮窗：拖标题移动
+  {const hd=document.getElementById('pfHead');if(hd&&pf){let ox=0,oy=0,drag=false;
+    hd.addEventListener('pointerdown',e=>{if(e.target.closest('.pf-btn'))return;drag=true;hd.setPointerCapture(e.pointerId);const r=pf.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;pf.style.right='auto';pf.style.bottom='auto';pf.style.left=r.left+'px';pf.style.top=r.top+'px';});
+    hd.addEventListener('pointermove',e=>{if(!drag)return;let nx=Math.max(4,Math.min(innerWidth-pf.offsetWidth-4,e.clientX-ox)),ny=Math.max(4,Math.min(innerHeight-38,e.clientY-oy));pf.style.left=nx+'px';pf.style.top=ny+'px';});
+    hd.addEventListener('pointerup',()=>{drag=false;});hd.addEventListener('pointercancel',()=>{drag=false;});
+  }}
   {const ax=document.getElementById('ansX');if(ax)ax.addEventListener('input',drawScale);}
   addEventListener('resize',()=>{drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();if(pd&&pd.open)drawProof();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
