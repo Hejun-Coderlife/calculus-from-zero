@@ -226,6 +226,14 @@ function drawDeriv(){
   const m=cf(t0),ta=Math.max(0,t0-1.3),tb=Math.min(TMAX,t0+1.3);
   ctx.strokeStyle=PINK;ctx.lineWidth=2;ctx.beginPath();
   ctx.moveTo(mx(ta),my1(cs(t0)+m*(ta-t0)));ctx.lineTo(mx(tb),my1(cs(t0)+m*(tb-t0)));ctx.stroke();
+  // —— 切线斜率的几何测量三角：往右走 / 往上爬，速度 = 两者之比 ——
+  const gRun=Math.min(0.9,Math.max(0.05,t0-0.05)), gxL=t0-gRun, gsBot=cs(t0)-m*gRun, gRise=m*gRun;
+  ctx.strokeStyle='rgba(28,28,36,.5)';ctx.lineWidth=1.3;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(mx(gxL),my1(gsBot));ctx.lineTo(mx(t0),my1(gsBot));ctx.lineTo(mx(t0),my1(cs(t0)));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText(TT('往右走 '+gRun.toFixed(2)+' 秒','run '+gRun.toFixed(2)+'s'),(mx(gxL)+mx(t0))/2,my1(gsBot)+4);
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(TT('往上爬 '+gRise.toFixed(2),'rise '+gRise.toFixed(2)),mx(t0)+6,(my1(gsBot)+my1(cs(t0)))/2);
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(t0),my1(cs(t0)),5,0,TAU);ctx.fill();
   {const tL=t0<TMAX*0.3;ctx.font='600 12px '+ff;ctx.textAlign=tL?'left':'right';ctx.textBaseline='bottom';ctx.fillText(TT('t='+t0.toFixed(1)+'秒, 路程='+cs(t0).toFixed(1),'t='+t0.toFixed(1)+'s, dist='+cs(t0).toFixed(1)),mx(t0)+(tL?8:-8),my1(cs(t0))-4);}
   // 下：速度曲线（把每刻斜率描出来），0..t0 逐步揭示
@@ -244,8 +252,8 @@ function drawDeriv(){
               TT('这辆车忽快忽慢，所以速度曲线是波浪形。','this car speeds up and slows down, so its speed curve is wavy.'),
               TT('这辆车先加速后刹车，所以速度先升后降。','this car speeds up then brakes, so its speed rises then falls.')][car];
   document.getElementById('derOut').innerHTML=
-    TT('此刻 t = <b>'+t0.toFixed(1)+'</b> 秒　·　切线斜率 = 速度 = <b class="pk">'+cf(t0).toFixed(1)+'</b> m/s',
-       'now t = <b>'+t0.toFixed(1)+'</b> s　·　slope = speed = <b class="pk">'+cf(t0).toFixed(1)+'</b> m/s')
+    TT('此刻 t = <b>'+t0.toFixed(1)+'</b> 秒　·　斜率 = 往上爬 ÷ 往右走 = '+gRise.toFixed(2)+' ÷ '+gRun.toFixed(2)+' = 速度 <b class="pk">'+cf(t0).toFixed(1)+'</b> m/s',
+       'now t = <b>'+t0.toFixed(1)+'</b> s　·　slope = rise ÷ run = '+gRise.toFixed(2)+' ÷ '+gRun.toFixed(2)+' = speed <b class="pk">'+cf(t0).toFixed(1)+'</b> m/s')
     +'<br><span class="note">'+desc+'</span>';
 }
 
