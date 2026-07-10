@@ -72,6 +72,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第六章</div>
   <div class="q reveal" data-i18n="p1_q">面积，能<em>直接算</em>吗？</div>
   <div class="sub reveal" data-i18n="p1_sub">第一、三章算面积，靠<b>数格子、数矩形</b> —— 又慢又不准。<br>有没有办法，一步就<b>直接算出</b>曲线下的面积？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="320"></canvas></div>
 </section>
 
@@ -241,7 +242,7 @@ function drawInt(){
   const mx=t=>X+t/XMAX*W, my1=y=>Y1+H1-y/FMX*H1, my2=a=>Y2+H2-a/AMX*H2;
   const xv=+document.getElementById('intX').value/10;
   // ---- 上：边界 f=x + 阴影面积 0..xv ----
-  axesBox(ctx,X,Y1,W,H1,'x',TT('导数 f','derivative f'),XMAX,FMX,1,FMX>4?2:1,hoverId==='cInt');
+  axesBox(ctx,X,Y1,W,H1,'x',TT('边界高 f','height f'),XMAX,FMX,1,FMX>4?2:1,hoverId==='cInt');
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my1(0));
   for(let i=0;i<=40;i++){const t=xv*i/40;ctx.lineTo(mx(t),my1(f(t)));}ctx.lineTo(mx(xv),my1(0));ctx.closePath();ctx.fill();
   {ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 13px '+ff;
@@ -259,17 +260,18 @@ function drawInt(){
   for(let i=0;i<=80;i++){const t=XMAX*i/80,x=mx(t),y=my2(Af(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
   ctx.fillStyle=PINK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('F = '+FN.Fs,mx(XMAX)-4,my2(Math.min(Af(XMAX),AMX*0.96))-2);
   // 一步的宽度 Δx（可拖）、真实新增面积 dA（= 上图梯形）、这一步的平均斜率 sec = dA/Δx
-  const dxEl=document.getElementById('intDx'),dxv=dxEl?+dxEl.value/100:1;
-  const run=Math.min(dxv,XMAX-0.15-xv);
+  const dxEl=document.getElementById('intDx'),rawv=dxEl?+dxEl.value:100,isLim=rawv<=6;
+  const run=isLim?0.004:Math.min(rawv/100,XMAX-0.15-xv);
   const dA=Af(xv+run)-Af(xv), sec=dA/run, fh=f(xv);
+  const dxLabel=isLim?'→ 0':run.toFixed(2), daLabel=isLim?'→ 0':dA.toFixed(2);
   // 割线：连 (xv,A) 与 (xv+Δx,A) 两点，两端稍延伸
   {const ta=Math.max(0,xv-0.7),tb=Math.min(XMAX,xv+run+0.7);
    ctx.strokeStyle=BLUE;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(mx(ta),my2(Af(xv)+sec*(ta-xv)));ctx.lineTo(mx(tb),my2(Af(xv)+sec*(tb-xv)));ctx.stroke();}
   // 割线三角形：往右 Δx、往上 dA（真实新增 = 上图梯形）
   ctx.strokeStyle='rgba(0,0,0,.5)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
   ctx.beginPath();ctx.moveTo(mx(xv),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)+dA));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+run.toFixed(1),'right '+run.toFixed(1)),(mx(xv)+mx(xv+run))/2,my2(Af(xv))+4);
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+dA.toFixed(2),'up '+dA.toFixed(2)),mx(xv+run)+6,(my2(Af(xv))+my2(Af(xv)+dA))/2);
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+dxLabel,'right '+dxLabel),(mx(xv)+mx(xv+run))/2,my2(Af(xv))+4);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+daLabel,'up '+daLabel),mx(xv+run)+6,(my2(Af(xv))+my2(Af(xv)+dA))/2);
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(xv),my2(Af(xv)),5,0,TAU);ctx.fill();
   {ctx.font='600 12px '+ff;const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';const lx=mx(xv)+(L?9:-9);ctx.textBaseline='bottom';
    ctx.fillStyle=INK;ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),lx,my2(Af(xv))-20);
@@ -286,14 +288,14 @@ function drawInt(){
    ctx.moveTo(px,my1(0));ctx.lineTo(px,my1(f(xv)));ctx.lineTo(pxb,my1(f(xv+run)));ctx.lineTo(pxb,my1(0));ctx.closePath();ctx.fill();
    ctx.strokeStyle='#28a745';ctx.lineWidth=1.6;ctx.stroke();
    ctx.fillStyle='#1a7a33';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 12px '+ff;
-   ctx.fillText(TT('多出 '+dA.toFixed(2),'gain '+dA.toFixed(2)),(px+pxb)/2,my1(f(xv)*0.42));
+   ctx.fillText(TT('多出 '+daLabel,'gain '+daLabel),(px+pxb)/2,my1(f(xv)*0.42));
    ctx.font='500 9.5px '+ff;ctx.textBaseline='top';ctx.fillStyle='#28a745';
    ctx.fillText(TT('往右一步多的一条','one step of extra area'),(px+pxb)/2,my1(0)+3);
    // 下图：割线“往上”这段染绿，标 = 上图梯形（相等）
    const q0=my2(Af(xv)),q1=my2(Af(xv)+dA),qx=pxb;
    ctx.strokeStyle='#28a745';ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(qx,q0);ctx.lineTo(qx,q1);ctx.stroke();
    ctx.fillStyle='#1a7a33';ctx.font='700 11px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';
-   ctx.fillText(TT('往上 '+dA.toFixed(2)+' = 上图梯形','up '+dA.toFixed(2)+' = trapezoid above'),qx+7,(q0+q1)/2);}
+   ctx.fillText(TT('往上 '+daLabel+' = 上图梯形','up '+daLabel+' = trapezoid above'),qx+7,(q0+q1)/2);}
   // 连线
   ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(xv),my1(f(xv)));ctx.lineTo(mx(xv),my2(Af(xv)));ctx.stroke();ctx.setLineDash([]);
   // 两图之间：边界高（极限速率）vs 这一步的平均速率 —— 拖小 Δx 两者逼近
@@ -307,8 +309,8 @@ function drawInt(){
   document.getElementById('intOut').innerHTML=
     TT('x = <b>'+xv.toFixed(1)+'</b>　·　边界高 f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　阴影面积 A = <b class="bl">'+Af(xv).toFixed(1)+'</b>',
        'x = <b>'+xv.toFixed(1)+'</b>　·　height f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　area A = <b class="bl">'+Af(xv).toFixed(1)+'</b>')
-    +'<br><span class="note">'+TT('这一步（Δx = '+run.toFixed(2)+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于边界高 f = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = 边界高」，也是「求面积 = 找原函数」。',
-       'over this step (Δx = '+run.toFixed(2)+') the average growth = <b class="pk">'+sec.toFixed(2)+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
+    +'<br><span class="note">'+TT('这一步（Δx = '+dxLabel+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于边界高 f = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = 边界高」，也是「求面积 = 找原函数」。',
+       'over this step (Δx = '+dxLabel+') the average growth = <b class="pk">'+sec.toFixed(2)+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
 }
 
 const I18N={
@@ -317,6 +319,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第六章',en:'Calculus from Zero · Chapter 6'},
   p1_q:{zh:'面积，能<em>直接算</em>吗？',en:'Can we <em>just compute</em> area?'},
   p1_sub:{zh:'第一、三章算面积，靠<b>数格子、数矩形</b> —— 又慢又不准。<br>有没有办法，一步就<b>直接算出</b>曲线下的面积？',en:'In chapters 1 & 3 we found area by <b>counting squares and rectangles</b> — slow and imprecise.<br>Is there a way to <b>compute</b> the area under a curve in one step?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一条曲线，求它下面的面积</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一条曲线 <b>f</b>（有公式）＋ 一段区间 <b>[a, b]</b><br><b>要算</b>：曲线 f 下方、从 a 到 b 的<b>面积</b><br><b>办法</b>：找 f 的<b>原函数 F</b>（求导能变回 f）→ 面积 = <b>F(b) − F(a)</b><br><span style="color:var(--faint);font-size:.92em">（后面哪一步看懵了，回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a curve, find the area under it</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a curve <b>f</b> (with a formula) ＋ an interval <b>[a, b]</b><br><b>Find</b>: the <b>area</b> under f, from a to b<br><b>How</b>: find the <b>antiderivative F</b> of f (differentiates back to f) → area = <b>F(b) − F(a)</b><br><span style="color:var(--faint);font-size:.92em">(Lost in any step later? Come back to this card to see what the whole chapter is about.)</span></div>'},
   p2_kicker:{zh:'面积会长大',en:'Area grows'},
   p2_q:{zh:'面积，是个<em>函数</em>',en:'Area is a <em>function</em>'},
   p2_sub:{zh:'<b>A(x)</b> = 「从 0 到右边界 x、这块阴影的面积」。拖动 x，面积跟着变 —— 同一个 x 只对一块面积，所以 A 是随 x 变的<b>函数</b>，记作 A(x)。<br>这块面积和边界线什么关系？<b>下一屏</b>见分晓。<br><span style="font-size:.9em;color:var(--faint)">（边界特意用直线，面积就是个规整的直角三角形，好量好算。）</span>',en:'<b>A(x)</b> = “the shaded area from 0 to the right edge x.” Drag x and the area changes — each x gives one area, so A is a <b>function</b> of x, written A(x).<br>How does it relate to the boundary line? <b>Next screen</b>.<br><span style="font-size:.9em;color:var(--faint)">(The boundary is a straight line on purpose, so the area is a tidy right triangle — easy to measure.)</span>'},
@@ -324,7 +327,7 @@ const I18N={
   p3_kicker:{zh:'面积 ↔ 原函数',en:'Area ↔ antiderivative'},
   p3_q:{zh:'面积长大的<em>快慢</em>，就是边界线的高',en:'How fast area <em>grows</em> is the boundary’s height'},
   p3_sub:{zh:'两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>（面积越大，爬得越高）。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b> —— 这个原函数，后面统一记作 <b>F</b>，<b>所以这条面积曲线 A 就是 F</b>。',en:'Two graphs stacked: on top the <b>boundary line</b>; below, the <b>area drawn as its own curve A(x)</b> (more area, higher it climbs).<br>Drag x and watch the middle line: <b>the boundary’s height = how fast the area grows</b> — equal once you shrink the step Δx.<br>In reverse, differentiating A gives f, so A is the <b>antiderivative</b> of f — from now on we call this antiderivative <b>F</b>, so <b>this area curve A is F</b>.'},
-  p3_syms:{zh:'📎 <b>这一章的符号</b>（后面会反复用）：<br><b>f</b> = 那条曲线（边界线），<b>f(x)</b> = 它在 x 处有多高　·　<b>A(x)</b> = 从 0 到 x 的阴影面积　·　<b>F</b> = f 的<b>原函数</b>（求导能变回 f）　·　<b>a、b</b> = 左右两端　·　<b>dx</b> = 每一条的宽',en:'📎 <b>Symbols in this chapter</b> (used throughout):<br><b>f</b> = the curve (boundary), <b>f(x)</b> = how high it is at x　·　<b>A(x)</b> = shaded area from 0 to x　·　<b>F</b> = the <b>antiderivative</b> of f (its derivative is f)　·　<b>a, b</b> = the two ends　·　<b>dx</b> = width of each strip'},
+  p3_syms:{zh:'📎 <b>这一章的符号</b>（后面会反复用）：<br><b>· 这几屏就用：</b><b>f</b> = 那条曲线（导数），<b>f(x)</b> = 它在 x 处有多高　·　<b>A(x)</b> = 从 0 到 x 的阴影面积　·　<b>F</b> = f 的<b>原函数</b>（= 面积曲线 A，求导变回 f）<br><b>· 后面「算积分」几屏才用：</b><b>a、b</b> = 左右两端　·　<b>dx</b> = 每一条的宽（这张图里还没出现）',en:'📎 <b>Symbols in this chapter</b> (used throughout):<br><b>· Used on these screens:</b> <b>f</b> = the curve (derivative), <b>f(x)</b> = its height at x　·　<b>A(x)</b> = shaded area from 0 to x　·　<b>F</b> = the <b>antiderivative</b> of f (= area curve A)<br><b>· Only later, for integration:</b> <b>a, b</b> = the two ends　·　<b>dx</b> = width of each strip (not in this figure yet)'},
   p3_lx:{zh:'移动 x',en:'move x'},
   p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
