@@ -90,6 +90,7 @@
   <div class="kicker reveal" data-i18n="p3_kicker">面积 ↔ 原函数</div>
   <div class="q reveal" data-i18n="p3_q">面积长大的<em>快慢</em>，就是曲线的高</div>
   <div class="sub reveal" data-i18n="p3_sub">两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b> —— 这个原函数，后面统一记作 <b>F</b>，<b>所以这条面积曲线 A 就是 F</b>。</div>
+  <div class="reveal" data-i18n="p3_point" style="max-width:34em;margin:6px auto 0;padding:10px 16px;background:#fff8e6;border:1px solid #f0dfa0;border-radius:12px;font-size:clamp(14px,1.8vw,16px);color:var(--ink);line-height:1.6;text-align:left"></div>
   <div class="reveal" data-i18n="p3_syms" style="max-width:33em;margin:4px auto 8px;padding:9px 15px;background:#f5f7fa;border:1px solid var(--line);border-radius:11px;font-size:clamp(12px,1.6vw,14px);color:var(--soft);line-height:1.75;text-align:left"></div>
   <div class="ctrl reveal"><span class="seg"><button class="segb on" data-fni="0">直线 f=x</button><button class="segb" data-fni="1">抛物线 f=x²</button><button class="segb" data-fni="2">√x</button></span></div>
   <div class="fig reveal"><canvas id="cInt" height="470"></canvas></div>
@@ -285,7 +286,7 @@ function drawInt(){
   // —— 增量：往右一步，面积多出的真实那块 = 梯形（上边贴 f 斜线）——
   {const px=mx(xv),pxb=mx(xv+run);
    ctx.fillStyle='rgba(40,167,69,.28)';ctx.beginPath();
-   ctx.moveTo(px,my1(0));ctx.lineTo(px,my1(f(xv)));ctx.lineTo(pxb,my1(f(xv+run)));ctx.lineTo(pxb,my1(0));ctx.closePath();ctx.fill();
+   ctx.moveTo(px,my1(0));ctx.lineTo(px,my1(f(xv)));for(let i=1;i<=24;i++){const t=xv+run*i/24;ctx.lineTo(mx(t),my1(f(t)));}ctx.lineTo(pxb,my1(0));ctx.closePath();ctx.fill();
    ctx.strokeStyle='#28a745';ctx.lineWidth=1.6;ctx.stroke();
    ctx.fillStyle='#1a7a33';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 12px '+ff;
    ctx.fillText(TT('多出 '+daLabel,'gain '+daLabel),(px+pxb)/2,my1(f(xv)*0.42));
@@ -327,6 +328,7 @@ const I18N={
   p3_kicker:{zh:'面积 ↔ 原函数',en:'Area ↔ antiderivative'},
   p3_q:{zh:'面积长大的<em>快慢</em>，就是边界线的高',en:'How fast area <em>grows</em> is the boundary’s height'},
   p3_sub:{zh:'两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>（面积越大，爬得越高）。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b> —— 这个原函数，后面统一记作 <b>F</b>，<b>所以这条面积曲线 A 就是 F</b>。',en:'Two graphs stacked: on top the <b>boundary line</b>; below, the <b>area drawn as its own curve A(x)</b> (more area, higher it climbs).<br>Drag x and watch the middle line: <b>the boundary’s height = how fast the area grows</b> — equal once you shrink the step Δx.<br>In reverse, differentiating A gives f, so A is the <b>antiderivative</b> of f — from now on we call this antiderivative <b>F</b>, so <b>this area curve A is F</b>.'},
+  p3_point:{zh:'🔍 <b>这一屏在干嘛</b>：量出「面积曲线 A（下图）的斜率」，发现它<b>正好 = f（上图的高）</b> —— 于是「求面积」就翻成了「<b>找原函数</b>」。',en:'🔍 <b>What this screen does</b>: measure the <b>slope of the area curve A</b> (below), find it <b>equals f</b> (the height above) — so finding the area becomes <b>finding the antiderivative</b>.'},
   p3_syms:{zh:'📎 <b>这一章的符号</b>（后面会反复用）：<br><b>· 这几屏就用：</b><b>f</b> = 那条曲线（导数），<b>f(x)</b> = 它在 x 处有多高　·　<b>A(x)</b> = 从 0 到 x 的阴影面积　·　<b>F</b> = f 的<b>原函数</b>（= 面积曲线 A，求导变回 f）<br><b>· 后面「算积分」几屏才用：</b><b>a、b</b> = 左右两端　·　<b>dx</b> = 每一条的宽（这张图里还没出现）',en:'📎 <b>Symbols in this chapter</b> (used throughout):<br><b>· Used on these screens:</b> <b>f</b> = the curve (derivative), <b>f(x)</b> = its height at x　·　<b>A(x)</b> = shaded area from 0 to x　·　<b>F</b> = the <b>antiderivative</b> of f (= area curve A)<br><b>· Only later, for integration:</b> <b>a, b</b> = the two ends　·　<b>dx</b> = width of each strip (not in this figure yet)'},
   p3_lx:{zh:'移动 x',en:'move x'},
   p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
