@@ -253,7 +253,7 @@ function drawInt(){
   axesBox(ctx,X,Y2,W,H2,'x',TT('原函数 F = 面积 A','antiderivative F = area A'),XMAX,AMX,1,AMX>4?2:1,hoverId==='cInt');
   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();
   for(let i=0;i<=80;i++){const t=XMAX*i/80,x=mx(t),y=my2(Af(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
-  ctx.fillStyle=PINK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('F = '+FN.Fs,mx(XMAX)-4,my2(Math.min(Af(XMAX),AMX*0.96))-2);
+  ctx.fillStyle=PINK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('A = F = '+FN.Fs,mx(XMAX)-4,my2(Math.min(Af(XMAX),AMX*0.96))-2);
   // 一步的宽度 Δx（可拖）、真实新增面积 dA（= 上图梯形）、这一步的平均斜率 sec = dA/Δx
   const dxEl=document.getElementById('intDx'),rawv=dxEl?+dxEl.value:100,isLim=rawv<=6;
   const run=isLim?0.004:Math.min(rawv/100,XMAX-0.15-xv);
