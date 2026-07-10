@@ -81,9 +81,10 @@
   <div class="q reveal" data-i18n="p2_q">面积，是个<em>函数</em></div>
   <div class="sub reveal" data-i18n="p2_sub">让右边界 x 往右移，阴影面积就跟着长大 —— 得到一个「<b>面积函数</b> A(x)」。<br>第三章发现过：<b>A 的变化率（斜率）= 曲线当前的高度</b>。<br>所以反过来想：要算面积，就<b>找一个函数，它的导数正好是这条曲线</b>。<br>这个函数，叫<b>原函数（反导数）</b>。</div>
   <div class="reveal" data-i18n="p2_point" style="max-width:34em;margin:6px auto 0;padding:10px 16px;background:#fff8e6;border:1px solid #f0dfa0;border-radius:12px;font-size:clamp(14px,1.8vw,16px);color:var(--ink);line-height:1.6;text-align:left"></div>
+  <div class="ctrl reveal"><span class="seg"><button class="segb" data-afn="0">直线 f=x</button><button class="segb on" data-afn="1">抛物线 f=x²</button><button class="segb" data-afn="2">√x</button></span></div>
   <div class="fig reveal" style="width:min(340px,82vw)"><canvas id="cAreaFn" height="380"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p2_lx">右边界 x</label>
-    <input id="afX" type="range" min="4" max="40" value="20" step="1"></div>
+    <input id="afX" type="range" min="8" max="98" value="55" step="1"></div>
   <div class="readout reveal" id="afOut"></div>
 </section>
 
@@ -198,42 +199,28 @@ function drawHero(){
   ctx.fillStyle=SOFT;ctx.font='500 11px '+ff;ctx.fillText(TT('← 拖动右边界 →','← drag the right edge →'),X+W/2,Y-9);
 }
 
+let fnIdxAf=1;
 function drawAreaFn(){
   const cv=document.getElementById('cAreaFn');if(!cv)return;const {ctx,w,h}=setup(cv,380);ctx.clearRect(0,0,w,h);
   const ff=ffont();
-  const xv=+document.getElementById('afX').value/10, A=Af(xv);
-  const XM=4.6, YM=5.0;                 // 等比例：x、y 每格像素相同 —— y=x 是 45°，高=底 才会画成一样长
-  const padL=46,padR=92,padT=18,padB=40, aW=w-padL-padR, aH=h-padT-padB;
-  const s=Math.min(aW/XM, aH/YM), W=XM*s, H=YM*s, X=padL, Y=padT+(aH-H)/2;
-  const mx=t=>X+t*s, my=y=>Y+H-y*s;
-  axesBox(ctx,X,Y,W,H,'x',TT('高','y'),0,0,0,0);
-  // f=x 下方、0..xv 的阴影三角形
+  const FN=[{f:x=>x,F:x=>x*x/2,fs:'x',ymax:3.0},{f:x=>x*x,F:x=>x*x*x/3,fs:'x²',ymax:7.2},{f:x=>Math.sqrt(x),F:x=>2/3*Math.pow(x,1.5),fs:'√x',ymax:1.9}][fnIdxAf];
+  const f=FN.f,Af=FN.F,XM=2.6,YM=FN.ymax;
+  const xv=+document.getElementById('afX').value/100*XM, A=Af(xv);
+  const X=46,Y=18,W=w-92,H=h-56;
+  const mx=t=>X+t/XM*W, my=y=>Y+H-y/YM*H;
+  axesBox(ctx,X,Y,W,H,'x',TT('f 的高','height f'),XM,YM,1,YM>4?2:1,false);
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my(0));
-  ctx.lineTo(mx(xv),my(f(xv)));ctx.lineTo(mx(xv),my(0));ctx.closePath();ctx.fill();
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(XM),my(f(XM)));ctx.stroke();
-  ctx.fillStyle=BLUE;ctx.font='600 12px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';
-  ctx.fillText(TT('边界 y = x','boundary y = x'),mx(XM*0.9),my(f(XM*0.9))-5);
-  // 高：右边这条竖线（= 三角形的高），画醒目 + 上下端帽，和蓝色斜边区分开
-  ctx.strokeStyle=PINK;ctx.lineWidth=2.6;
-  ctx.beginPath();ctx.moveTo(mx(xv),my(f(xv)));ctx.lineTo(mx(xv),my(0));ctx.stroke();
-  ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(mx(xv)-5,my(f(xv)));ctx.lineTo(mx(xv)+5,my(f(xv)));ctx.moveTo(mx(xv)-5,my(0));ctx.lineTo(mx(xv)+5,my(0));ctx.stroke();
+  for(let i=0;i<=48;i++){const t=xv*i/48;ctx.lineTo(mx(t),my(f(t)));}ctx.lineTo(mx(xv),my(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<=80;i++){const t=XM*i/80,px=mx(t),py=my(f(t));i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
+  ctx.fillStyle=BLUE;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('f = '+FN.fs,mx(XM)-4,my(Math.min(f(XM),YM*0.95))+(f(XM)>YM*0.9?16:-2));
+  ctx.strokeStyle='rgba(0,0,0,.3)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(mx(xv),my(0));ctx.lineTo(mx(xv),my(f(xv)));ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(xv),my(f(xv)),5,0,TAU);ctx.fill();
-  // 直角标记（右下角 (xv,0)，强调这是直角三角形）
-  {const cs=7;ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=1.1;
-   ctx.beginPath();ctx.moveTo(mx(xv)-cs,my(0));ctx.lineTo(mx(xv)-cs,my(0)-cs);ctx.lineTo(mx(xv),my(0)-cs);ctx.stroke();}
-  // 底 = x（沿底边居中）
-  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
-  ctx.fillText(TT('底 = x = '+xv.toFixed(1),'base = x = '+xv.toFixed(1)),mx(xv/2),my(0)+6);
-  // 高 = x：标签紧贴那条粉色竖线右侧
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=PINK;ctx.font='700 12px '+ff;
-  ctx.fillText(TT('高 = x = '+f(xv).toFixed(1),'height = x = '+f(xv).toFixed(1)),mx(xv)+10,my(f(xv)/2));
-  // 大号面积 + ½×底×高（就写在阴影里）
-  ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font='700 19px '+ff;ctx.fillText(TT('面积 = '+A.toFixed(1),'area = '+A.toFixed(1)),mx(Math.max(xv*0.5,0.9)),my(f(xv)*0.34));
-  ctx.font='500 11px '+ff;ctx.fillText('½ × '+xv.toFixed(1)+' × '+f(xv).toFixed(1),mx(Math.max(xv*0.5,0.9)),my(f(xv)*0.34)+17);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('x = '+xv.toFixed(1),mx(xv),my(0)+5);
+  ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 17px '+ff;
+  ctx.fillText(TT('阴影面积 A = ','area A = ')+A.toFixed(1),mx(Math.max(xv*0.42,0.5)),my(Math.max(f(xv)*0.26,YM*0.1)));
   document.getElementById('afOut').innerHTML=
-    TT('右边界 x = <b>'+xv.toFixed(1)+'</b>　→　面积 A(x) = <b class="bl">'+A.toFixed(1)+'</b><br><span class="note">面积 = ½ × 底 × 高 = ½ × '+xv.toFixed(1)+' × '+f(xv).toFixed(1)+' = <b>'+A.toFixed(1)+'</b>。拖动 x：底和高一起变，面积这个数也跟着变 —— 所以它是随 x 变的函数 A(x)。</span>',
-       'right edge x = <b>'+xv.toFixed(1)+'</b>　→　area A(x) = <b class="bl">'+A.toFixed(1)+'</b><br><span class="note">Area = ½ × base × height = ½ × '+xv.toFixed(1)+' × '+f(xv).toFixed(1)+' = <b>'+A.toFixed(1)+'</b>. Drag x: base and height change together, and so does the area — so it is a function A(x).</span>');
+    TT('右边界 x = <b>'+xv.toFixed(1)+'</b>　→　阴影面积 A(x) = <b class="bl">'+A.toFixed(1)+'</b><br><span class="note">拖动 x：这块阴影面积跟着变 —— 同一个 x 只对一块面积，所以它是随 x 变的<b>函数 A(x)</b>。换上面的函数 f，A(x) 也跟着换一条。</span>',
+       'right edge x = <b>'+xv.toFixed(1)+'</b>　→　area A(x) = <b class="bl">'+A.toFixed(1)+'</b><br><span class="note">Drag x: the shaded area changes — each x gives one area, so it is a <b>function A(x)</b>. Switch f above and A(x) changes too.</span>');
 }
 
 let fnIdxInt=0;
@@ -267,7 +254,7 @@ function drawInt(){
   // 一步的宽度 Δx（可拖）、真实新增面积 dA（= 上图梯形）、这一步的平均斜率 sec = dA/Δx
   const dxEl=document.getElementById('intDx'),rawv=dxEl?+dxEl.value:100,isLim=rawv<=6;
   const run=isLim?0.004:Math.min(rawv/100,XMAX-0.15-xv);
-  const dA=Af(xv+run)-Af(xv), sec=dA/run, fh=f(xv);
+  const fh=f(xv), dA=Af(xv+run)-Af(xv), sec=isLim?fh:dA/run;
   const dxLabel=isLim?'→ 0':run.toFixed(2), daLabel=isLim?'→ 0':dA.toFixed(2);
   // 割线：连 (xv,A) 与 (xv+Δx,A) 两点，两端稍延伸
   {const ta=Math.max(0,xv-0.7),tb=Math.min(XMAX,xv+run+0.7);
@@ -280,7 +267,7 @@ function drawInt(){
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(xv),my2(Af(xv)),5,0,TAU);ctx.fill();
   {ctx.font='600 12px '+ff;const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';const lx=mx(xv)+(L?9:-9);ctx.textBaseline='bottom';
    ctx.fillStyle=INK;ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),lx,my2(Af(xv))-20);
-   ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢（斜率）= '+sec.toFixed(2),'growth rate (slope) = '+sec.toFixed(2)),lx,my2(Af(xv))-6);}
+   ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢（量出的斜率）= '+(isLim?sec.toFixed(1):sec.toFixed(2)),'growth rate (measured) = '+(isLim?sec.toFixed(1):sec.toFixed(2))),lx,my2(Af(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.fillText(TT('这条曲线的高 = 上图那块阴影的大小','height of this curve = size of the shaded area above'),X+W/2,Y2-6);
   // 下图：把“面积 A 的值”画成看得见的高度标尺（红点↓到 x 轴）——它就等于上图那块阴影
@@ -307,15 +294,15 @@ function drawInt(){
   {const by=(Y1+H1+Y2)/2+2,near=Math.abs(sec-fh)<0.06;
    const bt1=TT('f 的高 = '+fh.toFixed(1),'height f = '+fh.toFixed(1));
    const mid=near?TT('　＝　','　=　'):TT('　← 拖小 Δx ←　','　← shrink Δx ←　');
-   const bt2=TT('这一步平均 = '+sec.toFixed(2),'step avg = '+sec.toFixed(2));
+   const bt2=TT('这一步平均 = '+(isLim?sec.toFixed(1):sec.toFixed(2)),'step avg = '+(isLim?sec.toFixed(1):sec.toFixed(2)));
    ctx.font='700 13px '+ff;const w1=ctx.measureText(bt1).width,wm=ctx.measureText(mid).width,w2=ctx.measureText(bt2).width,total=w1+wm+w2,bx=X+W/2-total/2;
    ctx.fillStyle='rgba(251,251,253,.92)';ctx.fillRect(bx-8,by-12,total+16,24);
    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=PINK;ctx.fillText(bt1,bx,by);ctx.fillStyle=near?'#1a7a33':SOFT;ctx.fillText(mid,bx+w1,by);ctx.fillStyle=PINK;ctx.fillText(bt2,bx+w1+wm,by);}
   document.getElementById('intOut').innerHTML=
     TT('x = <b>'+xv.toFixed(1)+'</b>　·　f 的高 = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　阴影面积 A = <b class="bl">'+Af(xv).toFixed(1)+'</b>',
        'x = <b>'+xv.toFixed(1)+'</b>　·　height f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　area A = <b class="bl">'+Af(xv).toFixed(1)+'</b>')
-    +'<br><span class="note">'+TT('这一步（Δx = '+dxLabel+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于f 的高 = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = f 的高」，也是「求面积 = 找原函数」。',
-       'over this step (Δx = '+dxLabel+') the average growth = <b class="pk">'+sec.toFixed(2)+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
+    +'<br><span class="note">'+TT('这一步（Δx = '+dxLabel+'）面积平均长速 = <b class="pk">'+(isLim?sec.toFixed(1):sec.toFixed(2))+'</b>；把 Δx 拖到 0，它就精确等于f 的高 = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = f 的高」，也是「求面积 = 找原函数」。',
+       'over this step (Δx = '+dxLabel+') the average growth = <b class="pk">'+(isLim?sec.toFixed(1):sec.toFixed(2))+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
 }
 
 const I18N={
@@ -327,8 +314,8 @@ const I18N={
   p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一条曲线，求它下面的面积</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一条曲线 <b>f</b>（有公式）＋ 一段区间 <b>[a, b]</b><br><b>要算</b>：曲线 f 下方、从 a 到 b 的<b>面积</b><br><b>办法</b>：找 f 的<b>原函数 F</b>（求导能变回 f）→ 面积 = <b>F(b) − F(a)</b><br><span style="color:var(--faint);font-size:.92em">（后面哪一步看懵了，回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a curve, find the area under it</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a curve <b>f</b> (with a formula) ＋ an interval <b>[a, b]</b><br><b>Find</b>: the <b>area</b> under f, from a to b<br><b>How</b>: find the <b>antiderivative F</b> of f (differentiates back to f) → area = <b>F(b) − F(a)</b><br><span style="color:var(--faint);font-size:.92em">(Lost in any step later? Come back to this card to see what the whole chapter is about.)</span></div>'},
   p2_kicker:{zh:'面积会长大',en:'Area grows'},
   p2_q:{zh:'面积，是个<em>函数</em>',en:'Area is a <em>function</em>'},
-  p2_sub:{zh:'<b>A(x)</b> = 「从 0 到右边界 x、这块阴影的面积」。拖动 x，面积跟着变 —— 同一个 x 只对一块面积，所以 A 是随 x 变的<b>函数</b>，记作 A(x)。<br>这块面积和边界线什么关系？<b>下一屏</b>见分晓。<br><span style="font-size:.9em;color:var(--faint)">（边界特意用直线，面积就是个规整的直角三角形，好量好算。）</span>',en:'<b>A(x)</b> = “the shaded area from 0 to the right edge x.” Drag x and the area changes — each x gives one area, so A is a <b>function</b> of x, written A(x).<br>How does it relate to the boundary line? <b>Next screen</b>.<br><span style="font-size:.9em;color:var(--faint)">(The boundary is a straight line on purpose, so the area is a tidy right triangle — easy to measure.)</span>'},
-  p2_point:{zh:'🔍 <b>本屏</b>：已知直线 f（y=x）、移动右边界 x → 推出「阴影面积是个随 x 变的函数 <b>A(x)</b>」。',en:'🔍 <b>This screen</b>: given a straight line f (y=x) and a moving right edge x → the shaded area is a function <b>A(x)</b> of x.'},
+  p2_sub:{zh:'<b>A(x)</b> = 「从 0 到右边界 x、这块阴影的面积」。拖动 x，面积跟着变 —— 同一个 x 只对一块面积，所以 A 是随 x 变的<b>函数</b>，记作 A(x)。<br>这块面积和边界线什么关系？<b>下一屏</b>见分晓。<br><span style="font-size:.9em;color:var(--faint)">（上面可切直线／曲线 —— 不管哪条，面积都是随 x 变的函数 A(x)。）</span>',en:'<b>A(x)</b> = “the shaded area from 0 to the right edge x.” Drag x and the area changes — each x gives one area, so A is a <b>function</b> of x, written A(x).<br>How does it relate to the boundary line? <b>Next screen</b>.<br><span style="font-size:.9em;color:var(--faint)">(Switch straight line / curve above — either way the area is a function A(x) of x.)</span>'},
+  p2_point:{zh:'🔍 <b>本屏</b>：已知一条函数 f（上面可切直线/曲线）、移动右边界 x → 推出「阴影面积是个随 x 变的函数 <b>A(x)</b>」。',en:'🔍 <b>This screen</b>: given a function f (switch line/curve above) and a moving right edge x → the shaded area is a function <b>A(x)</b> of x.'},
   p2_lx:{zh:'右边界 x',en:'right edge x'},
   p3_kicker:{zh:'面积 ↔ 原函数',en:'Area ↔ antiderivative'},
   p3_q:{zh:'面积长大的<em>快慢</em>，就是边界线的高',en:'How fast area <em>grows</em> is the boundary’s height'},
@@ -407,6 +394,7 @@ function initAll(){
   hero.addEventListener('pointermove',e=>{if(hdrag)aim(e);});
   hero.addEventListener('pointerup',()=>hdrag=false);hero.addEventListener('pointercancel',()=>hdrag=false);
   let ra=null;document.getElementById('afX').addEventListener('input',()=>{if(ra)return;ra=requestAnimationFrame(()=>{ra=null;drawAreaFn();});});
+  document.querySelectorAll('[data-afn]').forEach(btn=>btn.addEventListener('click',()=>{fnIdxAf=+btn.dataset.afn;document.querySelectorAll('[data-afn]').forEach(x=>x.classList.toggle('on',x===btn));drawAreaFn();}));
   let r1=null;const _redInt=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawInt();});};
 document.getElementById('intX').addEventListener('input',_redInt);
 document.getElementById('intDx').addEventListener('input',_redInt);
