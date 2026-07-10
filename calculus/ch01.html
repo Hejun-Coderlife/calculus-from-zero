@@ -70,6 +70,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第一章</div>
   <div class="q reveal" data-i18n="p1_q">这个圆，有多大？</div>
   <div class="sub reveal" data-i18n="p1_sub">手里只有半径 r，别的都不知道。<br>你，能算出它的面积吗？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(400px,80vw)"><canvas id="cHero" height="300"></canvas></div>
 </section>
 
@@ -140,6 +141,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第一章',en:'Calculus from Zero · Chapter 1'},
   p1_q:{zh:'这个圆，有多大？',en:'How big is this circle?'},
   p1_sub:{zh:'手里只有半径 r，别的都不知道。<br>你，能算出它的面积吗？',en:'All you have is the radius r — nothing else.<br>Can you work out its area?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一个圆，求它的面积</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一个圆（半径 r）<br><b>要算</b>：圆的<b>面积</b><br><b>办法</b>：切成无数小块、拼起来 → 逼近出 <b>πr²</b><br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a circle, find its area</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a circle (radius r)<br><b>Find</b>: the <b>area</b><br><b>How</b>: cut it into countless pieces, rearrange → <b>πr²</b><br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'逼近',en:'Approximate'},
   p2_q:{zh:'数<em>格子</em>',en:'Count <em>squares</em>'},
   p2_sub:{zh:'面积就是数小方格。里面的多边形盖住的格子一定比圆少，外面的一定比圆多 —— 圆就夹在中间。',en:'Area is just counting little squares. The inner polygon covers fewer than the circle, the outer one covers more — the circle is squeezed in between.'},

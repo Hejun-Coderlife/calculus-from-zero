@@ -89,6 +89,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第五章</div>
   <div class="q reveal" data-i18n="p1_q">别拖了，能<em>算</em>吗？</div>
   <div class="sub reveal" data-i18n="p1_sub">前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="320"></canvas></div>
 </section>
 
@@ -563,6 +564,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第五章',en:'Calculus from Zero · Chapter 5'},
   p1_q:{zh:'别拖了，能<em>算</em>吗？',en:'Enough dragging — can we <em>compute</em> it?'},
   p1_sub:{zh:'前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？',en:'In earlier chapters we <i>watched</i> how steep the curve is, point by point, by dragging a slider — that steepness is the derivative.<br>But re-dragging for every single point is clumsy.<br>Could we <b>skip the dragging and just compute</b> the derivative at any point?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一个函数，求它的导数</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一个函数 f（比如 xⁿ）<br><b>要算</b>：它的<b>导数</b>（变化率 / 斜率）<br><b>办法</b>：把曲线放大到变直、量斜率 → 得出<b>幂法则</b> xⁿ → n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a function, find its derivative</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a function f (like xⁿ)<br><b>Find</b>: its <b>derivative</b> (rate / slope)<br><b>How</b>: zoom until straight, measure the slope → the <b>power rule</b> xⁿ→n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'放大的魔法',en:'The zoom trick'},
   p2_q:{zh:'弯的，<em>放大到极致会变直</em>',en:'Zoom in enough, and <em>curves look straight</em>'},
   p2_sub:{zh:'把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。',en:'Zoom into a point on a curve <b>far enough</b>, and the bend fades until it looks like <b>a straight line</b>.<br>The <b>slope</b> of that line is the <b>derivative</b> there.<br>So “find the derivative” becomes “measure that line’s slope.”'},

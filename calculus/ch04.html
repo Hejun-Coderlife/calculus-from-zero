@@ -63,6 +63,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第四章</div>
   <div class="q reveal" data-i18n="p1_q">怎样围出<em>最大</em>的地？</div>
   <div class="sub reveal" data-i18n="p1_sub">一段固定长的篱笆（比如 20 米），围成一个矩形。<br>形状随你变——瘦高、矮胖……<br>哪一种，<b>圈住的面积最大</b>？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(520px,90vw)"><canvas id="cHero" height="380"></canvas></div>
 </section>
 
@@ -196,6 +197,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第四章',en:'Calculus from Zero · Chapter 4'},
   p1_q:{zh:'怎样围出<em>最大</em>的地？',en:'How to fence the <em>biggest</em> field?'},
   p1_sub:{zh:'一段固定长的篱笆（比如 20 米），围成一个矩形。<br>形状随你变——瘦高、矮胖……<br>哪一种，<b>圈住的面积最大</b>？',en:'A fence of fixed length (say 20 m) makes a rectangle.<br>Reshape it as you like — tall & thin, short & wide…<br>Which shape encloses the <b>largest area</b>?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一个函数，求它的最大/最小值</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一个函数（利润、成本、高度…）<br><b>要算</b>：它的<b>最大值 / 最小值</b><br><b>办法</b>：最高/最低点处<b>斜率 = 0</b> → 令导数 = 0，解出这些点<br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a function, find its max/min</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a function (profit, cost, height…)<br><b>Find</b>: its <b>maximum / minimum</b><br><b>How</b>: slope = 0 at the top/bottom → set derivative = 0<br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'有个最高点',en:'There is a peak'},
   p2_q:{zh:'面积，<em>先涨后跌</em>',en:'Area <em>rises, then falls</em>'},
   p2_sub:{zh:'把宽从小拖到大：面积先变大，到某处最大，再变小。<br>中间藏着一个<b>顶点</b>。<br>怎么<b>精确</b>找到它？—— 用上一章学的<b>坡度（导数）</b>。',en:'Slide the width from small to large: the area rises, peaks, then falls.<br>A <b>summit</b> hides in the middle.<br>How do we pin it down <b>exactly</b>? — with last chapter’s <b>slope (the derivative)</b>.'},

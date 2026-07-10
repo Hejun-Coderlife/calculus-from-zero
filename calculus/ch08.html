@@ -60,6 +60,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第八章</div>
   <div class="q reveal" data-i18n="p1_q">套娃变化</div>
   <div class="sub reveal" data-i18n="p1_sub">往湖里丢块石头。<br>水波的<b>半径</b>随时间越变越大；而<b>面积</b>又随半径越变越大。<br>那么——<b>面积随时间</b>，变多快？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="330"></canvas></div>
 </section>
 
@@ -167,6 +168,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第八章',en:'Calculus from Zero · Chapter 8'},
   p1_q:{zh:'套娃变化',en:'Nested change'},
   p1_sub:{zh:'往湖里丢块石头。<br>水波的<b>半径</b>随时间越变越大；而<b>面积</b>又随半径越变越大。<br>那么——<b>面积随时间</b>，变多快？',en:'Drop a stone in a lake.<br>The ripple’s <b>radius</b> grows with time; and its <b>area</b> grows with the radius.<br>So — how fast does the <b>area grow over time</b>?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一层套一层的变化，求整体变化率</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一层套一层的<b>复合变化</b>（f 套着 g）<br><b>要算</b>：整个复合的<b>变化率</b><br><b>办法</b>：<b>链式法则</b> —— 把每一层的变化率<b>相乘</b><br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given nested change, find the overall rate</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: nested (composite) change, f of g<br><b>Find</b>: the overall <b>rate of change</b><br><b>How</b>: the <b>chain rule</b> — multiply the rate of each layer<br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'一层套一层',en:'Layer inside a layer'},
   p2_q:{zh:'两个「变多快」<em>相乘</em>',en:'Two “how fast”s <em>multiply</em>'},
   p2_sub:{zh:'这里有<b>两层</b>：外层（面积随半径变）套着内层（半径随时间变）。<br>整体的变化率，等于两层各自的变化率<b>相乘</b>：<br>面积随时间 = 面积随半径 <b>×</b> 半径随时间。',en:'There are <b>two layers</b>: an outer one (area changes with radius) wrapping an inner one (radius changes with time).<br>The whole rate equals the two rates <b>multiplied</b>:<br>area/time = area/radius <b>×</b> radius/time.'},

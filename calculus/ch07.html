@@ -63,6 +63,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第七章</div>
   <div class="q reveal" data-i18n="p1_q">越大，<em>长得越快</em></div>
   <div class="sub reveal" data-i18n="p1_sub">有一类东西，<b>越大、长得越快</b>：<br>钱生利息、利滚利；细菌分裂；人口。<br>它的「增长速度」，正比于它<b>当前的大小</b>。</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(480px,88vw)"><canvas id="cHero" height="320"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p1_lt">拖时间 t</label>
     <input id="heroT" type="range" min="2" max="30" value="15" step="1"></div>
@@ -202,6 +203,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第七章',en:'Calculus from Zero · Chapter 7'},
   p1_q:{zh:'越大，<em>长得越快</em>',en:'The bigger, <em>the faster it grows</em>'},
   p1_sub:{zh:'有一类东西，<b>越大、长得越快</b>：<br>钱生利息、利滚利；细菌分裂；人口。<br>它的「增长速度」，正比于它<b>当前的大小</b>。',en:'Some things <b>grow faster the bigger they are</b>:<br>money earning compound interest; splitting bacteria; population.<br>Their <b>growth rate</b> is proportional to their <b>current size</b>.'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：找那个「导数 = 自己」的特殊数</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一类「增长速度正比于当前大小」的东西（利滚利、细菌、人口）<br><b>要算</b>：让「<b>增长速度 = 自己</b>」的那个特殊底数<br><b>办法</b>：调底数 b，让 增速 ÷ 大小 = 1 → 得到 <b>e ≈ 2.718</b><br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: find the special number whose derivative is itself</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: things that grow in proportion to their size<br><b>Find</b>: the base where <b>growth = itself</b><br><b>How</b>: tune the base so growth ÷ size = 1 → <b>e ≈ 2.718</b><br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p1_lt:{zh:'拖时间 t',en:'drag time t'},
   p2_kicker:{zh:'导数正比于自己',en:'Derivative ∝ itself'},
   p2_q:{zh:'指数 <em>bˣ</em>',en:'The exponential <em>bˣ</em>'},

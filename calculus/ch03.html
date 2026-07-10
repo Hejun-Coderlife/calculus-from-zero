@@ -71,6 +71,7 @@
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第三章</div>
   <div class="q reveal" data-i18n="p1_q">反过来：<em>走了多远</em>？</div>
   <div class="sub reveal" data-i18n="p1_sub">上一章从「路程」求出了每一刻的「速度」。<br>现在反过来：只有仪表盘记下的<b>速度</b>（一直在变），<br>能倒推出一共<b>走了多远</b>吗？</div>
+  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
   <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="300"></canvas></div>
 </section>
 
@@ -317,6 +318,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第三章',en:'Calculus from Zero · Chapter 3'},
   p1_q:{zh:'反过来：<em>走了多远</em>？',en:'In reverse: <em>how far?</em>'},
   p1_sub:{zh:'上一章从「路程」求出了每一刻的「速度」。<br>现在反过来：只有仪表盘记下的<b>速度</b>（一直在变），<br>能倒推出一共<b>走了多远</b>吗？',en:'Last chapter we went from distance to the speed at every instant.<br>Now the reverse: given only the <b>speed</b> the dashboard recorded (always changing),<br>can we recover <b>how far</b> we went?'},
+  p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知速度，倒推走了多远</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：速度随时间变化的曲线<br><b>要算</b>：一段时间走的<b>总路程</b><br><b>办法</b>：路程 = 速度曲线下的<b>面积</b>；由此看出积分与导数<b>互为逆运算</b><br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given speed, recover the distance</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a speed-vs-time curve<br><b>Find</b>: the <b>total distance</b> over a period<br><b>How</b>: distance = area under the speed curve; integral and derivative are <b>inverses</b><br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'化整为零',en:'Break it up'},
   p2_q:{zh:'速度 <em>×</em> 时间',en:'speed <em>×</em> time'},
   p2_sub:{zh:'如果速度不变，路程 = 速度 × 时间，就是一个矩形的面积。<br>可速度一直在变 —— 那就把时间切成很多小段（每段时长记作 <b>Δt</b>），<br>每一小段里速度<b>几乎不变</b>，路程 ≈ 速度 × Δt，再加起来。<br>（又是「切小、加回去」。）',en:'If speed were constant, distance = speed × time — the area of one rectangle.<br>But speed keeps changing, so slice time into many tiny bits (each of length <b>Δt</b>);<br>within each bit speed is <b>almost constant</b>, distance ≈ speed × Δt, then add them up.<br>(Slice small, add it back — again.)'},
