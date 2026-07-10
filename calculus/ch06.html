@@ -248,7 +248,7 @@ function drawInt(){
   {ctx.font='700 12px '+ff;ctx.textBaseline='bottom';const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';ctx.fillStyle=PINK;
    ctx.fillText(TT('f 的高 = '+f(xv).toFixed(1),'boundary height f = '+f(xv).toFixed(1)),mx(xv)+(L?9:-9),my1(f(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillText(TT('阴影 = 面积 A','shaded = area A'),X+W/2,Y1-6);
+  ctx.fillText(TT('↑ 阴影 = 你要算的面积 A','shaded = the area you want (A)'),X+W/2,Y1-6);
   // ---- 下：把面积单独画成曲线 A(x)=x²，量它“长大的快慢”（斜率）----
   axesBox(ctx,X,Y2,W,H2,'x',TT('原函数 F = 面积 A','antiderivative F = area A'),XMAX,AMX,1,AMX>4?2:1,hoverId==='cInt');
   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();
@@ -272,7 +272,7 @@ function drawInt(){
    ctx.fillStyle=INK;ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),lx,my2(Af(xv))-20);
    ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢（量出的斜率）= '+(isLim?sec.toFixed(1):sec.toFixed(2)),'growth rate (measured) = '+(isLim?sec.toFixed(1):sec.toFixed(2))),lx,my2(Af(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillText(TT('这条曲线的高 = 上图那块阴影的大小','height of this curve = size of the shaded area above'),X+W/2,Y2-6);
+  ctx.fillText(TT('↑ 这条曲线 = 面积 A 随 x 怎么变（高 = 上图阴影）','this curve = how area A changes with x (height = shaded area above)'),X+W/2,Y2-6);
   // 下图：把“面积 A 的值”画成看得见的高度标尺（红点↓到 x 轴）——它就等于上图那块阴影
   ctx.strokeStyle='#0a5bb5';ctx.lineWidth=2.4;ctx.setLineDash([]);
   ctx.beginPath();ctx.moveTo(mx(xv),my2(Af(xv)));ctx.lineTo(mx(xv),my2(0));ctx.stroke();
