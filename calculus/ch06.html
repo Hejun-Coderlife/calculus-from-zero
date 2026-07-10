@@ -242,7 +242,7 @@ function drawInt(){
   const mx=t=>X+t/XMAX*W, my1=y=>Y1+H1-y/FMX*H1, my2=a=>Y2+H2-a/AMX*H2;
   const xv=+document.getElementById('intX').value/10;
   // ---- 上：边界 f=x + 阴影面积 0..xv ----
-  axesBox(ctx,X,Y1,W,H1,'x',TT('边界高 f','height f'),XMAX,FMX,1,FMX>4?2:1,hoverId==='cInt');
+  axesBox(ctx,X,Y1,W,H1,'x',TT('f 的高','height f'),XMAX,FMX,1,FMX>4?2:1,hoverId==='cInt');
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my1(0));
   for(let i=0;i<=40;i++){const t=xv*i/40;ctx.lineTo(mx(t),my1(f(t)));}ctx.lineTo(mx(xv),my1(0));ctx.closePath();ctx.fill();
   {ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 13px '+ff;
@@ -251,7 +251,7 @@ function drawInt(){
   ctx.fillStyle=BLUE;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('f = '+FN.fs,mx(XMAX)-4,my1(Math.min(f(XMAX),FMX*0.96))+(f(XMAX)>FMX*0.9?16:-2));
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(xv),my1(f(xv)),5,0,TAU);ctx.fill();
   {ctx.font='700 12px '+ff;ctx.textBaseline='bottom';const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';ctx.fillStyle=PINK;
-   ctx.fillText(TT('边界高 f = '+f(xv).toFixed(1),'boundary height f = '+f(xv).toFixed(1)),mx(xv)+(L?9:-9),my1(f(xv))-6);}
+   ctx.fillText(TT('f 的高 = '+f(xv).toFixed(1),'boundary height f = '+f(xv).toFixed(1)),mx(xv)+(L?9:-9),my1(f(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.fillText(TT('阴影 = 面积 A','shaded = area A'),X+W/2,Y1-6);
   // ---- 下：把面积单独画成曲线 A(x)=x²，量它“长大的快慢”（斜率）----
@@ -300,16 +300,16 @@ function drawInt(){
   ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(xv),my1(f(xv)));ctx.lineTo(mx(xv),my2(Af(xv)));ctx.stroke();ctx.setLineDash([]);
   // 两图之间：边界高（极限速率）vs 这一步的平均速率 —— 拖小 Δx 两者逼近
   {const by=(Y1+H1+Y2)/2+2,near=Math.abs(sec-fh)<0.06;
-   const bt1=TT('边界高 f = '+fh.toFixed(1),'height f = '+fh.toFixed(1));
+   const bt1=TT('f 的高 = '+fh.toFixed(1),'height f = '+fh.toFixed(1));
    const mid=near?TT('　＝　','　=　'):TT('　← 拖小 Δx ←　','　← shrink Δx ←　');
    const bt2=TT('这一步平均 = '+sec.toFixed(2),'step avg = '+sec.toFixed(2));
    ctx.font='700 13px '+ff;const w1=ctx.measureText(bt1).width,wm=ctx.measureText(mid).width,w2=ctx.measureText(bt2).width,total=w1+wm+w2,bx=X+W/2-total/2;
    ctx.fillStyle='rgba(251,251,253,.92)';ctx.fillRect(bx-8,by-12,total+16,24);
    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=PINK;ctx.fillText(bt1,bx,by);ctx.fillStyle=near?'#1a7a33':SOFT;ctx.fillText(mid,bx+w1,by);ctx.fillStyle=PINK;ctx.fillText(bt2,bx+w1+wm,by);}
   document.getElementById('intOut').innerHTML=
-    TT('x = <b>'+xv.toFixed(1)+'</b>　·　边界高 f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　阴影面积 A = <b class="bl">'+Af(xv).toFixed(1)+'</b>',
+    TT('x = <b>'+xv.toFixed(1)+'</b>　·　f 的高 = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　阴影面积 A = <b class="bl">'+Af(xv).toFixed(1)+'</b>',
        'x = <b>'+xv.toFixed(1)+'</b>　·　height f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　area A = <b class="bl">'+Af(xv).toFixed(1)+'</b>')
-    +'<br><span class="note">'+TT('这一步（Δx = '+dxLabel+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于边界高 f = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = 边界高」，也是「求面积 = 找原函数」。',
+    +'<br><span class="note">'+TT('这一步（Δx = '+dxLabel+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于f 的高 = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = f 的高」，也是「求面积 = 找原函数」。',
        'over this step (Δx = '+dxLabel+') the average growth = <b class="pk">'+sec.toFixed(2)+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
 }
 
@@ -363,7 +363,7 @@ function drawFtc(){
   const mx=x=>X+x/xmax*W,my=y=>Y+H-y/ymax*H;
   let a=+document.getElementById('ftcA').value/100*xmax,b=+document.getElementById('ftcB').value/100*xmax;
   if(a>b-0.15*xmax)a=Math.max(0,b-0.15*xmax);
-  axesBox(ctx,X,Y,W,H,'x',TT('边界高 f','height f'),xmax,ymax,1,ymax>6?2:1,false);
+  axesBox(ctx,X,Y,W,H,'x',TT('f 的高','height f'),xmax,ymax,1,ymax>6?2:1,false);
   const shade=(x0,x1,col)=>{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(mx(x0),my(0));
     for(let i=0;i<=48;i++){const t=x0+(x1-x0)*i/48;ctx.lineTo(mx(t),my(f(t)));}
     ctx.lineTo(mx(x1),my(0));ctx.closePath();ctx.fill();};
