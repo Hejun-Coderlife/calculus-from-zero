@@ -79,10 +79,12 @@
 <section class="panel">
   <div class="kicker reveal" data-i18n="p3_kicker">面积 ↔ 原函数</div>
   <div class="q reveal" data-i18n="p3_q">面积长大的<em>快慢</em>，就是曲线的高</div>
-  <div class="sub reveal" data-i18n="p3_sub">两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 两个数永远相等。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b>。</div>
+  <div class="sub reveal" data-i18n="p3_sub">两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b>。</div>
   <div class="fig reveal"><canvas id="cInt" height="470"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p3_lx">移动 x</label>
-    <input id="intX" type="range" min="2" max="45" value="30" step="1"></div>
+    <input id="intX" type="range" min="2" max="45" value="30" step="1">
+    <label data-i18n="p3_ldx">把一步 Δx 拖小</label>
+    <input id="intDx" type="range" min="6" max="100" value="100" step="1"></div>
   <div class="readout reveal" id="intOut"></div>
 </section>
 
@@ -91,6 +93,10 @@
   <div class="q reveal" data-i18n="p4_q">会<em>求导</em>，就会<em>算面积</em></div>
   <div class="sub reveal" style="transition-delay:.05s" data-i18n="p4_l1">第五章学过 <b>x² 求导 = 2x</b>，两边都除以 2 就得 <b>½x² 求导 = x</b>。<br>反过来读：直线 <b>x</b> 的<b>原函数</b>就是 <b>½x²</b>（因为它求导正好回到 x）。</div>
   <div class="sub reveal" style="transition-delay:.4s" data-i18n="p4_l2">那么「0 到 3」这段的面积，不用数格子 —— <br>只要把原函数在<b>两端一减</b>：<b class="bl">½·3² − ½·0² = 4.5</b>。</div>
+  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cFtc" height="300"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p4_la">下端 a</label><input id="ftcA" type="range" min="0" max="40" value="0" step="1">
+    <label data-i18n="p4_lb">上端 b</label><input id="ftcB" type="range" min="10" max="54" value="30" step="1"></div>
+  <div class="readout reveal" id="ftcOut"></div>
   <div class="card reveal" style="transition-delay:.75s" data-i18n="p4_card">✅ 面积 = 原函数（上端）− 原函数（下端）。找到原函数，一减就得。</div>
 </section>
 
@@ -212,6 +218,8 @@ function drawInt(){
   axesBox(ctx,X,Y1,W,H1,'x',TT('边界高 f','height f'),XMAX,FMX,1,2,hoverId==='cInt');
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my1(0));
   for(let i=0;i<=40;i++){const t=xv*i/40;ctx.lineTo(mx(t),my1(f(t)));}ctx.lineTo(mx(xv),my1(0));ctx.closePath();ctx.fill();
+  {ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 13px '+ff;
+   ctx.fillText(TT('这块 = 面积 '+Af(xv).toFixed(1),'this = area '+Af(xv).toFixed(1)),mx(xv*0.5),my1(f(xv)*0.24));}
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my1(0));ctx.lineTo(mx(XMAX),my1(f(XMAX)));ctx.stroke();
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(xv),my1(f(xv)),5,0,TAU);ctx.fill();
   {ctx.font='700 12px '+ff;ctx.textBaseline='bottom';const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';ctx.fillStyle=PINK;
@@ -222,32 +230,57 @@ function drawInt(){
   axesBox(ctx,X,Y2,W,H2,'x',TT('面积 A','area A'),XMAX,AMX,1,5,hoverId==='cInt');
   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();
   for(let i=0;i<=80;i++){const t=XMAX*i/80,x=mx(t),y=my2(Af(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
-  const m=(Af(xv+1e-3)-Af(xv-1e-3))/2e-3, ta=Math.max(0,xv-1.2), tb=Math.min(XMAX,xv+1.2);
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(mx(ta),my2(Af(xv)+m*(ta-xv)));ctx.lineTo(mx(tb),my2(Af(xv)+m*(tb-xv)));ctx.stroke();
-  // 斜率三角形：往右 run，往上 rise —— 让“长大的快慢”看得见
-  const run=Math.min(1,XMAX-0.15-xv), rise=m*run;
+  // 一步的宽度 Δx（可拖）、真实新增面积 dA（= 上图梯形）、这一步的平均斜率 sec = dA/Δx
+  const dxEl=document.getElementById('intDx'),dxv=dxEl?+dxEl.value/100:1;
+  const run=Math.min(dxv,XMAX-0.15-xv);
+  const dA=Af(xv+run)-Af(xv), sec=dA/run, fh=f(xv);
+  // 割线：连 (xv,A) 与 (xv+Δx,A) 两点，两端稍延伸
+  {const ta=Math.max(0,xv-0.7),tb=Math.min(XMAX,xv+run+0.7);
+   ctx.strokeStyle=BLUE;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(mx(ta),my2(Af(xv)+sec*(ta-xv)));ctx.lineTo(mx(tb),my2(Af(xv)+sec*(tb-xv)));ctx.stroke();}
+  // 割线三角形：往右 Δx、往上 dA（真实新增 = 上图梯形）
   ctx.strokeStyle='rgba(0,0,0,.5)';ctx.setLineDash([5,4]);ctx.lineWidth=1.3;
-  ctx.beginPath();ctx.moveTo(mx(xv),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)+rise));ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(mx(xv),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)));ctx.lineTo(mx(xv+run),my2(Af(xv)+dA));ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(TT('往右 '+run.toFixed(1),'right '+run.toFixed(1)),(mx(xv)+mx(xv+run))/2,my2(Af(xv))+4);
-  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+rise.toFixed(1),'up '+rise.toFixed(1)),mx(xv+run)+6,(my2(Af(xv))+my2(Af(xv)+rise))/2);
+  ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('往上 '+dA.toFixed(2),'up '+dA.toFixed(2)),mx(xv+run)+6,(my2(Af(xv))+my2(Af(xv)+dA))/2);
   ctx.fillStyle=PINK;ctx.beginPath();ctx.arc(mx(xv),my2(Af(xv)),5,0,TAU);ctx.fill();
   {ctx.font='600 12px '+ff;const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';const lx=mx(xv)+(L?9:-9);ctx.textBaseline='bottom';
    ctx.fillStyle=INK;ctx.fillText(TT('面积 A = '+Af(xv).toFixed(1),'area A = '+Af(xv).toFixed(1)),lx,my2(Af(xv))-20);
-   ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢 = '+m.toFixed(1),'growth rate = '+m.toFixed(1)),lx,my2(Af(xv))-6);}
+   ctx.fillStyle=PINK;ctx.fillText(TT('长大快慢（斜率）= '+sec.toFixed(2),'growth rate (slope) = '+sec.toFixed(2)),lx,my2(Af(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.fillText(TT('这条曲线的高 = 上图那块阴影的大小','height of this curve = size of the shaded area above'),X+W/2,Y2-6);
+  // 下图：把“面积 A 的值”画成看得见的高度标尺（红点↓到 x 轴）——它就等于上图那块阴影
+  ctx.strokeStyle='#0a5bb5';ctx.lineWidth=2.4;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(mx(xv),my2(Af(xv)));ctx.lineTo(mx(xv),my2(0));ctx.stroke();
+  ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(mx(xv)-5,my2(0));ctx.lineTo(mx(xv)+5,my2(0));ctx.stroke();
+  // —— 增量：往右一步，面积多出的真实那块 = 梯形（上边贴 f 斜线）——
+  {const px=mx(xv),pxb=mx(xv+run);
+   ctx.fillStyle='rgba(40,167,69,.28)';ctx.beginPath();
+   ctx.moveTo(px,my1(0));ctx.lineTo(px,my1(f(xv)));ctx.lineTo(pxb,my1(f(xv+run)));ctx.lineTo(pxb,my1(0));ctx.closePath();ctx.fill();
+   ctx.strokeStyle='#28a745';ctx.lineWidth=1.6;ctx.stroke();
+   ctx.fillStyle='#1a7a33';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 12px '+ff;
+   ctx.fillText(TT('多出 '+dA.toFixed(2),'gain '+dA.toFixed(2)),(px+pxb)/2,my1(f(xv)*0.42));
+   ctx.font='500 9.5px '+ff;ctx.textBaseline='top';ctx.fillStyle='#28a745';
+   ctx.fillText(TT('往右一步多的一条','one step of extra area'),(px+pxb)/2,my1(0)+3);
+   // 下图：割线“往上”这段染绿，标 = 上图梯形（相等）
+   const q0=my2(Af(xv)),q1=my2(Af(xv)+dA),qx=pxb;
+   ctx.strokeStyle='#28a745';ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(qx,q0);ctx.lineTo(qx,q1);ctx.stroke();
+   ctx.fillStyle='#1a7a33';ctx.font='700 11px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';
+   ctx.fillText(TT('往上 '+dA.toFixed(2)+' = 上图梯形','up '+dA.toFixed(2)+' = trapezoid above'),qx+7,(q0+q1)/2);}
   // 连线
   ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx(xv),my1(f(xv)));ctx.lineTo(mx(xv),my2(Af(xv)));ctx.stroke();ctx.setLineDash([]);
-  // 两图之间：把“边界的高 = 面积长大的快慢”直接写在图上（两个数永远相等）
-  {const by=(Y1+H1+Y2)/2+2,bt1=TT('边界高 = '+f(xv).toFixed(1),'boundary height = '+f(xv).toFixed(1)),bt2=TT('面积长大快慢 = '+m.toFixed(1),'growth rate = '+m.toFixed(1));
-   ctx.font='700 13px '+ff;const w1=ctx.measureText(bt1).width,eq='  =  ',weq=ctx.measureText(eq).width,w2=ctx.measureText(bt2).width,total=w1+weq+w2,bx=X+W/2-total/2;
+  // 两图之间：边界高（极限速率）vs 这一步的平均速率 —— 拖小 Δx 两者逼近
+  {const by=(Y1+H1+Y2)/2+2,near=Math.abs(sec-fh)<0.06;
+   const bt1=TT('边界高 f = '+fh.toFixed(1),'height f = '+fh.toFixed(1));
+   const mid=near?TT('　＝　','　=　'):TT('　← 拖小 Δx ←　','　← shrink Δx ←　');
+   const bt2=TT('这一步平均 = '+sec.toFixed(2),'step avg = '+sec.toFixed(2));
+   ctx.font='700 13px '+ff;const w1=ctx.measureText(bt1).width,wm=ctx.measureText(mid).width,w2=ctx.measureText(bt2).width,total=w1+wm+w2,bx=X+W/2-total/2;
    ctx.fillStyle='rgba(251,251,253,.92)';ctx.fillRect(bx-8,by-12,total+16,24);
-   ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=PINK;ctx.fillText(bt1,bx,by);ctx.fillStyle=SOFT;ctx.fillText(eq,bx+w1,by);ctx.fillStyle=PINK;ctx.fillText(bt2,bx+w1+weq,by);}
+   ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=PINK;ctx.fillText(bt1,bx,by);ctx.fillStyle=near?'#1a7a33':SOFT;ctx.fillText(mid,bx+w1,by);ctx.fillStyle=PINK;ctx.fillText(bt2,bx+w1+wm,by);}
   document.getElementById('intOut').innerHTML=
     TT('x = <b>'+xv.toFixed(1)+'</b>　·　边界高 f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　阴影面积 A = <b class="bl">'+Af(xv).toFixed(1)+'</b>',
        'x = <b>'+xv.toFixed(1)+'</b>　·　height f = <b class="pk">'+f(xv).toFixed(1)+'</b>　·　area A = <b class="bl">'+Af(xv).toFixed(1)+'</b>')
-    +'<br><span class="note">'+TT('面积函数 A 的斜率 = <b class="pk">'+m.toFixed(1)+'</b> = 边界的高 f —— 所以「求面积」就反过来「找原函数」。',
-       'slope of area-curve A = <b class="pk">'+m.toFixed(1)+'</b> = the height f — so “find area” is just “find the antiderivative,” in reverse.')+'</span>';
+    +'<br><span class="note">'+TT('这一步（Δx = '+run.toFixed(2)+'）面积平均长速 = <b class="pk">'+sec.toFixed(2)+'</b>；把 Δx 拖到 0，它就精确等于边界高 f = <b class="pk">'+fh.toFixed(1)+'</b> —— 这就是「面积的斜率 = 边界高」，也是「求面积 = 找原函数」。',
+       'over this step (Δx = '+run.toFixed(2)+') the average growth = <b class="pk">'+sec.toFixed(2)+'</b>; shrink Δx to 0 and it equals the height f = <b class="pk">'+fh.toFixed(1)+'</b> exactly — that is “slope of area = boundary height.”')+'</span>';
 }
 
 const I18N={
@@ -262,12 +295,14 @@ const I18N={
   p2_lx:{zh:'右边界 x',en:'right edge x'},
   p3_kicker:{zh:'面积 ↔ 原函数',en:'Area ↔ antiderivative'},
   p3_q:{zh:'面积长大的<em>快慢</em>，就是边界线的高',en:'How fast area <em>grows</em> is the boundary’s height'},
-  p3_sub:{zh:'两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>（面积越大，爬得越高）。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 两个数永远相等。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b>。',en:'Two graphs stacked: on top the <b>boundary line</b>; below, the <b>area drawn as its own curve A(x)</b> (more area, higher it climbs).<br>Drag x and watch the middle line: <b>the boundary’s height = how fast the area grows</b> — always equal.<br>In reverse, differentiating A gives f, so A is the <b>antiderivative</b> of f.'},
+  p3_sub:{zh:'两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>（面积越大，爬得越高）。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b>。',en:'Two graphs stacked: on top the <b>boundary line</b>; below, the <b>area drawn as its own curve A(x)</b> (more area, higher it climbs).<br>Drag x and watch the middle line: <b>the boundary’s height = how fast the area grows</b> — equal once you shrink the step Δx.<br>In reverse, differentiating A gives f, so A is the <b>antiderivative</b> of f.'},
   p3_lx:{zh:'移动 x',en:'move x'},
+  p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
   p4_q:{zh:'会<em>求导</em>，就会<em>算面积</em>',en:'Differentiate → you can <em>integrate</em>'},
   p4_l1:{zh:'第五章学过 <b>x² 求导 = 2x</b>，两边都除以 2 就得 <b>½x² 求导 = x</b>。<br>反过来读：直线 <b>x</b> 的<b>原函数</b>就是 <b>½x²</b>（因为它求导正好回到 x）。',en:'From chapter 5, <b>the derivative of x² is 2x</b>; halve both sides to get <b>the derivative of ½x² is x</b>.<br>Read it backward: the <b>antiderivative</b> of the line <b>x</b> is <b>½x²</b> (its derivative is exactly x).'},
   p4_l2:{zh:'那么「0 到 3」这段的面积，不用数格子 —— <br>只要把原函数在<b>两端一减</b>：<b class="bl">½·3² − ½·0² = 4.5</b>。',en:'So the area from <b>0 to 3</b> needs no counting —<br>just subtract the antiderivative at the two ends: <b class="bl">½·3² − ½·0² = 4.5</b>.'},
+  p4_la:{zh:'下端 a',en:'lower a'},p4_lb:{zh:'上端 b',en:'upper b'},
   p4_card:{zh:'✅ 面积 = 原函数（上端）− 原函数（下端）。找到原函数，一减就得。',en:'✅ Area = antiderivative(top) − antiderivative(bottom). Find the antiderivative, then subtract.'},
   p5_kicker:{zh:'写成公式',en:'As a formula'},
   p5_l1:{zh:'这就是<b>微积分基本定理</b>的算法版 —— 把「求面积」变成「找原函数、再一减」：',en:'This is the computational side of the <b>Fundamental Theorem</b> — turning “find the area” into “find the antiderivative, then subtract”:'},
@@ -280,14 +315,36 @@ const I18N={
   p6_next:{zh:'下一章：神奇的 e →',en:'Next: The Magic e →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
+function drawFtc(){
+  const cv=document.getElementById('cFtc');if(!cv)return;const {ctx,w,h}=setup(cv,300);ctx.clearRect(0,0,w,h);
+  const X=44,Y=18,W=w-64,H=h-50,ff=ffont(),f=x=>x,F=x=>x*x/2,xmax=5.4,ymax=5.6;
+  const mx=x=>X+x/xmax*W,my=y=>Y+H-y/ymax*H;
+  let a=+document.getElementById('ftcA').value/10,b=+document.getElementById('ftcB').value/10;
+  if(a>b-0.2)a=Math.max(0,b-0.2);
+  axesBox(ctx,X,Y,W,H,'x',TT('边界高 f','height f'),xmax,ymax,1,1,false);
+  ctx.fillStyle='rgba(0,113,227,.13)';ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(b),my(f(b)));ctx.lineTo(mx(b),my(0));ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(40,167,69,.34)';ctx.beginPath();ctx.moveTo(mx(a),my(0));ctx.lineTo(mx(a),my(f(a)));ctx.lineTo(mx(b),my(f(b)));ctx.lineTo(mx(b),my(0));ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(0,113,227,.30)';ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(a),my(f(a)));ctx.lineTo(mx(a),my(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(xmax),my(f(xmax)));ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(mx(a),my(0));ctx.lineTo(mx(a),my(f(a)));ctx.moveTo(mx(b),my(0));ctx.lineTo(mx(b),my(f(b)));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('a = '+a.toFixed(1),mx(a),my(0)+4);ctx.fillText('b = '+b.toFixed(1),mx(b),my(0)+4);
+  const area=F(b)-F(a);
+  if(b-a>0.55){ctx.fillStyle='#1a7a33';ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(TT('这块 = '+area.toFixed(2),'this = '+area.toFixed(2)),(mx(a)+mx(b))/2,my((f(a)+f(b))/2*0.5));}
+  const out=document.getElementById('ftcOut');
+  if(out)out.innerHTML=TT('原函数两端一减：½·b² − ½·a² = ½·'+b.toFixed(1)+'² − ½·'+a.toFixed(1)+'² = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= a 到 b 那块<b>绿色</b>面积。拖 a、b：大三角 F(b) 挖掉小三角 F(a)，剩中间。</span>',
+    'antiderivative at both ends: ½·b² − ½·a² = ½·'+b.toFixed(1)+'² − ½·'+a.toFixed(1)+'² = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= the <b>green</b> area from a to b. Drag a, b: big triangle F(b) minus small F(a) leaves the middle.</span>');
+}
 function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawHero();drawAreaFn();drawInt();
+  drawHero();drawAreaFn();drawInt();drawFtc();
 }
 function initAll(){
-  drawHero();drawAreaFn();drawInt();
+  drawHero();drawAreaFn();drawInt();drawFtc();
   const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
   const aim=e=>{const rc=hero.getBoundingClientRect();const X=44,W=hero.clientWidth-70;
     heroXe=Math.max(0.6,Math.min(XMAX,(e.clientX-rc.left-X)/W*XMAX));drawHero();};
@@ -296,7 +353,12 @@ function initAll(){
   hero.addEventListener('pointermove',e=>{if(hdrag)aim(e);});
   hero.addEventListener('pointerup',()=>hdrag=false);hero.addEventListener('pointercancel',()=>hdrag=false);
   let ra=null;document.getElementById('afX').addEventListener('input',()=>{if(ra)return;ra=requestAnimationFrame(()=>{ra=null;drawAreaFn();});});
-  let r1=null;document.getElementById('intX').addEventListener('input',()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawInt();});});
+  let r1=null;const _redInt=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawInt();});};
+document.getElementById('intX').addEventListener('input',_redInt);
+document.getElementById('intDx').addEventListener('input',_redInt);
+  let rF=null;const _redF=()=>{if(rF)return;rF=requestAnimationFrame(()=>{rF=null;drawFtc();});};
+  document.getElementById('ftcA').addEventListener('input',_redF);
+  document.getElementById('ftcB').addEventListener('input',_redF);
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
   const el=document.getElementById('cInt');
   el.addEventListener('pointerenter',()=>{hoverId='cInt';drawInt();});el.addEventListener('pointerleave',()=>{hoverId=null;drawInt();});
@@ -304,7 +366,7 @@ function initAll(){
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const lastPanel=document.querySelector('.panel:last-of-type');
   new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
-  addEventListener('resize',()=>{drawHero();drawAreaFn();drawInt();});
+  addEventListener('resize',()=>{drawHero();drawAreaFn();drawInt();drawFtc();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }

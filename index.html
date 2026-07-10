@@ -74,14 +74,14 @@
 let LANG='zh';
 function TT(zh,en){return LANG==='en'?en:zh;}
 const CALC=[
-  {n:'01',file:'ch01.html',done:true, cc:{zh:'积分',en:'Integral'},       zh:['圆的面积','数格子，逼近 π'],           en:['Area of a Circle','count squares → π']},
-  {n:'02',file:'ch02.html',done:true, cc:{zh:'导数',en:'Derivative'},     zh:['瞬时速度','割线逼近，斜率 = 速度'],         en:['Instant Speed','secant → slope = speed']},
-  {n:'03',file:'ch03.html',done:true, cc:{zh:'基本定理',en:'the FTC'},     zh:['面积就是路程','积分与导数，互为逆运算'],       en:['Area is Distance','integral & derivative: inverses']},
-  {n:'04',file:'ch04.html',done:true, cc:{zh:'优化',en:'Optimization'},   zh:['找最大最小','导数 = 0，锁定山顶谷底'],           en:['Finding the Best','derivative = 0 → peaks & valleys']},
-  {n:'05',file:'ch05.html',done:true, cc:{zh:'幂法则',en:'Power Rule'},    zh:['怎么算导数','放大成直线，发现幂法则'],           en:['Computing Derivatives','zoom → line → the power rule']},
-  {n:'06',file:'ch06.html',done:true, cc:{zh:'原函数',en:'Antiderivative'},zh:['怎么算积分','反过来求导，找原函数'],             en:['Computing Integrals','undo the derivative']},
-  {n:'07',file:'ch07.html',done:true, cc:{zh:'自然常数 e',en:'the number e'},zh:['神奇的 e','导数 = 自己的那个数'],               en:['The Magic e','the number that is its own derivative']},
-  {n:'08',file:'ch08.html',done:true, cc:{zh:'链式法则',en:'Chain Rule'},  zh:['套娃变化','链式法则：变化率相乘'],               en:['The Chain Rule','nested rates multiply']},
+  {n:'01',file:'ch01.html',done:true, cc:{zh:'积分',en:'Integral'},       zh:['圆的面积','弯曲的图形，也能量出面积'],           en:['Area of a Circle','measuring a curved shape']},
+  {n:'02',file:'ch02.html',done:true, cc:{zh:'导数',en:'Derivative'},     zh:['瞬时速度','某一瞬间，到底有多快'],         en:['Instant Speed','exactly how fast, right now']},
+  {n:'03',file:'ch03.html',done:true, cc:{zh:'基本定理',en:'the FTC'},     zh:['面积就是路程','知道速度，倒推走了多远'],       en:['Area is Distance','speed → how far you went']},
+  {n:'04',file:'ch04.html',done:true, cc:{zh:'优化',en:'Optimization'},   zh:['找最大最小','怎么做到最省、最优'],           en:['Finding the Best','the cheapest, the best']},
+  {n:'05',file:'ch05.html',done:true, cc:{zh:'幂法则',en:'Power Rule'},    zh:['怎么算导数','任意一点的变化快慢，一步算出'],           en:['Computing Derivatives','a point rate of change, one step']},
+  {n:'06',file:'ch06.html',done:true, cc:{zh:'原函数',en:'Antiderivative'},zh:['怎么算积分','任意曲线下的面积，不用数格子'],             en:['Computing Integrals','area under any curve, no counting']},
+  {n:'07',file:'ch07.html',done:true, cc:{zh:'自然常数 e',en:'the number e'},zh:['神奇的 e','利滚利、人口爆炸背后的数'],               en:['The Magic e','the number behind compound growth']},
+  {n:'08',file:'ch08.html',done:true, cc:{zh:'链式法则',en:'Chain Rule'},  zh:['套娃变化','一环扣一环的变化，连起来算'],               en:['The Chain Rule','chained changes, linked up']},
 ];
 const PROB=[
   {n:'01',file:'ch01.html',done:true, cc:{zh:'随机与概率',en:'Randomness'},      zh:['随机与概率','抛硬币，看频率稳到概率'],       en:['Random & Probability','flip coins → frequency settles']},

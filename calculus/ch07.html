@@ -64,6 +64,9 @@
   <div class="q reveal" data-i18n="p1_q">越大，<em>长得越快</em></div>
   <div class="sub reveal" data-i18n="p1_sub">有一类东西，<b>越大、长得越快</b>：<br>钱生利息、利滚利；细菌分裂；人口。<br>它的「增长速度」，正比于它<b>当前的大小</b>。</div>
   <div class="fig reveal" style="width:min(480px,88vw)"><canvas id="cHero" height="320"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p1_lt">拖时间 t</label>
+    <input id="heroT" type="range" min="2" max="30" value="15" step="1"></div>
+  <div class="readout reveal" id="heroOut"></div>
 </section>
 
 <section class="panel">
@@ -138,13 +141,21 @@ function drawHero(){
   axesBox(ctx,X,Y,W,H,TT('时间','time'),TT('大小','size'));
   ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();
   for(let i=0;i<=80;i++){const x=xmax*i/80,px=mx(x),py=my(f(x));i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
-  // 越高越陡：几处向上的增长箭头，长度 ∝ 当前大小
-  ctx.strokeStyle=PINK;ctx.fillStyle=PINK;ctx.lineWidth=2;
-  [1.0,1.8,2.6].forEach(x=>{const val=f(x),px=mx(x),py=my(val),len=val*(H/ymax)*0.42;
-    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py-len);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(px,py-len);ctx.lineTo(px-4,py-len+7);ctx.lineTo(px+4,py-len+7);ctx.closePath();ctx.fill();});
+  // 可拖：当前时间 t —— 点沿曲线走，增长箭头长度 ∝ 当前大小
+  const tEl=document.getElementById('heroT'),t=tEl?+tEl.value/10:1.5;
+  const val=f(t),px=mx(t),py=my(val),rate=val*Math.LN2,len=val*(H/ymax)*0.42;
+  ctx.strokeStyle='rgba(0,0,0,.2)';ctx.setLineDash([4,4]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,my(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle=PINK;ctx.fillStyle=PINK;ctx.lineWidth=2.6;
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,py-len);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px,py-len);ctx.lineTo(px-5,py-len+8);ctx.lineTo(px+5,py-len+8);ctx.closePath();ctx.fill();
+  ctx.font='700 12px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('增长速度','growth'),px+9,py-len+len*0.5);
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fill();
   ctx.fillStyle=SOFT;ctx.font='500 13px '+ff;ctx.textAlign='left';ctx.textBaseline='bottom';
   ctx.fillText(TT('越高 → 箭头越长 → 长得越快','higher → longer arrow → grows faster'),X+8,Y+16);
+  const out=document.getElementById('heroOut');
+  if(out)out.innerHTML=TT('时间 t = <b>'+t.toFixed(1)+'</b>　·　当前大小 = <b class="bl">'+val.toFixed(1)+'</b>　·　增长速度 = <b class="pk">'+rate.toFixed(1)+'</b><br><span style="font-size:13px;color:var(--faint)">增长速度 ÷ 大小 = <b>'+(rate/val).toFixed(2)+'</b>，不管多大都<b>恒定</b> —— 这就是「越大长得越快」，也是本章 e 的根。</span>',
+    'time t = <b>'+t.toFixed(1)+'</b>　·　size = <b class="bl">'+val.toFixed(1)+'</b>　·　growth = <b class="pk">'+rate.toFixed(1)+'</b><br><span style="font-size:13px;color:var(--faint)">growth ÷ size = <b>'+(rate/val).toFixed(2)+'</b>, constant no matter the size — the root of e.</span>');
 }
 
 function drawE(){
@@ -191,6 +202,7 @@ const I18N={
   p1_kicker:{zh:'从 0 开始的微积分 · 第七章',en:'Calculus from Zero · Chapter 7'},
   p1_q:{zh:'越大，<em>长得越快</em>',en:'The bigger, <em>the faster it grows</em>'},
   p1_sub:{zh:'有一类东西，<b>越大、长得越快</b>：<br>钱生利息、利滚利；细菌分裂；人口。<br>它的「增长速度」，正比于它<b>当前的大小</b>。',en:'Some things <b>grow faster the bigger they are</b>:<br>money earning compound interest; splitting bacteria; population.<br>Their <b>growth rate</b> is proportional to their <b>current size</b>.'},
+  p1_lt:{zh:'拖时间 t',en:'drag time t'},
   p2_kicker:{zh:'导数正比于自己',en:'Derivative ∝ itself'},
   p2_q:{zh:'指数 <em>bˣ</em>',en:'The exponential <em>bˣ</em>'},
   p2_sub:{zh:'这类增长，写成指数 <b>bˣ</b>（b 是「底」）。<br>神奇的是：它的<b>导数</b>（增长速度），总是<b>正比于它自己</b> —— 比例是一个常数。<br>换一个底 b，这个比例就不同。有没有哪个底，让比例<b>正好 = 1</b>？',en:'Such growth is written as an exponential <b>bˣ</b> (b is the “base”).<br>The remarkable thing: its <b>derivative</b> (growth rate) is always <b>proportional to itself</b> — by a constant factor.<br>Change the base b and that factor changes. Is there a base that makes the factor <b>exactly 1</b>?'},
@@ -223,6 +235,7 @@ function applyLang(){
 function initAll(){
   drawHero();drawE();
   let r1=null;document.getElementById('eB').addEventListener('input',()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawE();});});
+  let r0=null;document.getElementById('heroT').addEventListener('input',()=>{if(r0)return;r0=requestAnimationFrame(()=>{r0=null;drawHero();});});
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
   const el=document.getElementById('cE');
   el.addEventListener('pointerenter',()=>{hoverId='cE';drawE();});el.addEventListener('pointerleave',()=>{hoverId=null;drawE();});
