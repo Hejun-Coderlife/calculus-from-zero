@@ -90,9 +90,10 @@
   <div class="q reveal" data-i18n="p3_q">面积长大的<em>快慢</em>，就是曲线的高</div>
   <div class="sub reveal" data-i18n="p3_sub">两张图叠着看：上面是<b>边界线</b>，下面把<b>面积单独画成一条曲线 A(x)</b>。<br>拖动 x，盯住中间那行数：<b>上面边界有多高，下面面积就长多快</b> —— 把那一步 Δx 拖小，两个数就贴到一起。<br>反过来说，A 求导正好等于 f，所以 A 就是 f 的<b>原函数</b> —— 这个原函数，后面统一记作 <b>F</b>，<b>所以这条面积曲线 A 就是 F</b>。</div>
   <div class="reveal" data-i18n="p3_syms" style="max-width:33em;margin:4px auto 8px;padding:9px 15px;background:#f5f7fa;border:1px solid var(--line);border-radius:11px;font-size:clamp(12px,1.6vw,14px);color:var(--soft);line-height:1.75;text-align:left"></div>
+  <div class="ctrl reveal"><span class="seg"><button class="segb on" data-fni="0">直线 f=x</button><button class="segb" data-fni="1">抛物线 f=x²</button><button class="segb" data-fni="2">√x</button></span></div>
   <div class="fig reveal"><canvas id="cInt" height="470"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="p3_lx">移动 x</label>
-    <input id="intX" type="range" min="2" max="45" value="30" step="1">
+    <input id="intX" type="range" min="2" max="24" value="15" step="1">
     <label data-i18n="p3_ldx">把一步 Δx 拖小</label>
     <input id="intDx" type="range" min="6" max="100" value="100" step="1"></div>
   <div class="readout reveal" id="intOut"></div>
@@ -229,28 +230,34 @@ function drawAreaFn(){
        'right edge x = <b>'+xv.toFixed(1)+'</b>　→　area A(x) = <b class="bl">'+A.toFixed(1)+'</b><br><span class="note">Area = ½ × base × height = ½ × '+xv.toFixed(1)+' × '+f(xv).toFixed(1)+' = <b>'+A.toFixed(1)+'</b>. Drag x: base and height change together, and so does the area — so it is a function A(x).</span>');
 }
 
+let fnIdxInt=0;
 function drawInt(){
   const cv=document.getElementById('cInt');const {ctx,w,h}=setup(cv,470);ctx.clearRect(0,0,w,h);
   const X=50,W=w-76,ff=ffont();const Y1=22,H1=176,Y2=258,H2=176;
-  const FMX=5.5, AMX=13;   // 边界 f=x 最高 ~5；面积 ½x² 最高 ~12.5
+  const FN=[{f:x=>x,F:x=>x*x/2,xmax:2.6,fmx:3.0,amx:3.7,fs:'x',Fs:'½x²'},
+            {f:x=>x*x,F:x=>x*x*x/3,xmax:2.6,fmx:7.2,amx:6.4,fs:'x²',Fs:'⅓x³'},
+            {f:x=>Math.sqrt(x),F:x=>2/3*Math.pow(x,1.5),xmax:2.6,fmx:1.8,amx:3.0,fs:'√x',Fs:'⅔·x√x'}][fnIdxInt];
+  const f=FN.f,Af=FN.F,XMAX=FN.xmax,FMX=FN.fmx,AMX=FN.amx;
   const mx=t=>X+t/XMAX*W, my1=y=>Y1+H1-y/FMX*H1, my2=a=>Y2+H2-a/AMX*H2;
   const xv=+document.getElementById('intX').value/10;
   // ---- 上：边界 f=x + 阴影面积 0..xv ----
-  axesBox(ctx,X,Y1,W,H1,'x',TT('边界高 f','height f'),XMAX,FMX,1,2,hoverId==='cInt');
+  axesBox(ctx,X,Y1,W,H1,'x',TT('导数 f','derivative f'),XMAX,FMX,1,FMX>4?2:1,hoverId==='cInt');
   ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mx(0),my1(0));
   for(let i=0;i<=40;i++){const t=xv*i/40;ctx.lineTo(mx(t),my1(f(t)));}ctx.lineTo(mx(xv),my1(0));ctx.closePath();ctx.fill();
   {ctx.fillStyle='#0a5bb5';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='700 13px '+ff;
    ctx.fillText(TT('这块 = 面积 '+Af(xv).toFixed(1),'this = area '+Af(xv).toFixed(1)),mx(xv*0.5),my1(f(xv)*0.24));}
-  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mx(0),my1(0));ctx.lineTo(mx(XMAX),my1(f(XMAX)));ctx.stroke();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();for(let i=0;i<=80;i++){const t=XMAX*i/80,px=mx(t),py=my1(f(t));i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
+  ctx.fillStyle=BLUE;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('f = '+FN.fs,mx(XMAX)-4,my1(Math.min(f(XMAX),FMX*0.96))+(f(XMAX)>FMX*0.9?16:-2));
   ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mx(xv),my1(f(xv)),5,0,TAU);ctx.fill();
   {ctx.font='700 12px '+ff;ctx.textBaseline='bottom';const L=xv<XMAX*0.3;ctx.textAlign=L?'left':'right';ctx.fillStyle=PINK;
    ctx.fillText(TT('边界高 f = '+f(xv).toFixed(1),'boundary height f = '+f(xv).toFixed(1)),mx(xv)+(L?9:-9),my1(f(xv))-6);}
   ctx.fillStyle=SOFT;ctx.font='500 12px '+ff;ctx.textAlign='center';ctx.textBaseline='alphabetic';
   ctx.fillText(TT('阴影 = 面积 A','shaded = area A'),X+W/2,Y1-6);
   // ---- 下：把面积单独画成曲线 A(x)=x²，量它“长大的快慢”（斜率）----
-  axesBox(ctx,X,Y2,W,H2,'x',TT('面积 A','area A'),XMAX,AMX,1,5,hoverId==='cInt');
+  axesBox(ctx,X,Y2,W,H2,'x',TT('原函数 F = 面积 A','antiderivative F = area A'),XMAX,AMX,1,AMX>4?2:1,hoverId==='cInt');
   ctx.strokeStyle=PINK;ctx.lineWidth=2.4;ctx.beginPath();
   for(let i=0;i<=80;i++){const t=XMAX*i/80,x=mx(t),y=my2(Af(t));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  ctx.fillStyle=PINK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText('F = '+FN.Fs,mx(XMAX)-4,my2(Math.min(Af(XMAX),AMX*0.96))-2);
   // 一步的宽度 Δx（可拖）、真实新增面积 dA（= 上图梯形）、这一步的平均斜率 sec = dA/Δx
   const dxEl=document.getElementById('intDx'),dxv=dxEl?+dxEl.value/100:1;
   const run=Math.min(dxv,XMAX-0.15-xv);
@@ -390,6 +397,7 @@ function initAll(){
   let r1=null;const _redInt=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawInt();});};
 document.getElementById('intX').addEventListener('input',_redInt);
 document.getElementById('intDx').addEventListener('input',_redInt);
+document.querySelectorAll('[data-fni]').forEach(btn=>btn.addEventListener('click',()=>{fnIdxInt=+btn.dataset.fni;document.querySelectorAll('[data-fni]').forEach(x=>x.classList.toggle('on',x===btn));drawInt();}));
   let rF=null;const _redF=()=>{if(rF)return;rF=requestAnimationFrame(()=>{rF=null;drawFtc();});};
   document.getElementById('ftcA').addEventListener('input',_redF);
   document.getElementById('ftcB').addEventListener('input',_redF);
