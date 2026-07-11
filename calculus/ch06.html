@@ -73,7 +73,7 @@
   <div class="q reveal" data-i18n="pT_q">先看个水龙头</div>
   <div class="sub reveal" data-i18n="pT_sub"></div>
   <div class="fig reveal" style="width:min(420px,86vw)"><canvas id="cTap" height="340"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"><button id="tapGo" class="segb" style="margin-left:10px" onclick="tapStart()" data-i18n="pT_go">▶ 放水</button></div>
+  <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"></div>
   <div class="readout reveal" id="tapOut"></div>
 </section>
 
@@ -357,7 +357,6 @@ const I18N={
   pT_q:{zh:'先看个水龙头',en:'First, a tap'},
   pT_sub:{zh:'想象一个水龙头，正一股一股往桶里放水。<br>水龙头<b>开得越大</b>、水流越急，桶里的水面就<b>涨得越快</b>；开得越小，就涨得越慢。<br>拖一拖水龙头、点「放水」，盯着水面看 —— <b>它涨得有多快，全看此刻水流有多急</b>。',en:'Picture a tap running water into a bucket.<br>The <b>wider</b> the tap and stronger the flow, the <b>faster the water rises</b>; the smaller, the slower.<br>Drag the tap and hit Fill, watch the surface — <b>how fast it rises depends entirely on how strong the flow is right now</b>.'},
   pT_lv:{zh:'把水龙头开大 →',en:'tap width →'},
-  pT_go:{zh:'▶ 放水',en:'▶ Fill'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
   p4_q:{zh:'会<em>求导</em>，就会<em>算面积</em>',en:'Differentiate → you can <em>integrate</em>'},
   p4_l1:{zh:'第五章学过 <b>x² 求导 = 2x</b>，两边都除以 2 就得 <b>½x² 求导 = x</b>。<br>反过来读：直线 <b>x</b> 的<b>原函数</b>就是 <b>½x²</b>（因为它求导正好回到 x）。',en:'From chapter 5, <b>the derivative of x² is 2x</b>; halve both sides to get <b>the derivative of ½x² is x</b>.<br>Read it backward: the <b>antiderivative</b> of the line <b>x</b> is <b>½x²</b> (its derivative is exactly x).'},
