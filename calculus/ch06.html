@@ -69,6 +69,16 @@
 <button id="langBtn" class="langbtn">EN</button>
 
 <section class="panel">
+  <div class="kicker reveal" data-i18n="pT_kicker">从一个现实开始</div>
+  <div class="q reveal" data-i18n="pT_q">先看个水龙头</div>
+  <div class="sub reveal" data-i18n="pT_sub"></div>
+  <div class="fig reveal" style="width:min(420px,86vw)"><canvas id="cTap" height="340"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"><button id="tapGo" class="segb" style="margin-left:10px" onclick="tapStart()" data-i18n="pT_go">▶ 放水</button></div>
+  <div class="readout reveal" id="tapOut"></div>
+  <div class="card reveal" data-i18n="pT_card"></div>
+</section>
+
+<section class="panel">
   <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第六章</div>
   <div class="q reveal" data-i18n="p1_q">面积，能<em>直接算</em>吗？</div>
   <div class="sub reveal" data-i18n="p1_sub">第一、三章算面积，靠<b>数格子、数矩形</b> —— 又慢又不准。<br>有没有办法，一步就<b>直接算出</b>曲线下的面积？</div>
@@ -112,16 +122,6 @@
   <div class="readout reveal" id="intOut"></div>
   <div class="reveal" data-i18n="p3_proc" style="width:min(720px,92vw);margin:14px auto 2px"></div>
   <div class="reveal" data-i18n="p3_kinds" style="max-width:34em;margin:6px auto 0;padding:11px 16px;background:#fbfbfd;border:1px solid var(--line);border-radius:12px;font-size:clamp(13px,1.7vw,15px);color:var(--soft);line-height:1.75;text-align:left"></div>
-</section>
-
-<section class="panel">
-  <div class="kicker reveal" data-i18n="pT_kicker">换个说法</div>
-  <div class="q reveal" data-i18n="pT_q">水龙头 和 水桶</div>
-  <div class="sub reveal" data-i18n="pT_sub"></div>
-  <div class="fig reveal" style="width:min(420px,86vw)"><canvas id="cTap" height="340"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"></div>
-  <div class="readout reveal" id="tapOut"></div>
-  <div class="card reveal" data-i18n="pT_card"></div>
 </section>
 
 <section class="panel">
@@ -354,11 +354,12 @@ const I18N={
   p3_syms:{zh:'📎 <b>这一章的符号</b>（后面会反复用）：<br><b>· 这几屏就用：</b><b>f</b> = 那条曲线（导数），<b>f(x)</b> = 它在 x 处有多高　·　<b>A(x)</b> = 从 0 到 x 的阴影面积　·　<b>F</b> = f 的<b>原函数</b>（= 面积曲线 A，求导变回 f）<br><b>· 后面「算积分」几屏才用：</b><b>a、b</b> = 左右两端　·　<b>dx</b> = 每一条的宽（这张图里还没出现）',en:'📎 <b>Symbols in this chapter</b> (used throughout):<br><b>· Used on these screens:</b> <b>f</b> = the curve (derivative), <b>f(x)</b> = its height at x　·　<b>A(x)</b> = shaded area from 0 to x　·　<b>F</b> = the <b>antiderivative</b> of f (= area curve A)<br><b>· Only later, for integration:</b> <b>a, b</b> = the two ends　·　<b>dx</b> = width of each strip (not in this figure yet)'},
   p3_lx:{zh:'移动 x',en:'move x'},
   p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
-  pT_kicker:{zh:'换个说法',en:'Another way to see it'},
-  pT_q:{zh:'水龙头 和 水桶',en:'A tap and a bucket'},
-  pT_sub:{zh:'把原来那条曲线，想成<b>水龙头此刻的出水速度</b>；把要算的面积，想成<b>桶里一点点积起来的水</b>。<br>水龙头开得越大、水流越急，桶里的水面就涨得越快。<br>拖一拖水龙头，盯着看：<b>水流有多急，水面就涨得有多快</b>。',en:'Think of the original curve as <b>how fast the tap flows right now</b>, and the area as <b>the water slowly filling the bucket</b>.<br>Open the tap wider, stronger flow, water rises faster.<br>Drag the tap and watch: <b>how strong the flow is, is how fast the water rises</b>.'},
-  pT_lv:{zh:'把水龙头开大 →',en:'open the tap →'},
-  pT_card:{zh:'💡 一句话记住：<b>桶里的水涨得多快，全看此刻水龙头流得多急</b> —— 也就是「原来那条曲线越高，面积就长得越快」。',en:'💡 In one line: <b>how fast the water rises depends on how strong the tap flows right now</b> — i.e. the taller the curve, the faster the area grows.'},
+  pT_kicker:{zh:'从一个现实开始',en:'Start from something real'},
+  pT_q:{zh:'先看个水龙头',en:'First, a tap'},
+  pT_sub:{zh:'微积分不是天上掉下来的公式 —— 它就是从这种<b>日常观察</b>里想出来的。<br>看这个水龙头往桶里放水：<b>水龙头开得越大，桶里的水就涨得越快</b>。<br>就这么一句大白话。后面整章要算的「面积」，其实就是<b>这桶水</b>；那条「曲线」，就是<b>水龙头此刻开多大</b>。',en:'Calculus is not a formula that fell from the sky — it came from <b>everyday observation</b> like this.<br>Watch this tap fill a bucket: <b>the wider the tap, the faster the water rises</b>.<br>That is the whole idea. The area we compute all chapter is <b>this water</b>; the curve is <b>how wide the tap is right now</b>.'},
+  pT_lv:{zh:'把水龙头开大 →',en:'tap width →'},
+  pT_go:{zh:'▶ 放水',en:'▶ Fill'},
+  pT_card:{zh:'💡 记住这个画面：<b>桶里的水涨多快，全看此刻水龙头开多大</b>。接下来，我们就把这句大白话，变成「算面积」的钥匙。',en:'💡 Remember this picture: <b>how fast the water rises depends on how wide the tap is right now</b>. Next we turn this plain idea into the key for computing area.'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
   p4_q:{zh:'会<em>求导</em>，就会<em>算面积</em>',en:'Differentiate → you can <em>integrate</em>'},
   p4_l1:{zh:'第五章学过 <b>x² 求导 = 2x</b>，两边都除以 2 就得 <b>½x² 求导 = x</b>。<br>反过来读：直线 <b>x</b> 的<b>原函数</b>就是 <b>½x²</b>（因为它求导正好回到 x）。',en:'From chapter 5, <b>the derivative of x² is 2x</b>; halve both sides to get <b>the derivative of ½x² is x</b>.<br>Read it backward: the <b>antiderivative</b> of the line <b>x</b> is <b>½x²</b> (its derivative is exactly x).'},
@@ -415,28 +416,36 @@ function drawFtc(){
   if(out)out.innerHTML=TT('原函数两端一减：F(b) − F(a) = '+expr+' = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= a 到 b 那块<b>绿色</b>曲边面积。换上面的函数、拖 a、b：不管什么曲线，都是「大块 F(b) 挖掉小块 F(a)」。</span>',
     'antiderivative at both ends: F(b) − F(a) = '+expr+' = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= the <b>green</b> area from a to b. Switch the function, drag a, b: any curve is big F(b) minus small F(a).</span>');
 }
+let tapLevel=0.12,tapRAF=null,tapLast=0;
+function tapSpeed(){const e=document.getElementById('tapV');return e?+e.value/100:0.6;}
 function drawTap(){
   const cv=document.getElementById('cTap');if(!cv)return;const {ctx,w,h}=setup(cv,340);ctx.clearRect(0,0,w,h);
-  const ff=ffont();
-  const v=+document.getElementById('tapV').value/100;
-  const cx=w*0.40, tapTop=26, spoutY=tapTop+32, bucketTop=150, bucketBot=300, bL=cx-66, bR=cx+66;
+  const ff=ffont();const v=tapSpeed();
+  const cx=w*0.40,tapTop=26,spoutY=tapTop+32,bucketTop=150,bucketBot=300,bL=cx-66,bR=cx+66;
+  const wT=bucketBot-2-(bucketBot-bucketTop-4)*tapLevel;
   ctx.fillStyle='#9aa0aa';ctx.fillRect(cx-66,tapTop,76,13);ctx.fillRect(cx-6,tapTop,15,30);
   ctx.fillStyle='#7a808a';ctx.fillRect(cx-11,spoutY-7,23,8);
   ctx.fillStyle=v>0.66?'#e11d0f':(v>0.33?'#f0a020':'#28a745');ctx.beginPath();ctx.arc(cx-56,tapTop+6,9,0,TAU);ctx.fill();
-  const fw=3+v*24;ctx.fillStyle='rgba(0,113,227,.45)';ctx.fillRect(cx-fw/2,spoutY,fw,bucketTop-spoutY+46);
+  const fw=3+v*24;ctx.fillStyle='rgba(0,113,227,.45)';ctx.fillRect(cx-fw/2,spoutY,fw,Math.max(0,wT-spoutY));
   ctx.strokeStyle='#7a808a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bL,bucketTop);ctx.lineTo(bL,bucketBot);ctx.lineTo(bR,bucketBot);ctx.lineTo(bR,bucketTop);ctx.stroke();
-  const wT=bucketTop+78;ctx.fillStyle='rgba(0,113,227,.30)';ctx.fillRect(bL+2,wT,bR-bL-4,bucketBot-wT-2);
-  const aL=14+v*74;ctx.strokeStyle='#28a745';ctx.fillStyle='#28a745';ctx.lineWidth=3;
+  ctx.fillStyle='rgba(0,113,227,.30)';ctx.fillRect(bL+2,wT,bR-bL-4,bucketBot-wT-2);
+  const aL=14+v*70;ctx.strokeStyle='#28a745';ctx.fillStyle='#28a745';ctx.lineWidth=3;
   ctx.beginPath();ctx.moveTo(cx,wT);ctx.lineTo(cx,wT-aL);ctx.stroke();
   ctx.beginPath();ctx.moveTo(cx,wT-aL);ctx.lineTo(cx-6,wT-aL+10);ctx.lineTo(cx+6,wT-aL+10);ctx.closePath();ctx.fill();
   const zh=v>0.66?['很急','涨得很快']:(v>0.33?['中等','涨得中等']:['很缓','涨得很慢']);
-  const en=v>0.66?['strong','rising fast']:(v>0.33?['medium','rising medium']:['gentle','rising slow']);
+  const en=v>0.66?['strong','fast']:(v>0.33?['medium','medium']:['gentle','slow']);
   ctx.font='700 13px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillStyle='#0071e3';ctx.fillText(TT('水流'+zh[0],'flow '+en[0]),cx+fw/2+10,(spoutY+bucketTop)/2);
-  ctx.fillStyle='#1a7a33';ctx.fillText(TT('水面'+zh[1],'water '+en[1]),cx+12,wT-aL/2);
+  ctx.fillStyle='#1a7a33';ctx.fillText(TT('水面'+zh[1],'rising '+en[1]),cx+12,wT-aL/2-2);
   const out=document.getElementById('tapOut');
-  if(out)out.innerHTML=TT('把水龙头开得越大，水流越急，桶里的水面就<b>涨得越快</b>。<br>此刻：<b>水流的急缓</b>，正好就是<b>水面上涨的快慢</b> —— 这就是「曲线越高、面积长得越快」。','Open the tap wider, stronger flow, and the water rises <b>faster</b>.<br>Right now: <b>how strong the flow is</b> equals <b>how fast the water rises</b> — a taller curve grows area faster.');
+  if(out)out.innerHTML=TT('拖上面的滑块调<b>水龙头开多大</b>，再点<b>「放水」</b>看水一点点涨起来。<br>水龙头开得越大、水流越急，桶里的水面就<b>涨得越快</b> —— <b>水流的急缓，就是水面上涨的快慢</b>。','Drag to set <b>how wide the tap is</b>, then hit <b>Fill</b>. Wider tap, faster it rises — <b>how strong the flow is, is how fast the water rises</b>.');
 }
+function tapAnim(ts){
+  if(!tapLast)tapLast=ts;const dt=Math.min((ts-tapLast)/1000,0.05);tapLast=ts;
+  tapLevel=Math.min(1,tapLevel+tapSpeed()*0.30*dt);drawTap();
+  if(tapLevel<1)tapRAF=requestAnimationFrame(tapAnim);else tapRAF=null;
+}
+function tapStart(){tapLevel=0.04;tapLast=0;if(tapRAF)cancelAnimationFrame(tapRAF);tapRAF=requestAnimationFrame(tapAnim);}
 function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
