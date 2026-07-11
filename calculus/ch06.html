@@ -74,7 +74,6 @@
   <div class="sub reveal" data-i18n="pT_sub"></div>
   <div class="fig reveal" style="width:min(420px,86vw)"><canvas id="cTap" height="340"></canvas></div>
   <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"></div>
-  <div class="readout reveal" id="tapOut"></div>
 </section>
 
 <section class="panel">
@@ -355,7 +354,7 @@ const I18N={
   p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
   pT_kicker:{zh:'从一个现实开始',en:'Start from something real'},
   pT_q:{zh:'先看个水龙头',en:'First, a tap'},
-  pT_sub:{zh:'想象一个水龙头，正一股一股往桶里放水。<br>水龙头<b>开得越大</b>、水流越急，桶里的水面就<b>涨得越快</b>；开得越小，就涨得越慢。<br>拖一拖水龙头、点「放水」，盯着水面看 —— <b>它涨得有多快，全看此刻水流有多急</b>。',en:'Picture a tap running water into a bucket.<br>The <b>wider</b> the tap and stronger the flow, the <b>faster the water rises</b>; the smaller, the slower.<br>Drag the tap and hit Fill, watch the surface — <b>how fast it rises depends entirely on how strong the flow is right now</b>.'},
+  pT_sub:{zh:'想象一个水龙头，正往桶里放水。<br>水龙头<b>开得越大</b>，桶里的水面就<b>涨得越快</b>；开得越小，就涨得越慢。<br>拖动下面的滑块试试。',en:'Picture a tap running water into a bucket.<br>The <b>wider</b> the tap, the <b>faster the water rises</b>; the smaller, the slower.<br>Try the slider below.'},
   pT_lv:{zh:'把水龙头开大 →',en:'tap width →'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
   p4_q:{zh:'会<em>求导</em>，就会<em>算面积</em>',en:'Differentiate → you can <em>integrate</em>'},
@@ -434,8 +433,6 @@ function drawTap(){
   ctx.font='700 13px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillStyle='#0071e3';ctx.fillText(TT('水流'+zh[0],'flow '+en[0]),cx+fw/2+10,(spoutY+bucketTop)/2);
   ctx.fillStyle='#1a7a33';ctx.fillText(TT('水面'+zh[1],'rising '+en[1]),cx+12,wT-aL/2-2);
-  const out=document.getElementById('tapOut');
-  if(out)out.innerHTML=TT('拖上面的滑块调<b>水龙头开多大</b>，再点<b>「放水」</b>看水一点点涨起来。<br>水龙头开得越大、水流越急，桶里的水面就<b>涨得越快</b> —— <b>水流的急缓，就是水面上涨的快慢</b>。','Drag to set <b>how wide the tap is</b>, then hit <b>Fill</b>. Wider tap, faster it rises — <b>how strong the flow is, is how fast the water rises</b>.');
 }
 function tapAnim(ts){
   if(!tapLast)tapLast=ts;const dt=Math.min((ts-tapLast)/1000,0.05);tapLast=ts;
