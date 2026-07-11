@@ -442,8 +442,8 @@ function drawTap(){
 }
 function tapAnim(ts){
   if(!tapLast)tapLast=ts;const dt=Math.min((ts-tapLast)/1000,0.05);tapLast=ts;
-  tapLevel=Math.min(1,tapLevel+tapSpeed()*0.30*dt);drawTap();
-  if(tapLevel<1)tapRAF=requestAnimationFrame(tapAnim);else tapRAF=null;
+  tapLevel+=tapSpeed()*0.32*dt; if(tapLevel>=1)tapLevel=0.04;
+  drawTap(); tapRAF=requestAnimationFrame(tapAnim);
 }
 function tapStart(){tapLevel=0.04;tapLast=0;if(tapRAF)cancelAnimationFrame(tapRAF);tapRAF=requestAnimationFrame(tapAnim);}
 function applyLang(){
@@ -482,6 +482,7 @@ document.querySelectorAll('[data-fni]').forEach(btn=>btn.addEventListener('click
   addEventListener('resize',()=>{drawHero();drawAreaFn();drawInt();drawFtc();drawTap();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
+  if(document.getElementById("cTap")) tapStart();
 }
 initAll();
 </script>
