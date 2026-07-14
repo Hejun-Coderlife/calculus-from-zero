@@ -79,6 +79,10 @@
   .hint svg{width:20px;height:20px}
   @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
   @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+  .hero1{display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,44px);flex-wrap:wrap;margin-bottom:8px}
+  .hero1{max-width:min(860px,94vw)}
+  .hero1 .htxt{text-align:left;flex:1 1 300px}
+  @media (max-width:680px){.hero1{flex-direction:column}.hero1 .htxt{text-align:center;flex:none}}
 </style></head>
 <body>
 <a href="../index.html" class="homelink" data-i18n="nav_home">← 目录</a>
@@ -86,53 +90,69 @@
 <button id="langBtn" class="langbtn">EN</button>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="p1_kicker">从 0 开始的微积分 · 第五章</div>
-  <div class="q reveal" data-i18n="p1_q">别拖了，能<em>算</em>吗？</div>
-  <div class="sub reveal" data-i18n="p1_sub">前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？</div>
-  <div class="reveal" data-i18n="p1_goal" style="max-width:32em;margin:16px auto 0;padding:16px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 20px rgba(0,113,227,.10)"></div>
-  <div class="fig reveal" style="width:min(460px,86vw)"><canvas id="cHero" height="320"></canvas></div>
+  <div class="hero1 reveal">
+    <figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:9px;flex:0 0 auto">
+      <img src="galileo.jpg" alt="Galileo Galilei" width="377" height="480" loading="lazy" style="width:min(180px,42vw);height:auto;border-radius:16px;box-shadow:0 12px 34px rgba(0,0,0,.22);border:1px solid rgba(0,0,0,.06)">
+      <figcaption style="font-size:13px;color:var(--faint);font-weight:500" data-i18n="p1_gal">伽利略 · 1564–1642</figcaption>
+    </figure>
+    <div class="htxt">
+      <div class="kicker" data-i18n="p1_kicker">从一个现实开始 · 400 年前</div>
+      <div class="q" style="margin-top:8px" data-i18n="p1_q">它掉得，<em>有多快</em>？</div>
+    </div>
+  </div>
+  <div class="sub reveal" data-i18n="p1_sub"></div>
+  <div class="fig reveal" style="width:min(500px,94vw)"><canvas id="cDrop" height="430"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p1_lt">松手后 · 拖着看时间走 →</label><input id="dropT" type="range" min="1" max="34" value="12" step="1"></div>
 </section>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="p2_kicker">放大的魔法</div>
-  <div class="q reveal" data-i18n="p2_q">弯的，<em>放大到极致会变直</em></div>
-  <div class="sub reveal" data-i18n="p2_sub">把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。</div>
-  <div class="fig reveal" style="width:min(640px,92vw)"><canvas id="cZoomSeq" height="300"></canvas></div>
-  <div class="defcard reveal" data-i18n="p2_def"></div>
+  <div class="kicker reveal" data-i18n="p2_kicker">把它放慢</div>
+  <div class="q reveal" data-i18n="p2_q">让球<em>顺着斜坡</em>滚下来</div>
+  <div class="sub reveal" data-i18n="p2_sub"></div>
+  <div class="fig reveal" style="width:min(560px,95vw)"><canvas id="cRamp" height="400"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p2_lt">松手让球滚 · 拖时间 →</label><input id="rampT" type="range" min="1" max="30" value="14" step="1"></div>
+  <div class="readout reveal" id="rampOut"></div>
 </section>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="p3_kicker">放大，量斜率</div>
-  <div class="q reveal" data-i18n="p3_q">在 x = a 处，<em>放大</em></div>
-  <div class="sub reveal" data-i18n="p3_sub">这是 y = x²。把窗口越缩越小（放大倍数越拉越大），曲线肉眼就变直了。<br>在小三角形上量斜率 = <b>Δ竖 ÷ Δ横</b>；放大越狠，这个数越稳。<br>再拖动 a，看这个「稳下来的斜率」怎么随 a 变。</div>
-  <div class="fig reveal" style="width:min(320px,78vw)"><canvas id="cZoom" height="460"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p3_la">点 A 位置</label>
-    <input id="zA" type="range" min="6" max="15" value="10" step="1">
-    <label data-i18n="p3_lg">A、B 间距</label>
-    <input id="zGap" type="range" min="0" max="15" value="10" step="1"></div>
-  <div class="readout reveal" id="zoomOut"></div>
+  <div class="kicker reveal" data-i18n="p3_kicker">量出来的规律</div>
+  <div class="q reveal" data-i18n="p3_q">越往后，<em>每一段走得越多</em></div>
+  <div class="sub reveal" data-i18n="p3_sub"></div>
+  <div class="fig reveal" style="width:min(580px,95vw)"><canvas id="cLaw" height="420"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p3_lt">接了几份水（＝几份时间）→</label><input id="lawT" type="range" min="4" max="40" value="40" step="1"></div>
+  <div class="readout reveal" id="lawOut"></div>
+  <div class="card reveal" data-i18n="p3_law"></div>
 </section>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="p4_kicker">找规律</div>
-  <div class="q reveal" data-i18n="p4_q">换几个函数，<em>都放大量一量</em></div>
-  <div class="sub reveal" data-i18n="p4_sub">同样的招：放大、量斜率。换 x²、x³、√x 试试，把每个的导数记下来 —— 一张表就露出<b>规律</b>。</div>
-  <div class="ctrl reveal"><span class="seg">
-    <button class="segb" data-fn="0" data-i18n="fn0">x²</button>
-    <button class="segb on" data-fn="1" data-i18n="fn1">x³</button>
-    <button class="segb" data-fn="2" data-i18n="fn2">√x</button>
-  </span></div>
-  <div class="fig reveal" style="width:min(320px,78vw)"><canvas id="cPat" height="440"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p4_la">点 A 位置</label>
-    <input id="pA" type="range" min="0" max="100" value="40" step="1">
-    <label data-i18n="p4_lg">A、B 间距</label>
-    <input id="pGap" type="range" min="0" max="100" value="60" step="1"></div>
-  <div class="readout reveal" id="patOut"></div>
-  <div class="tbl reveal" data-i18n="p4_tbl" style="margin-top:6px">斜率（也叫<b>导数</b>）：<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span></div>
-  <details class="deriv reveal">
-    <summary data-i18n="p4_dsum">为什么 √x 的斜率 = ½·x<sup>−½</sup> ？—— 点开看推导（用 x=4）</summary>
-    <div class="db" data-i18n="p4_dbody"></div>
-  </details>
+  <div class="kicker reveal" data-i18n="p4_kicker">先算平均快慢</div>
+  <div class="q reveal" data-i18n="p4_q">这一段，<em>平均有多快</em></div>
+  <div class="sub reveal" data-i18n="p4_sub"></div>
+  <div class="fig reveal" style="width:min(580px,95vw)"><canvas id="cAvg" height="420"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="p4_la">这段的起点 →</label><input id="avgA" type="range" min="3" max="34" value="8" step="1">
+    <label data-i18n="p4_lb">这段的终点 →</label><input id="avgB" type="range" min="6" max="40" value="30" step="1"></div>
+  <div class="readout reveal" id="avgOut"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="pv_kicker">没有秒表，更没有微积分 · 他却算准了</div>
+  <div class="q reveal" data-i18n="pv_q">那一刻，<em>真正</em>有多快？</div>
+  <div class="sub reveal" data-i18n="pv_sub"></div>
+  <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cSpeed" height="300"></canvas></div>
+  <div class="readout reveal" data-i18n="pv_read"></div>
+  <div class="reveal" style="max-width:34em;margin:2px auto 0;font-size:13px;line-height:1.65;color:var(--faint)" data-i18n="pv_hist"></div>
+  <div class="card reveal" data-i18n="pv_card"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="pc_kicker">用上那把钥匙 · 真算一个数</div>
+  <div class="q reveal" data-i18n="pc_q">此刻多快？<em>算给你看</em></div>
+  <div class="sub reveal" data-i18n="pc_sub"></div>
+  <div class="fig reveal" style="width:min(560px,95vw)"><canvas id="cCalc" height="360"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="pc_lt">拖到第几份时间 →</label><input id="calcT" type="range" min="1" max="4" value="3" step="1"></div>
+  <div class="readout reveal" id="calcOut"></div>
+  <div class="sub reveal" style="font-size:clamp(15px,1.95vw,18px);max-width:32em" data-i18n="pc_why"></div>
+  <div class="card reveal" data-i18n="pc_card"></div>
 </section>
 
 <section class="panel">
@@ -389,6 +409,287 @@ function drawScale(){
                         'x = <b>'+a.toFixed(1)+'</b>　→　slope = 2 × '+a.toFixed(1)+' = <b class="pk">'+m.toFixed(1)+'</b><br><span class="note">Straight from the power rule — no two points, no limit. Drag x: slope = 2×x instantly.</span>');
 }
 
+// ==== 第5屏：匀速球赛跑动画（真球加速 vs 假想匀速，同时到，终点真球=2倍）====
+let spdCtx=null,spdW=0,spdH=0,spdInView=false,spdRAF=null,spdStart=0,spdReduce=false;
+function spdSetup(){
+  const cv=document.getElementById('cSpeed');if(!cv)return false;
+  const r=dpr(),cssW=cv.clientWidth||cv.width,cssH=300;
+  cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  spdCtx=cv.getContext('2d');spdCtx.setTransform(r,0,0,r,0,0);spdW=cssW;spdH=cssH;return true;
+}
+function spdScene(p,hold){
+  const ctx=spdCtx;if(!ctx)return;const w=spdW,ff=ffont();
+  ctx.clearRect(0,0,w,spdH);
+  const startX=w*0.15,finishX=w*0.72,trackW=finishX-startX;
+  const sc=(w*0.16)/2;                 // 真球终点速度=2 → 箭头长 0.16w
+  const yA=106,yB=196,gateTop=58,gateBot=232;
+  // 跑道
+  ctx.strokeStyle='rgba(0,0,0,.09)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(startX,yA);ctx.lineTo(finishX,yA);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(startX,yB);ctx.lineTo(finishX,yB);ctx.stroke();
+  // 均匀刻度（对照：真球越过越来越快，匀速球匀速）
+  ctx.fillStyle='rgba(0,0,0,.10)';
+  for(let k=1;k<6;k++){const x=startX+trackW*k/6;ctx.beginPath();ctx.arc(x,yA,2,0,TAU);ctx.fill();ctx.beginPath();ctx.arc(x,yB,2,0,TAU);ctx.fill();}
+  // 松手 / 终点
+  ctx.strokeStyle='rgba(0,0,0,.26)';ctx.setLineDash([4,3]);ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(startX,gateTop);ctx.lineTo(startX,gateBot);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle=GREEN;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(finishX,gateTop);ctx.lineTo(finishX,gateBot);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('松手','start'),startX,gateTop-2);
+  ctx.fillStyle='#1a7a33';ctx.fillText(TT('终点 · 同时到','finish · together'),finishX,gateTop-2);
+  // 道标
+  ctx.font='600 12px '+ff;ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#c0392b';ctx.fillText(TT('真球 · 越滚越快','real ball · speeds up'),startX,yA-14);
+  ctx.fillStyle=BLUE;ctx.fillText(TT('匀速球 · 假想的','pacer · imagined'),startX,yB+26);
+  // 位置 & 速度
+  const rx=startX+trackW*p*p,px=startX+trackW*p,rSp=2*p,pSp=1;
+  const arrow=(x,y,len,col,dash)=>{if(len<2)return;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3;
+    if(dash)ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x+len,y);ctx.lineTo(x+len-9,y-5);ctx.lineTo(x+len-9,y+5);ctx.closePath();ctx.fill();};
+  arrow(rx,yA,rSp*sc,'#e0900a',false);
+  arrow(px,yB,pSp*sc,'rgba(0,113,227,.75)',true);
+  // 终点定格：把匀速球箭头投到真球道上 → 一眼看出真球是它的两倍
+  if(hold){
+    const midx=finishX+pSp*sc;
+    ctx.strokeStyle='rgba(0,0,0,.28)';ctx.setLineDash([3,3]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(midx,yA-8);ctx.lineTo(midx,yB+8);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=INK;ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('2 倍','×2'),(midx+finishX+rSp*sc)/2,(yA+yB)/2);
+  }
+  // 真球（实心红）
+  {const g=ctx.createRadialGradient(rx-4,yA-4,1,rx,yA,11);g.addColorStop(0,'#f2937a');g.addColorStop(1,'#d2352f');ctx.fillStyle=g;ctx.beginPath();ctx.arc(rx,yA,11,0,TAU);ctx.fill();}
+  // 匀速球（假想：半透明 + 虚线圈）
+  ctx.fillStyle='rgba(150,160,172,.28)';ctx.beginPath();ctx.arc(px,yB,11,0,TAU);ctx.fill();
+  ctx.strokeStyle='rgba(90,100,115,.85)';ctx.lineWidth=1.6;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(px,yB,11,0,TAU);ctx.stroke();ctx.setLineDash([]);
+}
+function spdFrame(now){
+  if(!spdInView){spdRAF=null;return;}
+  const RACE=2600,HOLD=1500,CYC=RACE+HOLD;
+  if(!spdStart)spdStart=now;
+  const e=(now-spdStart)%CYC;
+  if(e<RACE)spdScene(e/RACE,false);else spdScene(1,true);
+  spdRAF=requestAnimationFrame(spdFrame);
+}
+function spdPlay(){if(spdReduce){if(spdSetup())spdScene(1,true);return;}if(spdRAF)return;spdStart=0;spdRAF=requestAnimationFrame(spdFrame);}
+function spdStop(){if(spdRAF){cancelAnimationFrame(spdRAF);spdRAF=null;}}
+function drawSpeed(){if(spdSetup()&&(spdReduce||!spdInView))spdScene(1,true);}   // 静态重绘（切语言/resize/初次）
+let calcT=3;
+function drawCalc(){
+  const cv=document.getElementById('cCalc');if(!cv)return;
+  const {ctx,w,h}=setup(cv,360);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const t=calcT, dist=t*t, avg=t, now=2*t;   // 整数份：走了=t²(1/4/9/16) 平均=t 此刻=2t
+  const groundY=h-26;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:w*0.13,y:64},B={x:w*0.52,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),dnx=-dy/len,dny=dx/len,th=13,ballR=12;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  const pos=f=>({x:A.x+dx*f,y:A.y+dy*f}),upx=-dnx,upy=-dny;
+  const frac=dist/16,P=pos(frac),bcx=P.x+ballR*upx,bcy=P.y+ballR*upy;
+  // 走过的路 高亮 A→P
+  ctx.strokeStyle='rgba(224,144,10,.8)';ctx.lineWidth=7;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(A.x-4*dnx,A.y-4*dny);ctx.lineTo(P.x-4*dnx,P.y-4*dny);ctx.stroke();ctx.lineCap='butt';
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('松手','let go'),A.x,A.y-8);
+  const mp=pos(frac/2);
+  ctx.fillStyle='#c47f00';ctx.font='700 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(TT('走了 '+dist+' 份','went '+dist),mp.x+20*upx,mp.y+20*upy);
+  const bg=ctx.createRadialGradient(bcx-4,bcy-4,1,bcx,bcy,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bcx,bcy,ballR,0,TAU);ctx.fill();
+  // 右侧：水桶接水 = 用了多久（和前面几屏一致）
+  const cupW=Math.min(64,w*0.15),cupX=w*0.74,cupYt=120,cupB=groundY-4,cupH=cupB-cupYt,wl=cupB-cupH*(t/4);
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('用了 '+t+' 份','time '+t),cupX+cupW/2,cupYt-6);
+  ctx.fillStyle='rgba(0,140,220,.4)';ctx.fillRect(cupX+2.5,wl,cupW-5,cupB-wl-2.5);
+  for(let k=1;k<=4;k++){const y=cupB-cupH*(k/4);ctx.strokeStyle='rgba(0,0,0,.13)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cupX,y);ctx.lineTo(cupX+cupW,y);ctx.stroke();ctx.fillStyle=SOFT;ctx.font='500 9px '+ff;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(k+'',cupX-3,y);}
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  const out=document.getElementById('calcOut');
+  if(out)out.innerHTML=TT(
+   '走了 <b class="bl">'+dist+'</b> 份距离　÷　用了 '+t+' 份时间　=　平均速度 <b>'+avg+'</b><br>平均速度 <b>'+avg+'</b>　×2　=　<b style="color:#c47f00">此刻速度 '+now+'</b><br><span class="note">这里"速度"＝每份时间走几份距离。拖着看：此刻速度永远是平均速度的两倍。</span>',
+   'went <b class="bl">'+dist+'</b> distance　÷　'+t+' time　=　average speed <b>'+avg+'</b><br>average speed <b>'+avg+'</b>　×2　=　<b style="color:#c47f00">instant speed '+now+'</b><br><span class="note">here "speed" = distance per unit of time. Drag: the instant speed is always twice the average.</span>');
+}
+let dropT=12;
+function drawDrop(){
+  const cv=document.getElementById('cDrop');if(!cv)return;
+  const {ctx,w,h}=setup(cv,430);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const g=9.8,TMAX=3.4,T=dropT/10,d=0.5*g*T*T,DMAX=0.5*g*TMAX*TMAX,v=g*T,VMAX=g*TMAX;
+  const groundY=h-28;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const bx=132,tilt=0.068,towerH=306,hw0=42,hw1=35;
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(bx+24,groundY+3,64,8,0,0,TAU);ctx.fill();
+  const hwAt=f=>hw0+(hw1-hw0)*f;
+  ctx.save();ctx.translate(bx,groundY);ctx.rotate(tilt);
+  const gd=ctx.createLinearGradient(-hw0,0,hw0,0);gd.addColorStop(0,'#cbc2a8');gd.addColorStop(.16,'#efe9d9');gd.addColorStop(.5,'#fbf8f1');gd.addColorStop(.84,'#ece5d3');gd.addColorStop(1,'#c8bfa4');
+  ctx.fillStyle=gd;ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.lineTo(-hw1,-towerH);ctx.closePath();ctx.fill();
+  const L=8;
+  for(let i=0;i<L;i++){
+    const f0=i/L,f1=(i+1)/L,y0=-towerH*f0,y1=-towerH*f1,hwA=hwAt(f0),hw=hwAt((f0+f1)/2);
+    ctx.strokeStyle='rgba(140,126,98,.5)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(-hwA,y0);ctx.lineTo(hwA,y0);ctx.stroke();
+    if(i===0)continue;
+    const n=i===L-1?4:7,sp=2*hw/n,r=sp/2,colTop=y1+r;
+    ctx.strokeStyle='rgba(118,102,72,.5)';ctx.lineWidth=1;
+    for(let k=0;k<=n;k++){const x=-hw+k*sp;ctx.beginPath();ctx.moveTo(x,y0-1);ctx.lineTo(x,colTop);ctx.stroke();}
+    ctx.strokeStyle='rgba(118,102,72,.55)';ctx.lineWidth=1.1;
+    for(let k=0;k<n;k++){const cxk=-hw+(k+0.5)*sp;ctx.beginPath();ctx.arc(cxk,colTop,r,Math.PI,2*Math.PI);ctx.stroke();}
+  }
+  ctx.fillStyle='#f2ede0';ctx.fillRect(-hw1+3,-towerH-13,2*hw1-6,14);ctx.strokeStyle='rgba(140,126,98,.6)';ctx.lineWidth=1;ctx.strokeRect(-hw1+3,-towerH-13,2*hw1-6,14);
+  ctx.fillStyle='#ded6c2';ctx.fillRect(-hw0-3,-6,2*hw0+6,7);ctx.strokeStyle='rgba(150,138,110,.55)';ctx.lineWidth=1;ctx.strokeRect(-hw0-3,-6,2*hw0+6,7);
+  ctx.strokeStyle='rgba(130,116,88,.6)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(-hw1,-towerH);ctx.moveTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.stroke();
+  ctx.restore();
+  const topWX=bx+Math.sin(tilt)*towerH,topWY=groundY-Math.cos(tilt)*towerH;
+  const ballX=topWX+hw1+22,ballY0=topWY-2,fallPix=(groundY-14)-ballY0;
+  const by=ballY0+d/DMAX*fallPix;
+  ctx.fillStyle=SOFT;ctx.font='600 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('✋ 松手','✋ let go'),ballX,ballY0-11);
+  ctx.strokeStyle='rgba(0,0,0,.12)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ballX,ballY0-4);ctx.lineTo(ballX,groundY-12);ctx.stroke();ctx.setLineDash([]);
+  const al=15+v/VMAX*42;
+  ctx.strokeStyle='#e0900a';ctx.fillStyle='#e0900a';ctx.lineWidth=3.4;
+  ctx.beginPath();ctx.moveTo(ballX+17,by-al*0.5);ctx.lineTo(ballX+17,by+al*0.5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ballX+17,by+al*0.5+2);ctx.lineTo(ballX+11,by+al*0.5-8);ctx.lineTo(ballX+23,by+al*0.5-8);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#c47f00';ctx.font='700 12px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('这一刻多快 ?','how fast ?'),ballX+28,by-2);
+  const bg=ctx.createRadialGradient(ballX-4,by-4,1,ballX,by,13);bg.addColorStop(0,'#5aa8f5');bg.addColorStop(1,'#0060cf');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(ballX,by,13,0,TAU);ctx.fill();
+  const dlx=ballX+92;
+  ctx.strokeStyle='rgba(120,120,128,.5)';ctx.setLineDash([3,3]);ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(dlx,ballY0);ctx.lineTo(dlx,by);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(120,120,128,.45)';ctx.lineWidth=1.1;
+  ctx.beginPath();ctx.moveTo(dlx-5,ballY0);ctx.lineTo(dlx+5,ballY0);ctx.moveTo(dlx-5,by);ctx.lineTo(dlx+5,by);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='700 11.5px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('量得到','measured'),dlx+9,(ballY0+by)/2);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('🏛 比萨斜塔 · 约 57 米','🏛 Pisa · ~57 m'),12,12);
+  ctx.fillStyle=INK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';
+  ctx.fillText(TT('松手后 '+T.toFixed(1)+' 秒','t = '+T.toFixed(1)+' s'),w-12,groundY-9);
+}
+let rampT=14;
+function drawRamp(){
+  const cv=document.getElementById('cRamp');if(!cv)return;
+  const {ctx,w,h}=setup(cv,400);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const RT=30, s=Math.pow(rampT/RT,2), lvl=rampT/RT;
+  const groundY=h-24;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:74,y:100},B={x:322,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;
+  const dnx=-uy,dny=ux,th=14,ballR=13;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  ctx.strokeStyle='rgba(70,45,20,.4)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(A.x+3.5*dnx,A.y+3.5*dny);ctx.lineTo(B.x+3.5*dnx,B.y+3.5*dny);ctx.stroke();
+  const P={x:A.x+dx*s,y:A.y+dy*s},upx=-dnx,upy=-dny;
+  const bcx=P.x+ballR*upx,bcy=P.y+ballR*upy;
+  const bg=ctx.createRadialGradient(bcx-4,bcy-4,1,bcx,bcy,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bcx,bcy,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('松手','let go'),A.x+ballR*upx,A.y+ballR*upy-ballR-3);
+  ctx.fillStyle=SOFT;ctx.font='600 11.5px '+ff;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText(TT('斜面：把一秒的下落，拉长成几秒','ramp: stretches the fall'),14,groundY-10);
+  ctx.fillStyle='#c47f00';ctx.font='700 12px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(TT('越滚越快','faster'),B.x-6,B.y-16);
+  const tx=398,tw=92,tyT=60,tyH=54;
+  ctx.fillStyle='rgba(150,150,158,.22)';ctx.fillRect(tx,tyT,tw,tyH);
+  ctx.fillStyle='rgba(0,140,220,.32)';ctx.fillRect(tx+2,tyT+tyH*0.3,tw-4,tyH*0.7-2);
+  ctx.strokeStyle='#9aa0aa';ctx.lineWidth=1.5;ctx.strokeRect(tx,tyT,tw,tyH);
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('🕐 用流水当秒表','🕐 water as a clock'),tx+tw/2,tyT-5);
+  const sx=tx+tw/2;
+  ctx.fillStyle='#9aa0aa';ctx.fillRect(sx-3,tyT+tyH,6,12);
+  ctx.fillStyle='rgba(0,140,220,.72)';
+  for(const dyy of [tyT+tyH+22,tyT+tyH+40,tyT+tyH+60]){ctx.beginPath();ctx.ellipse(sx,dyy,3,4.6,0,0,TAU);ctx.fill();}
+  const cupW=70,cupX=sx-cupW/2,cupYt=tyT+tyH+78,cupB=groundY-4,cupH=cupB-cupYt,wl=cupB-cupH*lvl;
+  ctx.fillStyle='rgba(0,140,220,.4)';ctx.fillRect(cupX+2.5,wl,cupW-5,cupB-wl-2.5);
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  ctx.fillStyle='#0a6bb0';ctx.font='700 11.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('接到的水','water caught'),sx,Math.min((wl+cupB)/2,cupB-14));
+  document.getElementById('rampOut').innerHTML=TT(
+   '拖时间：球顺着斜坡<b>越滚越快</b>（后半程比前半程快得多）。<br><span class="note">右边接到的水<b>越来越多</b> —— 伽利略没有秒表，就<b>称这些水有多重来比时间</b>：水多，就是滚得久。斜坡把"眨眼就完的下落"拉长成好几秒，终于<b>测得动了</b>。</span>',
+   'Drag time: the ball rolls <b>faster and faster</b>.<br><span class="note">The water caught on the right <b>keeps growing</b> — Galileo had no stopwatch, so he <b>weighed this water to compare times</b>: more water, longer roll. The ramp stretches a blink-of-an-eye fall into seconds — finally <b>measurable</b>.</span>');
+}
+
+let lawT=40;
+function drawLaw(){
+  const cv=document.getElementById('cLaw');if(!cv)return;
+  const {ctx,w,h}=setup(cv,420);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const t=lawT/10, s=Math.pow(t/4,2);
+  const groundY=h-26;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:72,y:82},B={x:344,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,dnx=-uy,dny=ux,th=13,ballR=12;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  const pos=f=>({x:A.x+dx*f,y:A.y+dy*f});
+  const marks=[1,4,9,16],segLbl=['1','3','5','7'],segCol=['rgba(0,113,227,.55)','rgba(94,92,230,.5)','rgba(0,113,227,.55)','rgba(94,92,230,.5)'];
+  let prev=0;
+  for(let i=0;i<4;i++){
+    const f0=prev/16,f1=marks[i]/16,p0=pos(f0),p1=pos(f1);
+    ctx.strokeStyle=segCol[i];ctx.lineWidth=7;ctx.lineCap='butt';
+    ctx.beginPath();ctx.moveTo(p0.x-4*dnx,p0.y-4*dny);ctx.lineTo(p1.x-4*dnx,p1.y-4*dny);ctx.stroke();
+    const mid=pos((f0+f1)/2);
+    ctx.fillStyle=i%2?'#4b49c9':'#0a5bb5';ctx.font='700 13px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(segLbl[i],mid.x-16*dnx,mid.y-16*dny);
+    prev=marks[i];
+  }
+  for(let i=0;i<4;i++){
+    const p=pos(marks[i]/16);
+    ctx.strokeStyle='rgba(60,60,70,.5)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(p.x+2*dnx,p.y+2*dny);ctx.lineTo(p.x+10*dnx,p.y+10*dny);ctx.stroke();
+    ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(marks[i]+'',p.x+17*dnx,p.y+17*dny);
+  }
+  const P=pos(s),upx=-dnx,upy=-dny,bcx=P.x+ballR*upx,bcy=P.y+ballR*upy;
+  const bg=ctx.createRadialGradient(bcx-4,bcy-4,1,bcx,bcy,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bcx,bcy,ballR,0,TAU);ctx.fill();
+  const cupW=62,cupX=w-96,cupYt=150,cupB=groundY-4,cupH=cupB-cupYt,wl=cupB-cupH*(t/4);
+  ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('接到的水 = 时间','water = time'),cupX+cupW/2,cupYt-6);
+  ctx.fillStyle='rgba(0,140,220,.4)';ctx.fillRect(cupX+2.5,wl,cupW-5,cupB-wl-2.5);
+  for(let k=1;k<=4;k++){const y=cupB-cupH*(k/4);ctx.strokeStyle='rgba(0,0,0,.13)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cupX,y);ctx.lineTo(cupX+cupW,y);ctx.stroke();ctx.fillStyle=SOFT;ctx.font='500 9px '+ff;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(k+'',cupX-3,y);}
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  const tf=t.toFixed(1),acc=(t*t).toFixed(1);
+  document.getElementById('lawOut').innerHTML=TT(
+   '接了 <b>'+tf+'</b> 份水（＝'+tf+' 份时间）：球一共滚了 <b class="bl">'+acc+'</b> 份距离。<br><span class="note">看<b>每一段相同时间</b>走的：<b>1、3、5、7</b> —— 越走越多（因为越来越快）；累计总距离 <b>1、4、9、16</b>，正好是 <b>1×1、2×2、3×3、4×4</b> —— <b>距离，就照着时间乘时间在长</b>。</span>',
+   'Caught <b>'+tf+'</b> units of water (= '+tf+' of time): the ball rolled <b class="bl">'+acc+'</b> units.<br><span class="note">Each equal time-slice covers <b>1, 3, 5, 7</b> — more and more (getting faster); totals <b>1, 4, 9, 16</b> = <b>1×1, 2×2, 3×3, 4×4</b> — <b>distance grows like time × time</b>.</span>');
+}
+
+let avgA=8,avgB=30;
+function drawAvg(){
+  const cv=document.getElementById('cAvg');if(!cv)return;
+  const {ctx,w,h}=setup(cv,420);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  let t1=avgA/10,t2=avgB/10; if(t2<t1+0.3)t2=t1+0.3;
+  const groundY=h-26;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:72,y:82},B={x:344,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,dnx=-uy,dny=ux,th=13;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  const pos=f=>({x:A.x+dx*f,y:A.y+dy*f});
+  const pA=pos(t1*t1/16),pB=pos(t2*t2/16),upx=-dnx,upy=-dny,ballR=11;
+  ctx.strokeStyle='rgba(224,144,10,.7)';ctx.lineWidth=8;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(pA.x-4*dnx,pA.y-4*dny);ctx.lineTo(pB.x-4*dnx,pB.y-4*dny);ctx.stroke();ctx.lineCap='butt';
+  const aC={x:pA.x+ballR*upx,y:pA.y+ballR*upy},bC={x:pB.x+ballR*upx,y:pB.y+ballR*upy};
+  ctx.fillStyle='#fff';ctx.strokeStyle='#c47f00';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(aC.x,aC.y,ballR-1,0,TAU);ctx.fill();ctx.stroke();
+  const bg=ctx.createRadialGradient(bC.x-4,bC.y-4,1,bC.x,bC.y,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bC.x,bC.y,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('第 '+t1.toFixed(1)+' 份','t='+t1.toFixed(1)),aC.x+12*upx,aC.y+12*upy-ballR);
+  ctx.fillText(TT('第 '+t2.toFixed(1)+' 份','t='+t2.toFixed(1)),bC.x+12*upx,bC.y+12*upy-ballR);
+  const cupW=60,cupX=w-92,cupYt=150,cupB=groundY-4,cupH=cupB-cupYt;
+  const y1w=cupB-cupH*(t1/4),y2w=cupB-cupH*(t2/4);
+  ctx.fillStyle='rgba(0,140,220,.2)';ctx.fillRect(cupX+2.5,y1w,cupW-5,cupB-y1w-2.5);
+  ctx.fillStyle='rgba(224,144,10,.4)';ctx.fillRect(cupX+2.5,y2w,cupW-5,y1w-y2w);
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  ctx.fillStyle='#c47f00';ctx.font='700 10.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('用的时间','time used'),cupX+cupW/2,(y1w+y2w)/2);
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('水钟','clock'),cupX+cupW/2,cupYt-4);
+  const D=(t2*t2-t1*t1),T=(t2-t1),V=(t1+t2);
+  document.getElementById('avgOut').innerHTML=TT(
+   '从第 <b>'+t1.toFixed(1)+'</b> 份到第 <b>'+t2.toFixed(1)+'</b> 份这一段：球走了 <b>'+D.toFixed(1)+'</b> 份、用了 <b>'+T.toFixed(1)+'</b> 份时间。<br>平均快慢 ＝ 走的 ÷ 用的 ＝ <b class="bl">'+V.toFixed(1)+'</b> 份。<br><span class="note">可这一段里球一直在变快（前面慢、后面快）—— 这只是这段的<b>平均</b>，不是某一刻真正的快慢。可某一刻到底多快？伽利略有个<b>绝招</b> —— 下一屏。</span>',
+   'From unit <b>'+t1.toFixed(1)+'</b> to <b>'+t2.toFixed(1)+'</b>: the ball went <b>'+D.toFixed(1)+'</b>, in <b>'+T.toFixed(1)+'</b> of time.<br>Average speed ＝ distance ÷ time ＝ <b class="bl">'+V.toFixed(1)+'</b>.<br><span class="note">But it kept speeding up across this stretch, so this is only the <b>average</b>, not the speed at one instant. So how fast at one moment? Galileo had a <b>clever trick</b> — next screen.</span>');
+}
+
 function drawHero(){
   const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,320);ctx.clearRect(0,0,w,h);
   const X=50,Y=24,W=w-76,H=h-58,ff=ffont(),xmax=3.2,ymax=10.5;
@@ -562,26 +863,45 @@ function drawPat(){
 const I18N={
   title:{zh:'怎么算导数 — 从 0 开始的微积分',en:'Computing Derivatives — Calculus from Zero'},
   nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
-  p1_kicker:{zh:'从 0 开始的微积分 · 第五章',en:'Calculus from Zero · Chapter 5'},
-  p1_q:{zh:'别拖了，能<em>算</em>吗？',en:'Enough dragging — can we <em>compute</em> it?'},
-  p1_sub:{zh:'前面几章，我们靠拖滑块，一点一点「看」出曲线在某处有多陡 —— 那个「陡」，就是导数。<br>可每换一个点，就得重拖一次，太笨了。<br>能不能<b>不拖也能算</b>，直接得出任意一点的导数？',en:'In earlier chapters we <i>watched</i> how steep the curve is, point by point, by dragging a slider — that steepness is the derivative.<br>But re-dragging for every single point is clumsy.<br>Could we <b>skip the dragging and just compute</b> the derivative at any point?'},
+  p1_gal:{zh:'伽利略 · 1564–1642',en:'Galileo Galilei · 1564–1642'},
+  p1_kicker:{zh:'从一个现实开始 · 400 年前',en:'Start from something real · 400 years ago'},
+  p1_q:{zh:'它掉得，<em>有多快</em>？',en:'How <em>fast</em> is it falling?'},
+  p1_lt:{zh:'松手后 · 拖着看时间走 →',en:'after release · drag time →'},
+  p1_sub:{zh:'400 年前，伽利略在比萨斜塔（<b>高约 57 米</b>）上松手，让一个球往下掉 —— 它<b>越掉越快</b>。<br>可它到底<b>每一刻掉得多快</b>？球一秒就砸到地上，太快了；那年头没有秒表，光靠眼睛和脉搏，根本量不出「这一刻多快」。<br>这一章，就想办法<b>算出它每一刻的速度</b>。',en:'400 years ago Galileo dropped a ball from the Leaning Tower of Pisa (<b>about 57 m</b> tall) — it falls <b>faster and faster</b>.<br>But exactly <b>how fast at each instant</b>? It hits the ground in a second — too fast; and back then there was no stopwatch, so eyes and a pulse could not catch the speed at a moment.<br>This chapter finds a way to <b>compute its speed at every instant</b>.'},
   p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一个函数，求它的导数</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一个函数 f（比如 xⁿ）<br><b>要算</b>：它的<b>导数</b>（变化率 / 斜率）<br><b>办法</b>：把曲线放大到变直、量斜率 → 得出<b>幂法则</b> xⁿ → n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a function, find its derivative</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a function f (like xⁿ)<br><b>Find</b>: its <b>derivative</b> (rate / slope)<br><b>How</b>: zoom until straight, measure the slope → the <b>power rule</b> xⁿ→n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
-  p2_kicker:{zh:'放大的魔法',en:'The zoom trick'},
-  p2_q:{zh:'弯的，<em>放大到极致会变直</em>',en:'Zoom in enough, and <em>curves look straight</em>'},
-  p2_sub:{zh:'把曲线在某一点<b>无限放大</b>，弯会越来越不明显，最后看起来就是<b>一条直线</b>。<br>那条直线的<b>斜率</b>，就是这一点的<b>导数</b>。<br>—— 于是「算导数」变成了「量那条直线的斜率」。',en:'Zoom into a point on a curve <b>far enough</b>, and the bend fades until it looks like <b>a straight line</b>.<br>The <b>slope</b> of that line is the <b>derivative</b> there.<br>So “find the derivative” becomes “measure that line’s slope.”'},
+  p2_kicker:{zh:'把它放慢',en:'Slow it down'},
+  p2_lt:{zh:'松手让球滚 · 拖时间 →',en:'release the ball · drag time →'},
+  p2_q:{zh:'让球<em>顺着斜坡</em>滚下来',en:'Let the ball <em>roll down a ramp</em>'},
+  p2_sub:{zh:'竖直往下掉太快，测不了。伽利略想了个招：<b>让球顺着一道缓坡滚下来</b> —— 陡坡滚得快、缓坡滚得慢，斜坡就是一场「<b>慢放的下落</b>」，球照样越滚越快，只是慢到<b>能看清、能测量</b>了。<br>可还是没有秒表怎么办？他<b>用流水当钟</b>：一边滚球一边接水，<b>接到的水越多，就说明滚了越久</b>。',en:'Straight down is too fast to measure. Galileo had a trick: <b>let the ball roll down a gentle ramp</b> — steep rolls fast, gentle rolls slow; the ramp is a <b>slow-motion fall</b>, still speeding up, but slow enough to <b>see and measure</b>.<br>Still no stopwatch? He <b>used flowing water as a clock</b>: catch water while the ball rolls — <b>more water means a longer roll</b>.'},
   p2_def:{zh:'<div class="dt">📐 什么是导数？—— 一句话：变化的快慢</div><div class="dd"><b>导数 = 一个量变化的快慢</b>（另一个量动一点点，它跟着动多少）。<br>画成曲线时，它就是<b>斜率</b>（曲线有多陡）—— 这是最常见的长相；但它<b>不只是斜率</b>，换个场景就换个名字：</div><div class="dlist"><div><span>位置随时间变</span><b>速度</b></div><div><span>速度随时间变</span><b>加速度</b></div><div><span>面积随边界变（第 6 章）</span><b>边界的高</b></div><div><span>水位随时间变</span><b>进水快慢</b></div></div><div class="dd"><b>同一件事、一个本质：一个量随另一个量变化的「快慢」。</b>斜率，只是它画在纸上的模样。所以「求导」= 算出这个「变化的快慢」。</div>',en:'<div class="dt">📐 What is a derivative? — in one line: the speed of change.</div><div class="dd"><b>A derivative = how fast a quantity changes</b> (nudge the other quantity a little — how much does this one move?).<br>Drawn as a curve, it is the <b>slope</b> (how steep) — its most common look; but it is <b>not only slope</b>. Each setting gives it a new name:</div><div class="dlist"><div><span>position vs time</span><b>velocity</b></div><div><span>velocity vs time</span><b>acceleration</b></div><div><span>area vs boundary (ch.6)</span><b>boundary height</b></div><div><span>water level vs time</span><b>fill rate</b></div></div><div class="dd"><b>One thing, one essence: how fast one quantity changes as another does.</b> Slope is just how it looks on paper. So to <b>differentiate</b> = find this speed of change.</div>'},
-  p3_kicker:{zh:'两点，量陡度',en:'Two points, measure steepness'},
-  p3_q:{zh:'两个点，<em>量它有多陡</em>',en:'Two points — <em>measure how steep</em>'},
-  p3_sub:{zh:'蓝线是曲线 y = x²（越往右越高）。在上面取两个点 <b>A</b>、<b>B</b>。<br>从 A 走到 B：<b>往右走</b>了多少、<b>往上爬</b>了多少，都在坐标轴上量得出来。<b>有多陡 = 往上爬 ÷ 往右走</b>。<br>再把 <b>B 往 A 拖近</b>（拖小间距），这个「有多陡」会慢慢<b>稳下来</b> —— 稳住的那个数，就是这点的<b>斜率</b>（它正好是 A 的 x坐标的 <b>2 倍</b>；x坐标本身不变）。',en:'The blue line is the curve y = x² (higher as you go right). Put two points <b>A</b> and <b>B</b> on it.<br>From A to B: how far you go <b>right</b> and how far you climb <b>up</b> can both be read off the axes. <b>Steepness = up ÷ right</b>.<br>Now slide <b>B toward A</b> (shrink the gap): the steepness <b>settles</b> — that settled number is the slope at A (exactly 2× A’s x-coordinate).'},
+  p3_kicker:{zh:'量出来的规律',en:'The measured pattern'},
+  p3_lt:{zh:'接了几份水（＝几份时间）→',en:'units of water (= time) →'},
+  p3_q:{zh:'越往后，<em>每一段走得越多</em>',en:'Later slices go <em>farther and farther</em>'},
+  p3_sub:{zh:'把时间切成<b>相等的份</b>（每接一份水 ＝ 一份时间），量量看球每一份时间走多远。<br>第 1、2、3、4 份时间，球累计滚到 <b>1、4、9、16</b> —— 而每一段（相同时间）走的是 <b>1、3、5、7</b>，<b>越走越多</b>，因为它越来越快。',en:'Cut time into <b>equal units</b> (each unit of water = a unit of time) and measure how far the ball goes each unit.<br>By units 1, 2, 3, 4 it has rolled a total of <b>1, 4, 9, 16</b> — and each equal slice covers <b>1, 3, 5, 7</b>, <b>more and more</b>, because it keeps speeding up.'},
   p3_la:{zh:'点 A 位置',en:'point A'},p3_lg:{zh:'A、B 间距',en:'A–B gap'},
-  p4_kicker:{zh:'找规律',en:'Spot the pattern'},
-  p4_q:{zh:'换几个函数，<em>同样量斜率</em>',en:'Other functions — <em>measure the slope the same way</em>'},
-  p4_sub:{zh:'和上一屏<b>一样的玩法</b>：取两点、量「往上爬 ÷ 往右走」、把 B 拖近 A 看斜率稳住。<br>点上面按钮换 <b>x²、x³、√x</b>，各测几个 —— 你会发现<b>每条曲线的斜率规律都不一样</b>，都记在下面那张表里。',en:'The <b>same method</b> as before: take two points, measure “up ÷ right,” and slide B onto A to settle the slope.<br>Tap the buttons to switch <b>x², x³, √x</b> — you’ll find <b>each curve has its own slope rule</b>, all noted in the table below.'},
-  p4_la:{zh:'点 A 位置',en:'point A'},p4_lg:{zh:'A、B 间距',en:'A–B gap'},
+  p4_kicker:{zh:'先算平均快慢',en:'Average speed first'},
+  p4_lb:{zh:'这段的终点 →',en:'end of the stretch →'},
+  p4_q:{zh:'这一段，<em>平均有多快</em>',en:'This stretch, <em>how fast on average</em>'},
+  p4_sub:{zh:'球在变快，「多快」不好一口说清。先退一步：<b>挑一段时间</b>，量它<b>走了多远</b>、<b>用了多久</b>，用「走的 ÷ 用的」，得到这一段的<b>平均快慢</b>。<br>拖两个滑块，选这段的<b>起点和终点</b>看看。',en:'Since it keeps speeding up, a single how-fast is slippery. Step back: <b>pick a stretch of time</b>, measure <b>how far</b> it went and <b>how long</b> it took; distance ÷ time gives the <b>average speed</b> over that stretch.<br>Drag the two sliders to pick the <b>start and end</b>.'},
+  p4_la:{zh:'这段的起点 →',en:'start of the stretch →'},
   fn0:{zh:'x²',en:'x²'},fn1:{zh:'x³',en:'x³'},fn2:{zh:'√x',en:'√x'},
   p4_tbl:{zh:'斜率（也叫<b>导数</b>）：<span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>',en:'Slope (aka the <b>derivative</b>): <span class="a">x²</span> → <span class="b">2x</span>　·　<span class="a">x³</span> → <span class="b">3x²</span>　·　<span class="a">√x = x<sup>½</sup></span> → <span class="b">½·x<sup>−½</sup></span>'},
   p4_dsum:{zh:'为什么 √x 的斜率 = ½·x<sup>−½</sup> ？—— 点开看推导（用 x=4）',en:'Why is √x’s slope = ½·x<sup>−½</sup>? — open for the steps (using x=4)'},
   p4_dbody:{zh:'<b>目标</b>：证明「0.5 ÷ √x」和「½·x<sup>−½</sup>」是同一个东西，用 x=4 边算边看。<br><br><b>事实 A：右上角 ½ = 开根号。</b><br>4<sup>½</sup> 自己乘一遍：4<sup>½</sup> × 4<sup>½</sup>，右上角相加 ½+½=1 → 4<sup>1</sup>=4。所以 4<sup>½</sup> 是「自己乘自己 = 4」的数 = 2 = √4。<br>→ <b>x<sup>½</sup> = √x</b><br><br><b>事实 B：右上角带负号 = 1 ÷ 它。</b><br>4<sup>2</sup>=16 → 4<sup>1</sup>=4 → 4<sup>0</sup>=1 → 4<sup>−1</sup>=1÷4（每往下减 1，就 ÷4 一次）。<br>所以 4<sup>−½</sup> = 1 ÷ 4<sup>½</sup> = 1 ÷ √4 = 0.5。<br>→ <b>x<sup>−½</sup> = 1 ÷ √x</b><br><br><b>把 ½·x<sup>−½</sup> 翻译成大白话：</b><br>x<sup>−½</sup> 的右上角 −½：负号 → 翻成「1 ÷」（事实B），½ → 开根号（事实A），所以 x<sup>−½</sup> = 1 ÷ √x；前面还乘着 ½ = 0.5。<br>合起来：½·x<sup>−½</sup> = 0.5 × (1 ÷ √x) = <b>0.5 ÷ √x</b> —— 正是图里量的那个！<br><br><b>用 x=4 对答案：</b><br>大白话：0.5 ÷ √4 = 0.5 ÷ 2 = <b>0.25</b><br>公式版：½ · 4<sup>−½</sup> = 0.5 × 0.5 = <b>0.25</b> ✅ 一样，只是换了身衣服。<br><br>👉 上面 √x 的图里，把「点 A 位置」拖到最右 = <b>4</b>、「间距」拖到 <b>0</b>，图上就会显示 <b>斜率 = 0.25</b>，和这里对得上。',en:'<b>Goal</b>: show “0.5 ÷ √x” and “½·x<sup>−½</sup>” are the same thing. Follow along with x=4.<br><br><b>Fact A: top-right ½ = square root.</b><br>4<sup>½</sup> times itself: 4<sup>½</sup> × 4<sup>½</sup> adds the tops ½+½=1 → 4<sup>1</sup>=4. So 4<sup>½</sup> is the number that ×itself = 4 → 2 = √4.<br>→ <b>x<sup>½</sup> = √x</b><br><br><b>Fact B: a minus on top = 1 ÷ it.</b><br>4<sup>2</sup>=16 → 4<sup>1</sup>=4 → 4<sup>0</sup>=1 → 4<sup>−1</sup>=1÷4 (each step down divides by 4).<br>So 4<sup>−½</sup> = 1 ÷ 4<sup>½</sup> = 1 ÷ √4 = 0.5.<br>→ <b>x<sup>−½</sup> = 1 ÷ √x</b><br><br><b>Translate ½·x<sup>−½</sup>:</b><br>the −½ on top: minus → “1 ÷” (Fact B), ½ → a root (Fact A), so x<sup>−½</sup> = 1 ÷ √x; then the ½ in front.<br>So ½·x<sup>−½</sup> = 0.5 × (1 ÷ √x) = <b>0.5 ÷ √x</b> — exactly what the graph measures!<br><br><b>Check with x=4:</b><br>Plain: 0.5 ÷ √4 = 0.5 ÷ 2 = <b>0.25</b><br>Formula: ½ · 4<sup>−½</sup> = 0.5 × 0.5 = <b>0.25</b> ✅ same, just different clothes.<br><br>👉 In the √x graph above, drag “point A” all the way to <b>4</b> and the gap to <b>0</b> — it shows <b>slope = 0.25</b>, matching this.'},
+  pv_kicker:{zh:'没有秒表，更没有微积分 · 他却算准了',en:'No stopwatch, no calculus — yet he nailed it'},
+  pv_q:{zh:'那一刻，<em>真正</em>有多快？',en:'How fast, <em>really</em>, at that instant?'},
+  pv_sub:{zh:'平均速度好算。可"<b>此刻这一下</b>到底多快"？<br>有个<b>几百年前就有、伽利略也用过</b>的老办法：拿一个<b>不快不慢的匀速运动</b>来跟真球比。我们把它画成一个"<b>匀速球</b>"，看它俩<b>从起点跑到终点</b> 👇',en:'The average speed is easy. But "how fast <b>right this instant</b>"?<br>There’s an old idea — <b>centuries old, and Galileo used it</b>: compare the ball to a <b>steady, constant-speed</b> motion. We draw it as a "<b>pacer ball</b>" — watch them <b>race from start to finish</b> 👇'},
+  pv_read:{zh:'两个球<b>同时松手、同时到、走一样远</b>。<br><b>匀速球</b>（假想的）全程<b>不快不慢</b>，它的速度就是真球一路的<b>平均速度</b>。<br>可<b>真球越滚越快</b>：起先慢、落在后头，最后猛地追上；到终点这一瞬，<b>正好是匀速球的两倍</b> —— 那就是它<b>此刻</b>的快慢。<br><span class="note">（为什么是两倍？真球从 <b>0</b> 起步、匀匀变快，匀速球的速度正好卡在"<b>0</b>"和"<b>此刻最快</b>"的正中间 —— 正中间就是一半，所以此刻是它的两倍。）</span>',en:'Both balls <b>start together, arrive together, go the same distance</b>.<br>The (imagined) <b>pacer</b> is <b>steady</b> — its speed is the ball’s <b>average speed</b>.<br>But the <b>real ball speeds up</b>: slow at first, falling behind, then a late rush to catch up; at the finish it’s going <b>exactly twice the pacer</b> — its speed <b>right now</b>.<br><span class="note">(Why twice? Starting from <b>0</b> and speeding up evenly, the pacer’s speed sits right in the <b>middle</b> between "<b>0</b>" and "<b>fastest, now</b>" — the middle is half, so now is twice it.)</span>'},
+  pv_card:{zh:'🎯 <b>做不到，但可以"想"</b>：想一个匀速球当尺子，它正好是真球的<b>平均速度</b>；而真球到终点，是它的<b>两倍</b>。<br>于是有了一把<b>钥匙</b> —— <b>量出平均速度、翻一倍，就是某一瞬的速度</b>（还没到具体数字，但路子通了）。伽利略连准秒表都没有，就靠"想一把匀速的尺子"想通了这条 —— 四百年前，头一回。',en:'🎯 <b>You can’t build it, but you can imagine it</b>: picture a steady pacer as a ruler — it’s exactly the ball’s <b>average speed</b>, and at the finish the ball is <b>twice</b> that.<br>So now you hold a <b>key</b> — <b>measure the average speed, double it, and that’s the speed at an instant</b> (no number yet, but the path is clear). With no precise stopwatch, Galileo reasoned this out just by "imagining a steady ruler" — four hundred years ago, the first time ever.'},
+  pv_hist:{zh:'※ <b>现实里没有真的匀速球</b> —— 任何东西都会被摩擦拖慢，要一直匀速反而得不停使劲。匀速球是<b>想象出来量平均速度的尺子</b>，我们从没真造它、真赛跑。这也正是<b>伽利略</b>当年做的：在纸上把落体和一个<b>想象的匀速运动</b>相比。',en:'※ <b>No real ball moves at a perfectly steady speed</b> — friction always drags it, and holding constant speed would take constant effort. The pacer is an <b>imagined ruler for reading off the average speed</b>; we never build it or race it. This is exactly what <b>Galileo</b> did: on paper he compared the fall to an <b>imagined uniform motion</b>.'},
+  pv_more_s:{zh:'为什么真球到终点，正好是匀速球的两倍？',en:'Why is the ball, at the finish, exactly twice the pacer?'},
+  pv_more:{zh:'因为真球是从 <b>0 匀匀地</b>加速的：前半程它比匀速球<b>慢</b>（落在后头），后半程比匀速球<b>快</b>（追上来）—— <b>慢多少、就快多少，正好抵消</b>，所以两个球到终点<b>走一样远</b>。而匀速球那个匀速，正好卡在真球的<b>正中间</b>，也就是真球终点速度的<b>一半</b>。<br><br>要是真球忽快忽慢就没这么整齐了；但"<b>盯住平均速度、再抠出此刻速度</b>"这个思路是通用的，本章<b>最后一页</b>会把它推到任何曲线（也才第一次出现公式）。',en:'Because the ball accelerates <b>evenly from 0</b>: in the first half it’s <b>slower</b> than the pacer (falls behind), in the second half <b>faster</b> (catches up) — <b>as much slower as it is later faster, exactly cancelling</b> — so both reach the finish having gone the <b>same distance</b>. And the pacer’s steady speed sits <b>dead center</b> of the ball’s — <b>half</b> its finish speed.<br><br>If the ball sped up unevenly it wouldn’t be this tidy; but "<b>watch the average speed, then tease out the instant speed</b>" is general — the <b>last page</b> extends it to any curve (and only there does a formula first appear).'},
+  pc_kicker:{zh:'用上那把钥匙 · 真算一个数',en:'Use the key · get a real number'},
+  pc_q:{zh:'此刻多快？<em>算给你看</em>',en:'How fast now? <em>Let’s compute it</em>'},
+  pc_sub:{zh:'第 5 屏那把钥匙是：<b>量出平均速度，翻一倍，就是此刻速度</b>。这一屏就拿它算个真数字 —— 拖滑块，挑一刻看看 👇',en:'The key from Screen 5: <b>measure the average speed, double it, and that’s the instant speed</b>. Here we use it to get a real number — drag the slider and pick a moment 👇'},
+  pc_lt:{zh:'拖到第几份时间 →',en:'drag to which unit of time →'},
+  pc_why:{zh:'<b>这些距离，为什么正好是 1、4、9、16 这种平方数？</b><br>拿第 3 份时间走一遍：球走了多远，就等于"走了多久"乘上"这一路的平均速度"。走了多久？<b>3 份</b>。平均速度呢？上面刚算过——也正好是 <b>3</b>。于是 3 × 3 = <b>9</b>。<br>再看别的：第 2 份是 2×2=4，第 4 份是 4×4=16……每一次，都是<b>同一个数乘它自己</b>——距离自然就成了平方数。',en:'<b>Why are these distances exactly 1, 4, 9, 16 (squares)?</b><br>Walk through the 3rd unit of time: how far the ball went equals "how long it went" times "its average speed along the way". How long? <b>3 units</b>. And the average speed? Just computed above — also <b>3</b>. So 3 × 3 = <b>9</b>.<br>Others follow: the 2nd unit is 2×2=4, the 4th is 4×4=16… every time it’s <b>the same number times itself</b> — so the distance is always a square.'},
+  pc_card:{zh:'🎯 就这样，从"走了多远、用了多久"里，我们把"<b>此刻到底多快</b>"实实在在算了出来 —— 四百年前，伽利略头一个做到。',en:'🎯 And so, from "how far" and "how long", we actually worked out "<b>how fast at this instant</b>" — the very thing Galileo first pulled off four hundred years ago.'},
   p5_kicker:{zh:'给它一个规则',en:'Give it a rule'},
   p5_l1:{zh:'看出来了吗？<b>指数搬下来当系数，指数再减 1</b>。这就是<b>幂法则</b>：',en:'See it? <b>Bring the exponent down as a coefficient, then subtract 1 from it.</b> That is the <b>power rule</b>:'},
   p5_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数 n 搬到前面当系数<br>指数减 1</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">a power function</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">exponent n moves front as a coefficient<br>exponent drops by 1</span></span></div>'},
@@ -617,6 +937,7 @@ const I18N={
   p6_dn:{zh:'<b>幂法则 ≠ 导数。</b>幂法则只是「当曲线恰好是 xⁿ 时」的一条<b>捷径</b>。<br><br><b>① 幂法则只管 xⁿ 这一类</b>（x²、x³、√x…）。sin、eˣ、ln 各有各的求导公式，幂法则管不着。<br><br><b>② 但「求导」几乎不挑曲线。</b>导数是个<b>几何概念</b> —— 某点的<b>切线斜率</b>。只要曲线在那点<b>光滑</b>（放大后像直线），导数就存在，<b>根本不需要公式</b>。这正是本章开头互动图干的：纯靠「量两点、把 B 拖近 A」，没用一个公式。<br><br><b>③ 不规则曲线能不能求导？分三种：</b><br>· <b>有公式、非幂函数</b>（sin x、eˣ）：能 —— 用它自己的公式 + 加减/乘除/链式法则。<br>· <b>完全没公式</b>（手画波浪线、GPS 实测数据）：<b>也能</b> —— 回到定义，在那点取两个很近的点量斜率（<b>数值求导</b>），就是第 2、3 屏那套逼近法。<br>· <b>有尖角/断裂/无限抖动</b>（如 |x| 在 0 点）：那一点<b>不能</b> —— 没有唯一切线，导数在该点<b>不存在</b>。<br><br><b>一句话：</b>能不能求导，看曲线<b>光不光滑</b>，不看有没有漂亮公式。幂法则只是 xⁿ 的加速器；现实里没公式的数据（如汽车 GPS），靠的就是「量两点逼近」的数值办法（第 2 章瞬时速度正是这么干的）。',en:'<b>The power rule ≠ the derivative.</b> It is just a <b>shortcut for when the curve happens to be xⁿ</b>.<br><br><b>① It only covers the xⁿ family</b> (x², x³, √x…). sin, eˣ, ln each have their own derivative formulas; the power rule doesn’t touch them.<br><br><b>② But “taking a derivative” barely cares about the curve.</b> A derivative is a <b>geometric idea</b> — the <b>slope of the tangent</b> at a point. As long as the curve is <b>smooth</b> there (looks like a line when zoomed in), the derivative exists, <b>with no formula needed</b>. That is exactly what the interactive figure at the start did: purely “measure two points, drag B toward A”, no formula.<br><br><b>③ Can irregular curves be differentiated? Three cases:</b><br>· <b>Has a formula, not a power</b> (sin x, eˣ): yes — its own formula + sum/product/chain rules.<br>· <b>No formula at all</b> (a hand-drawn squiggle, measured GPS data): <b>also yes</b> — go back to the definition: take two very close points there and measure the slope (<b>numerical differentiation</b>) — the same limiting method as screens 2–3.<br>· <b>Has a corner / jump / infinite wiggle</b> (like |x| at 0): there it <b>can’t</b> — no single tangent, so the derivative <b>does not exist</b> at that point.<br><br><b>In one line:</b> whether you can differentiate depends on whether the curve is <b>smooth</b>, not on whether it has a pretty formula. The power rule is just an accelerator for xⁿ; real-world formula-less data (a car’s GPS) relies on the “measure two points, take the limit” numerical method (exactly what Chapter 2 did for instantaneous speed).'},
   p6_ex_s:{zh:'练一练 · 2 道求导题（点开看答案）',en:'Practice · 2 derivative problems (open for answers)'},
   p6_ex:{zh:'① 求 <b>x⁴</b> 的导数 = ?<br>　→ 幂法则：指数 4 搬下来、再减 1 → <b>4x³</b>。<br><br>② <b>x⁷</b> 在 x = 1 处的斜率 = ?<br>　→ 先求导 <b>7x⁶</b>，代入 x=1 → <b>7</b>。',en:'① derivative of <b>x⁴</b> = ?<br>　→ power rule: bring 4 down, subtract 1 → <b>4x³</b>.<br><br>② slope of <b>x⁷</b> at x = 1 = ?<br>　→ derivative <b>7x⁶</b>, plug x=1 → <b>7</b>.'},
+  p3_law:{zh:'🏛️ 这不是我编的数字：<b>1、3、5、7</b>（每段相同时间走的）和 <b>1、4、9、16</b>（累计＝平方），是伽利略在《<b>关于两门新科学的对话</b>》(1638) 里写下的<b>落体定律</b> —— 从斜面 + 水钟实验得来，他说反复做了上百次、结果一致到 1/10 脉搏。',en:'🏛️ Not made-up numbers: <b>1, 3, 5, 7</b> (each equal time-slice) and <b>1, 4, 9, 16</b> (totals = squares) are the law of falling bodies from <b>Two New Sciences</b> (1638, Galileo) — from ramp + water-clock experiments repeated a hundred times.'},
   p6_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
@@ -624,26 +945,25 @@ function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
+  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();
   {const pd0=document.getElementById('proofDetails');if(pd0&&pd0.open)drawProof();}
 }
 function initAll(){
-  drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();
-  const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
-  const aim=e=>{const rc=hero.getBoundingClientRect(),X=50,W=hero.clientWidth-76,xmax=3.2;
-    heroA=Math.max(0.3,Math.min(3.1,(e.clientX-rc.left-X)/W*xmax));drawHero();};
-  let drag=false;
-  hero.addEventListener('pointerdown',e=>{drag=true;hero.setPointerCapture(e.pointerId);aim(e);});
-  hero.addEventListener('pointermove',e=>{if(drag)aim(e);});
-  hero.addEventListener('pointerup',()=>drag=false);hero.addEventListener('pointercancel',()=>drag=false);
-  let r1=null;const zRedraw=()=>{if(r1)return;r1=requestAnimationFrame(()=>{r1=null;drawZoom();});};
-  document.getElementById('zA').addEventListener('input',zRedraw);document.getElementById('zGap').addEventListener('input',zRedraw);
-  let r2=null;const pRedraw=()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawPat();});};
-  document.getElementById('pA').addEventListener('input',pRedraw);document.getElementById('pGap').addEventListener('input',pRedraw);
+  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();
+  {const _dt=document.getElementById('dropT');if(_dt)_dt.addEventListener('input',()=>{dropT=+_dt.value;requestAnimationFrame(drawDrop);});}
+  {const _rt=document.getElementById('rampT');if(_rt)_rt.addEventListener('input',()=>{rampT=+_rt.value;requestAnimationFrame(drawRamp);});}
+  {const _lt=document.getElementById('lawT');if(_lt)_lt.addEventListener('input',()=>{lawT=+_lt.value;requestAnimationFrame(drawLaw);});}
+  let r2=null;const avR=()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawAvg();});};
+  {const a=document.getElementById('avgA'),b=document.getElementById('avgB');if(a)a.addEventListener('input',()=>{avgA=+a.value;avR();});if(b)b.addEventListener('input',()=>{avgB=+b.value;avR();});}
+  spdReduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
+  {const cSp=document.getElementById('cSpeed');
+   if(cSp&&'IntersectionObserver' in window){new IntersectionObserver(es=>{spdInView=es[0].isIntersecting;if(spdInView)spdPlay();else spdStop();},{threshold:.3}).observe(cSp);}
+   else{spdInView=true;spdPlay();}}
+  {const _ct=document.getElementById('calcT');if(_ct)_ct.addEventListener('input',()=>{calcT=+_ct.value;requestAnimationFrame(drawCalc);});}
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
-  [['cHero',drawHero],['cZoom',drawZoom],['cPat',drawPat]].forEach(([id,fn])=>{const el=document.getElementById(id);if(!el)return;
+  [].forEach(([id,fn])=>{const el=document.getElementById(id);if(!el)return;
     el.addEventListener('pointerenter',()=>{hoverId=id;fn();});el.addEventListener('pointerleave',()=>{if(hoverId===id){hoverId=null;fn();}});});
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
@@ -673,7 +993,7 @@ function initAll(){
     hd.addEventListener('pointerup',()=>{drag=false;});hd.addEventListener('pointercancel',()=>{drag=false;});
   }}
   {const ax=document.getElementById('ansX');if(ax)ax.addEventListener('input',drawScale);}
-  addEventListener('resize',()=>{drawHero();drawZoomSeq();drawZoom();drawPat();drawScale();if(pd&&pd.open)drawProof();});
+  addEventListener('resize',()=>{drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();if(pd&&pd.open)drawProof();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }
