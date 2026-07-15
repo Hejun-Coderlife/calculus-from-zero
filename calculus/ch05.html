@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>怎么算导数 — 从 0 开始的微积分</title>
+<title>伽利略的比萨斜塔 — 从 0 开始的微积分</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%230071e3' stroke-width='6'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -170,7 +170,7 @@
   <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cCurve" height="360"></canvas></div>
   <div class="readout reveal" data-i18n="p8_read"></div>
   <div class="card reveal" data-i18n="p8_card"></div>
-  <a href="ch06.html" class="nextbtn reveal" data-i18n="p8_next">下一章：怎么算积分 →</a>
+  <a href="ch05b.html" class="nextbtn reveal" data-i18n="p8_next">下一章：缩到极限 →</a>
 </section>
 
 <div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -851,7 +851,7 @@ function drawPat(){
 }
 
 const I18N={
-  title:{zh:'怎么算导数 — 从 0 开始的微积分',en:'Computing Derivatives — Calculus from Zero'},
+  title:{zh:'伽利略的比萨斜塔 — 从 0 开始的微积分',en:'Galileo’s Leaning Tower — Calculus from Zero'},
   nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
   p1_gal:{zh:'伽利略 · 1564–1642',en:'Galileo Galilei · 1564–1642'},
   p1_kicker:{zh:'从一个现实开始 · 400 年前',en:'Start from something real · 400 years ago'},
@@ -905,7 +905,7 @@ const I18N={
   p8_sub:{zh:'前面都是<b>直斜坡</b>——匀匀加速，伽利略的"翻倍"才管用。可现实里的运动大多<b>不匀</b>。把斜坡换成一条<b>弯道</b>看看 👇',en:'So far it’s been a <b>straight ramp</b> — even acceleration, where Galileo’s "double it" works. But most real motion is <b>uneven</b>. Swap the ramp for a <b>curved track</b> 👇'},
   p8_lx:{zh:'位置 x',en:'position x'},
   p8_card:{zh:'🚩 那么，在这种<b>不匀</b>的运动里，某一刻的<b>此刻速度</b>到底怎么算？<br>伽利略的翻倍失灵了 —— 这个问题，要等<b>牛顿</b>登场，才真正解开。',en:'🚩 So, in this <b>uneven</b> motion, how do you find the <b>instant speed</b> at a moment?<br>Galileo’s doubling fails here — this question waits for <b>Newton</b> to truly crack it.'},
-  p8_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
+  p8_next:{zh:'下一章：缩到极限 →',en:'Next: To the Limit →'},
   p5_kicker:{zh:'给它一个规则',en:'Give it a rule'},
   p5_l1:{zh:'看出来了吗？<b>指数搬下来当系数，指数再减 1</b>。这就是<b>幂法则</b>：',en:'See it? <b>Bring the exponent down as a coefficient, then subtract 1 from it.</b> That is the <b>power rule</b>:'},
   p5_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数 n 搬到前面当系数<br>指数减 1</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">a power function</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">exponent n moves front as a coefficient<br>exponent drops by 1</span></span></div>'},

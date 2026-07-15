@@ -69,11 +69,21 @@
 <button id="langBtn" class="langbtn">EN</button>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="pT_kicker">从一个现实开始</div>
-  <div class="q reveal" data-i18n="pT_q">先看个水龙头</div>
+  <div class="kicker reveal" data-i18n="pT_kicker">从一个现实开始 · 400 年前</div>
+  <div class="q reveal" data-i18n="pT_q">一个往下掉的球</div>
   <div class="sub reveal" data-i18n="pT_sub"></div>
-  <div class="fig reveal" style="width:min(420px,86vw)"><canvas id="cTap" height="340"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="pT_lv">把水龙头开大 →</label><input id="tapV" type="range" min="8" max="100" value="55" step="1"></div>
+  <div class="fig reveal" style="width:min(500px,94vw)"><canvas id="cDrop" height="430"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="pT_lv">松手后 · 拖着看时间走 →</label><input id="dropT" type="range" min="1" max="34" value="12" step="1"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="pC_kicker">先用笨办法</div>
+  <div class="q reveal" data-i18n="pC_q">把距离，一段段<em>加出来</em></div>
+  <div class="sub reveal" data-i18n="pC_sub"></div>
+  <div class="fig reveal" style="width:min(520px,94vw)"><canvas id="cSum" height="400"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="pC_lt">切成几段 →</label><input id="segN" type="range" min="2" max="40" value="6" step="1"></div>
+  <div class="readout reveal" id="sumOut"></div>
+  <div class="card reveal" data-i18n="pC_gal"></div>
 </section>
 
 <section class="panel">
@@ -148,6 +158,16 @@
   <div class="eqbox reveal" style="transition-delay:.5s" data-i18n="p5_eq"><div class="eqrow"><span class="tok"><span class="sym blue">∫ₐᵇ f dx</span><span class="lab" style="max-width:15em"><b>a、b</b> 左右两端　<b>f</b> 边界的高　<b>dx</b> 每条的宽<br><b>∫</b> = 把无数「高 f × 宽 dx」小条从 a 加到 b（求和，第三章）<br>= 曲线下的面积</span></span><span class="tok"><span class="sym">=</span></span><span class="tok"><span class="sym">F(b) − F(a)</span><span class="lab">原函数在两端一减<br>（F 的导数 = f）</span></span></div></div>
   <div class="fig reveal" style="max-width:420px;margin:8px auto 2px" data-i18n="p5_fig"></div>
   <div class="lim reveal" style="transition-delay:.95s" data-i18n="p5_lim">F 叫 f 的<b>原函数</b>：它的导数正好是 f。找到它，面积就是两端一减。</div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="pFall_kicker">给「找原函数」一个真实舞台</div>
+  <div class="q reveal" data-i18n="pFall_q">一个<em>自由落体</em></div>
+  <div class="sub reveal" data-i18n="pFall_sub"></div>
+  <div class="fig reveal" style="width:min(460px,92vw)"><canvas id="cFall" height="360"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="pFall_lt">时间 t：拖着往后走 →</label><input id="fallT" type="range" min="1" max="30" value="16" step="1"></div>
+  <div class="readout reveal" id="fallOut"></div>
+  <div class="card reveal" data-i18n="pFall_card"></div>
 </section>
 
 <section class="panel">
@@ -352,10 +372,20 @@ const I18N={
   p3_syms:{zh:'📎 <b>这一章的符号</b>（后面会反复用）：<br><b>· 这几屏就用：</b><b>f</b> = 那条曲线（导数），<b>f(x)</b> = 它在 x 处有多高　·　<b>A(x)</b> = 从 0 到 x 的阴影面积　·　<b>F</b> = f 的<b>原函数</b>（= 面积曲线 A，求导变回 f）<br><b>· 后面「算积分」几屏才用：</b><b>a、b</b> = 左右两端　·　<b>dx</b> = 每一条的宽（这张图里还没出现）',en:'📎 <b>Symbols in this chapter</b> (used throughout):<br><b>· Used on these screens:</b> <b>f</b> = the curve (derivative), <b>f(x)</b> = its height at x　·　<b>A(x)</b> = shaded area from 0 to x　·　<b>F</b> = the <b>antiderivative</b> of f (= area curve A)<br><b>· Only later, for integration:</b> <b>a, b</b> = the two ends　·　<b>dx</b> = width of each strip (not in this figure yet)'},
   p3_lx:{zh:'移动 x',en:'move x'},
   p3_ldx:{zh:'把一步 Δx 拖小',en:'shrink the step Δx'},
-  pT_kicker:{zh:'从一个现实开始',en:'Start from something real'},
-  pT_q:{zh:'先看个水龙头',en:'First, a tap'},
-  pT_sub:{zh:'想象一个水龙头，正往桶里放水。<br>水龙头<b>开得越大</b>，桶里的水面就<b>涨得越快</b>；开得越小，就涨得越慢。<br>拖动下面的滑块试试。',en:'Picture a tap running water into a bucket.<br>The <b>wider</b> the tap, the <b>faster the water rises</b>; the smaller, the slower.<br>Try the slider below.'},
-  pT_lv:{zh:'把水龙头开大 →',en:'tap width →'},
+  pT_kicker:{zh:'从一个现实开始 · 400 年前',en:'Start from something real · 400 years ago'},
+  pT_q:{zh:'一个往下掉的球',en:'A falling ball'},
+  pT_sub:{zh:'400 年前，伽利略在比萨斜塔（<b>高约 57 米</b>）上松开手，让一个球往下掉。<br>他<b>量了球掉多远、用多久</b>，发现越往后掉得越快，而且<b>加快得很均匀</b>（每过一秒，速度都增加同样多）—— 这就是他反推出的规律：<b>匀加速</b>。<br>可<b>到第几秒、它掉了多远</b>？这一章，就从这条规律，算出它<b>每一刻掉了多远</b>。',en:'400 years ago, Galileo dropped a ball from the Leaning Tower of Pisa (<b>about 57 m</b> tall).<br>By <b>measuring how far it fell and how long it took</b>, he found it falls faster and faster, speeding up <b>evenly</b> (each second the speed grows by the same amount) — the rule he inferred: <b>uniform acceleration</b>.<br>But <b>how far by each second</b>? This chapter turns that rule into <b>how far it has fallen at every instant</b>.'},
+  pT_lv:{zh:'松手后 · 拖着看时间走 →',en:'after release · drag time →'},
+  pC_kicker:{zh:'先用笨办法',en:'The brute-force way first'},
+  pC_q:{zh:'把距离，一段段<em>加出来</em>',en:'Add up the distance, <em>piece by piece</em>'},
+  pC_sub:{zh:'球越掉越快，速度一直在变，没法一口气算它掉了多远。<br>那就<b>把时间切成小段</b>：每一小段很短，就<b>假设里面速度不变</b>（当成匀速）—— 那这一小段掉的距离 ≈ <b>这一小段的速度 × 这段时间</b>。<br>把每一小段<b>加起来</b>，就是总距离 —— <b>切得越细，这个假设越贴近真实，结果越准</b>。',en:'The ball keeps speeding up, so we cannot get the distance in one shot.<br>So <b>slice time into small pieces</b>: each piece is short, so we <b>assume the speed inside it stays fixed</b> (treat it as constant) — then that piece falls about <b>its speed × that little time</b>.<br><b>Add up</b> every piece — that is the total distance, and <b>the finer the slices, the truer the assumption, the more accurate</b>.'},
+  pC_lt:{zh:'切成几段 →',en:'slices →'},
+  pC_gal:{zh:'🏛️ 这个「切段加起来」，是<b>理解</b>距离怎么来的笨办法。伽利略真正的天才不在这一步 —— 而是他<b>用斜面实验、量距离和时间，反推出「匀加速」这条规律</b>（推翻了亚里士多德两千年）。至于「一步算出距离」，是后来<b>牛顿用微积分</b>做到的，而且对<b>任何</b>变化的速度都管用 —— 后面几屏就见。',en:'🏛️ This slice-and-add is the brute-force way to <b>understand</b> where the distance comes from. The real genius of Galileo was not this step — it was <b>using ramp experiments, measuring distance and time, to infer the rule of uniform acceleration</b> (overturning Aristotle). Getting the distance <b>in one step</b> came later, from <b>Newton and calculus</b>, and it works for <b>any</b> changing speed. Coming soon.'},
+  pFall_kicker:{zh:'给「找原函数」一个真实舞台',en:'A real stage for the antiderivative'},
+  pFall_q:{zh:'一个<em>自由落体</em>',en:'A <em>falling object</em>'},
+  pFall_sub:{zh:'松手，让一个球往下掉。它的速度是<b>天生的公式</b>：越掉越快，<b>v = g·t</b>（g 是重力，约 10 m/s²）。<br>正因为速度是公式，我们能<b>找到原函数</b>，把「距离仪」<b>造出来</b> —— 任意时刻直接读出它掉了多远，不用一秒秒累加。',en:'Let a ball drop. Its speed is a <b>built-in formula</b>: faster and faster, <b>v = g·t</b> (g is gravity, ~10 m/s²).<br>Because the speed is a formula, we can <b>find the antiderivative</b> and <b>build a distance meter</b> — read how far it fell at any instant, no second-by-second adding.'},
+  pFall_lt:{zh:'时间 t：拖着往后走 →',en:'time t →'},
+  pFall_card:{zh:'🔑 和水龙头对照：水流忽快忽慢、<b>没有公式</b>，距离仪只能一秒秒累加（毛估）；这里速度是公式 <b>v=g·t</b>，找到原函数就把距离仪<b>一步造好</b> —— 这才是这一章方法真正的舞台。',en:'Vs the tap: the flow wobbles with <b>no formula</b>, so its meter can only be summed second by second (rough). Here speed is a formula <b>v=g·t</b>; the antiderivative builds the meter <b>in one step</b> — the real stage for this chapter.'},
   p4_kicker:{zh:'反着求',en:'Run it backward'},
   p4_q:{zh:'会<em>求导</em>，就会<em>算面积</em>',en:'Differentiate → you can <em>integrate</em>'},
   p4_l1:{zh:'第五章学过 <b>x² 求导 = 2x</b>，两边都除以 2 就得 <b>½x² 求导 = x</b>。<br>反过来读：直线 <b>x</b> 的<b>原函数</b>就是 <b>½x²</b>（因为它求导正好回到 x）。',en:'From chapter 5, <b>the derivative of x² is 2x</b>; halve both sides to get <b>the derivative of ½x² is x</b>.<br>Read it backward: the <b>antiderivative</b> of the line <b>x</b> is <b>½x²</b> (its derivative is exactly x).'},
@@ -412,42 +442,121 @@ function drawFtc(){
   if(out)out.innerHTML=TT('原函数两端一减：F(b) − F(a) = '+expr+' = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= a 到 b 那块<b>绿色</b>曲边面积。换上面的函数、拖 a、b：不管什么曲线，都是「大块 F(b) 挖掉小块 F(a)」。</span>',
     'antiderivative at both ends: F(b) − F(a) = '+expr+' = <b class="gr">'+area.toFixed(2)+'</b><br><span style="font-size:13px;color:var(--faint)">= the <b>green</b> area from a to b. Switch the function, drag a, b: any curve is big F(b) minus small F(a).</span>');
 }
-let tapLevel=0.12,tapRAF=null,tapLast=0;
-function tapSpeed(){const e=document.getElementById('tapV');return e?+e.value/100:0.6;}
-function drawTap(){
-  const cv=document.getElementById('cTap');if(!cv)return;const {ctx,w,h}=setup(cv,340);ctx.clearRect(0,0,w,h);
-  const ff=ffont();const v=tapSpeed();
-  const cx=w*0.40,tapTop=26,spoutY=tapTop+32,bucketTop=150,bucketBot=300,bL=cx-66,bR=cx+66;
-  const wT=bucketBot-2-(bucketBot-bucketTop-4)*tapLevel;
-  ctx.fillStyle='#9aa0aa';ctx.fillRect(cx-66,tapTop,76,13);ctx.fillRect(cx-6,tapTop,15,30);
-  ctx.fillStyle='#7a808a';ctx.fillRect(cx-11,spoutY-7,23,8);
-  ctx.fillStyle=v>0.66?'#e11d0f':(v>0.33?'#f0a020':'#28a745');ctx.beginPath();ctx.arc(cx-56,tapTop+6,9,0,TAU);ctx.fill();
-  const fw=3+v*24;ctx.fillStyle='rgba(0,113,227,.45)';ctx.fillRect(cx-fw/2,spoutY,fw,Math.max(0,wT-spoutY));
-  ctx.strokeStyle='#7a808a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bL,bucketTop);ctx.lineTo(bL,bucketBot);ctx.lineTo(bR,bucketBot);ctx.lineTo(bR,bucketTop);ctx.stroke();
-  ctx.fillStyle='rgba(0,113,227,.30)';ctx.fillRect(bL+2,wT,bR-bL-4,bucketBot-wT-2);
-  const aL=14+v*70;ctx.strokeStyle='#28a745';ctx.fillStyle='#28a745';ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(cx,wT);ctx.lineTo(cx,wT-aL);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,wT-aL);ctx.lineTo(cx-6,wT-aL+10);ctx.lineTo(cx+6,wT-aL+10);ctx.closePath();ctx.fill();
-  const zh=v>0.66?['很急','涨得很快']:(v>0.33?['中等','涨得中等']:['很缓','涨得很慢']);
-  const en=v>0.66?['strong','fast']:(v>0.33?['medium','medium']:['gentle','slow']);
-  ctx.font='700 13px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';
-  ctx.fillStyle='#0071e3';ctx.fillText(TT('水流'+zh[0],'flow '+en[0]),cx+fw/2+10,(spoutY+bucketTop)/2);
-  ctx.fillStyle='#1a7a33';ctx.fillText(TT('水面'+zh[1],'rising '+en[1]),cx+12,wT-aL/2-2);
+let segN=6;
+function drawSum(){
+  const cv=document.getElementById('cSum');if(!cv)return;
+  const {ctx,w,h}=setup(cv,400);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const g=9.8,TM=3.4,VM=g*TM,N=segN;
+  const X=50,Y=26,W=w-98,H=h-70;
+  const mx=t=>X+t/TM*W,my=v=>Y+H-v/VM*H;
+  ctx.fillStyle='rgba(0,113,227,.10)';ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TM),my(0));ctx.lineTo(mx(TM),my(g*TM));ctx.closePath();ctx.fill();
+  let sum=0;const dt=TM/N;
+  for(let i=0;i<N;i++){const t1=(i+1)*dt,hv=g*t1;sum+=hv*dt;
+    ctx.fillStyle='rgba(0,113,227,.28)';ctx.fillRect(mx(i*dt),my(hv),W/N,my(0)-my(hv));
+    ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.strokeRect(mx(i*dt),my(hv),W/N,my(0)-my(hv));}
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(mx(0),my(0));ctx.lineTo(mx(TM),my(g*TM));ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X,Y+H);ctx.lineTo(X+W,Y+H);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='500 11px '+ff;ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(TT('时间（秒）','time (s)'),X+W,Y+H+6);
+  ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText(TT('速度（越掉越快）','speed (faster)'),X-6,Y-7);
+  ctx.fillStyle='#0a5bb5';ctx.font='700 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(TT('底(时间) × 高(速度) ÷ 2 → 距离','base(t) × height(v) ÷ 2 → distance'),mx(TM*0.60),my(g*TM*0.30));
+  const est=sum.toFixed(1);
+  document.getElementById('sumOut').innerHTML=TT(
+   '这个笨办法，切成 <b>'+N+'</b> 段<b>估</b>出来 ≈ <b class="bl">'+est+'</b> 米。<br><span class="note"><b>真实距离是固定的</b>：这块三角形（底×高÷2）= <b>57 米 = 塔高</b>，<b>它不会变</b>。会变的是你的<b>估算</b> —— 切得越细、台阶越贴三角形，估算就越接近真实的 57（6 段估成 66，40 段就到 58 了）。这就是「切得越细越准」。</span>',
+   'This brute-force way, sliced into <b>'+N+'</b>, <b>estimates</b> ≈ <b class="bl">'+est+'</b> m.<br><span class="note"><b>The true distance is fixed</b>: this triangle (base×height÷2) = <b>57 m = tower height</b>, it <b>never changes</b>. What changes is your <b>estimate</b> — finer slices hug the triangle, so the estimate nears the true 57 (6 slices overshoot to 66; 40 reach 58). That is what finer = more accurate means.</span>');
 }
-function tapAnim(ts){
-  if(!tapLast)tapLast=ts;const dt=Math.min((ts-tapLast)/1000,0.05);tapLast=ts;
-  tapLevel+=tapSpeed()*0.32*dt; if(tapLevel>=1)tapLevel=0.04;
-  drawTap(); tapRAF=requestAnimationFrame(tapAnim);
+let fallT=16;
+function drawFall(){
+  const cv=document.getElementById('cFall');if(!cv)return;
+  const {ctx,w,h}=setup(cv,360);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const g=10,T=fallT/10,v=g*T,d=0.5*g*T*T;
+  const TMAX=3,DMAX=0.5*g*TMAX*TMAX,VMAX=g*TMAX;
+  const cx=50,top=36,bot=h-34,Hs=bot-top;
+  ctx.strokeStyle='rgba(0,0,0,.14)';ctx.setLineDash([4,4]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,bot);ctx.stroke();ctx.setLineDash([]);
+  ctx.font='500 9.5px '+ff;ctx.textAlign='right';ctx.textBaseline='middle';
+  for(let m=0;m<=DMAX;m+=15){const y=top+m/DMAX*Hs;
+    ctx.strokeStyle='rgba(0,0,0,.08)';ctx.beginPath();ctx.moveTo(cx-3,y);ctx.lineTo(cx+4,y);ctx.stroke();
+    ctx.fillStyle=SOFT;ctx.fillText(m+'m',cx-7,y);}
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('松手','drop'),cx,top-5);
+  const by=top+d/DMAX*Hs;
+  ctx.strokeStyle='#e0900a';ctx.fillStyle='#e0900a';ctx.lineWidth=2.5;
+  const al=10+v/VMAX*30;
+  ctx.beginPath();ctx.moveTo(cx+18,by);ctx.lineTo(cx+18,by+al);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+18,by+al);ctx.lineTo(cx+14,by+al-7);ctx.lineTo(cx+22,by+al-7);ctx.closePath();ctx.fill();
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(cx,by,11,0,TAU);ctx.fill();
+  const gx=w*0.44,gyT=42,gw=w-gx-20,gh=h-104,gyB=gyT+gh;
+  const mxx=tt=>gx+tt/TMAX*gw,myy=vv=>gyB-vv/VMAX*gh;
+  ctx.fillStyle='rgba(0,113,227,.16)';ctx.beginPath();ctx.moveTo(mxx(0),myy(0));ctx.lineTo(mxx(T),myy(0));ctx.lineTo(mxx(T),myy(v));ctx.closePath();ctx.fill();
+  ctx.strokeStyle=BLUE;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(mxx(0),myy(0));ctx.lineTo(mxx(TMAX),myy(VMAX));ctx.stroke();
+  ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(gx,gyT);ctx.lineTo(gx,gyB);ctx.lineTo(gx+gw,gyB);ctx.stroke();
+  ctx.fillStyle=SOFT;ctx.font='500 10px '+ff;ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(TT('时间 t','t'),gx+gw,gyB+5);
+  ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText(TT('速度 v=g·t','v=g·t'),gx+2,gyT-3);
+  ctx.strokeStyle='rgba(0,0,0,.3)';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(mxx(T),myy(0));ctx.lineTo(mxx(T),myy(v));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=BLUE;ctx.beginPath();ctx.arc(mxx(T),myy(v),4,0,TAU);ctx.fill();
+  if(T>0.5){ctx.fillStyle='#0a5bb5';ctx.font='700 10.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('面积 = 距离','area = dist'),mxx(T*0.5),myy(v*0.32));}
+  document.getElementById('fallOut').innerHTML=TT(
+   '时间 t = <b>'+T.toFixed(1)+'</b> 秒　→　速度 v = g·t = <b>'+v.toFixed(0)+'</b> m/s　→　掉下 d = ½·g·t² = <b class="bl">'+d.toFixed(1)+'</b> m<br><span class="note">速度是天生的公式 v=g·t，所以找得到原函数 ½g·t² —— 距离仪就这么<b>造出来了</b>：任意时刻直接读，不用一秒秒累加。右边三角形：速度斜线下的面积 = ½·底t·高v = ½g·t²，正好等于距离。</span>',
+   'time t = <b>'+T.toFixed(1)+'</b> s　→　speed v = g·t = <b>'+v.toFixed(0)+'</b> m/s　→　fallen d = ½·g·t² = <b class="bl">'+d.toFixed(1)+'</b> m<br><span class="note">Speed is a built-in formula v=g·t, so ½g·t² exists — the distance meter is <b>built</b>: read anytime, no adding. Triangle: area under the speed line = ½·t·v = ½g·t² = the distance.</span>');
 }
-function tapStart(){tapLevel=0.04;tapLast=0;if(tapRAF)cancelAnimationFrame(tapRAF);tapRAF=requestAnimationFrame(tapAnim);}
+let dropT=12;
+function drawDrop(){
+  const cv=document.getElementById('cDrop');if(!cv)return;
+  const {ctx,w,h}=setup(cv,430);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  const g=9.8,TMAX=3.4,T=dropT/10,d=0.5*g*T*T,DMAX=0.5*g*TMAX*TMAX,v=g*T,VMAX=g*TMAX;
+  const groundY=h-28;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const bx=132,tilt=0.068,towerH=306,hw0=42,hw1=35;
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(bx+24,groundY+3,64,8,0,0,TAU);ctx.fill();
+  const hwAt=f=>hw0+(hw1-hw0)*f;
+  ctx.save();ctx.translate(bx,groundY);ctx.rotate(tilt);
+  const gd=ctx.createLinearGradient(-hw0,0,hw0,0);gd.addColorStop(0,'#d6cdb6');gd.addColorStop(.42,'#faf6ee');gd.addColorStop(1,'#d3cab3');
+  ctx.fillStyle=gd;ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.lineTo(-hw1,-towerH);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(150,138,110,.28)';ctx.lineWidth=1;
+  const C=11;for(let c=1;c<C;c++){const xb=-hw0+2*hw0*c/C,xt=-hw1+2*hw1*c/C;ctx.beginPath();ctx.moveTo(xb,-2);ctx.lineTo(xt,-towerH+2);ctx.stroke();}
+  const L=7;ctx.strokeStyle='rgba(150,138,110,.5)';ctx.lineWidth=1.2;
+  for(let i=1;i<L;i++){const f=i/L,y=-towerH*f,hw=hwAt(f);ctx.beginPath();ctx.moveTo(-hw,y);ctx.lineTo(hw,y);ctx.stroke();}
+  ctx.fillStyle='#ded6c2';ctx.fillRect(-hw0-3,-7,2*hw0+6,8);ctx.strokeStyle='rgba(150,138,110,.55)';ctx.lineWidth=1;ctx.strokeRect(-hw0-3,-7,2*hw0+6,8);
+  ctx.fillStyle='#f2ede0';ctx.fillRect(-hw1+4,-towerH-15,2*hw1-8,16);ctx.strokeRect(-hw1+4,-towerH-15,2*hw1-8,16);
+  ctx.strokeStyle='rgba(138,124,96,.6)';ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(-hw1,-towerH);ctx.moveTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.stroke();
+  ctx.restore();
+  const topWX=bx+Math.sin(tilt)*towerH,topWY=groundY-Math.cos(tilt)*towerH;
+  const ballX=topWX+hw1+22,ballY0=topWY-2,fallPix=(groundY-14)-ballY0;
+  const by=ballY0+d/DMAX*fallPix;
+  ctx.fillStyle=SOFT;ctx.font='600 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('✋ 松手','✋ let go'),ballX,ballY0-11);
+  ctx.strokeStyle='rgba(0,0,0,.12)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ballX,ballY0-4);ctx.lineTo(ballX,groundY-12);ctx.stroke();ctx.setLineDash([]);
+  const al=15+v/VMAX*42;
+  ctx.strokeStyle='#1a9850';ctx.fillStyle='#1a9850';ctx.lineWidth=3.4;
+  ctx.beginPath();ctx.moveTo(ballX+17,by-al*0.5);ctx.lineTo(ballX+17,by+al*0.5);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ballX+17,by+al*0.5+2);ctx.lineTo(ballX+11,by+al*0.5-8);ctx.lineTo(ballX+23,by+al*0.5-8);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#157a3f';ctx.font='700 12px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('越掉越快','faster'),ballX+28,by-2);
+  const bg=ctx.createRadialGradient(ballX-4,by-4,1,ballX,by,13);bg.addColorStop(0,'#5aa8f5');bg.addColorStop(1,'#0060cf');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(ballX,by,13,0,TAU);ctx.fill();
+  const dlx=ballX+92;
+  ctx.strokeStyle='rgba(224,144,10,.55)';ctx.setLineDash([3,3]);ctx.lineWidth=1.4;
+  ctx.beginPath();ctx.moveTo(dlx,ballY0);ctx.lineTo(dlx,by);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(224,144,10,.5)';ctx.lineWidth=1.1;
+  ctx.beginPath();ctx.moveTo(dlx-5,ballY0);ctx.lineTo(dlx+5,ballY0);ctx.moveTo(dlx-5,by);ctx.lineTo(dlx+5,by);ctx.stroke();
+  ctx.fillStyle='#e0900a';ctx.font='800 17px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('?',dlx+9,(ballY0+by)/2-8);
+  ctx.fillStyle='#c47f00';ctx.font='700 11.5px '+ff;ctx.fillText(TT('掉了多远','how far'),dlx+9,(ballY0+by)/2+9);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('🏛 比萨斜塔 · 约 57 米','🏛 Pisa · ~57 m'),12,12);
+  ctx.fillStyle=INK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';
+  ctx.fillText(TT('松手后 '+T.toFixed(1)+' 秒','t = '+T.toFixed(1)+' s'),w-12,groundY-9);
+}
 function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawHero();drawAreaFn();drawInt();drawFtc();drawTap();
+  drawHero();drawAreaFn();drawInt();drawFtc();drawDrop();drawSum();drawFall();
 }
 function initAll(){
-  drawHero();drawAreaFn();drawInt();drawFtc();drawTap();
+  drawHero();drawAreaFn();drawInt();drawFtc();drawDrop();drawSum();drawFall();
   const hero=document.getElementById('cHero');hero.style.cursor='grab';hero.style.touchAction='none';
   const aim=e=>{const rc=hero.getBoundingClientRect();const X=44,W=hero.clientWidth-70;
     heroXe=Math.max(0.6,Math.min(XMAX,(e.clientX-rc.left-X)/W*XMAX));drawHero();};
@@ -465,7 +574,9 @@ document.querySelectorAll('[data-fni]').forEach(btn=>btn.addEventListener('click
   document.getElementById('ftcA').addEventListener('input',_redF);
   document.getElementById('ftcB').addEventListener('input',_redF);
   document.querySelectorAll('[data-ftc]').forEach(btn=>btn.addEventListener('click',()=>{fnIdxFtc=+btn.dataset.ftc;document.querySelectorAll('[data-ftc]').forEach(x=>x.classList.toggle('on',x===btn));drawFtc();}));
-  let rT=null;document.getElementById('tapV').addEventListener('input',()=>{if(rT)return;rT=requestAnimationFrame(()=>{rT=null;drawTap();});});
+  let rT=null;const _dt=document.getElementById('dropT');if(_dt)_dt.addEventListener('input',()=>{dropT=+_dt.value;if(rT)return;rT=requestAnimationFrame(()=>{rT=null;drawDrop();});});
+  let rC=null;const _sn=document.getElementById('segN');if(_sn)_sn.addEventListener('input',()=>{segN=+_sn.value;if(rC)return;rC=requestAnimationFrame(()=>{rC=null;drawSum();});});
+  let rf2=null;const _ft=document.getElementById('fallT');if(_ft)_ft.addEventListener('input',()=>{fallT=+_ft.value;if(rf2)return;rf2=requestAnimationFrame(()=>{rf2=null;drawFall();});});
   document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
   const el=document.getElementById('cInt');
   el.addEventListener('pointerenter',()=>{hoverId='cInt';drawInt();});el.addEventListener('pointerleave',()=>{hoverId=null;drawInt();});
@@ -473,10 +584,9 @@ document.querySelectorAll('[data-fni]').forEach(btn=>btn.addEventListener('click
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const lastPanel=document.querySelector('.panel:last-of-type');
   new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
-  addEventListener('resize',()=>{drawHero();drawAreaFn();drawInt();drawFtc();drawTap();});
+  addEventListener('resize',()=>{drawHero();drawAreaFn();drawInt();drawFtc();drawDrop();drawSum();drawFall();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
-  if(document.getElementById("cTap")) tapStart();
 }
 initAll();
 </script>

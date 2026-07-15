@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>缩到极限 — 从 0 开始的微积分</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23fbfbfd'/><circle cx='50' cy='50' r='30' fill='none' stroke='%230071e3' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbfbfd; --ink:#1d1d1f; --soft:#57575c; --faint:#86868b; --line:#e4e4e9;
+    --blue:#0071e3; --indigo:#5e5ce6; --pink:#ff2d55; --green:#28a745;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","PingFang SC",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .panel{position:relative;min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:96px 22px 72px;gap:20px}
+  .kicker{font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--blue)}
+  .q{font-size:clamp(34px,5.4vw,68px);font-weight:700;letter-spacing:-.026em;line-height:1.05;color:var(--ink)}
+  .q em{font-style:normal;color:var(--blue)}
+  .sub{font-size:clamp(17px,2.1vw,22px);font-weight:400;color:var(--soft);max-width:33em;line-height:1.62}
+  .fig{width:min(720px,92vw);margin-top:6px}
+  canvas{display:block;width:100%}
+  .ctrl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+  .ctrl label{font-size:14px;color:var(--faint);font-weight:500}
+  .note{font-size:13px;color:var(--faint)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:min(300px,64vw);height:4px;border-radius:99px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+     border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 3px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.06);cursor:pointer}
+  .readout{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--soft);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .readout b{color:var(--ink);font-weight:600}.readout .bl{color:var(--blue);font-weight:600}.readout .pk{color:var(--pink);font-weight:600}.readout .gr{color:var(--green);font-weight:600}
+  .eqbox{width:100%;max-width:100%;overflow-x:auto;padding:16px 4px 4px}
+  .eqrow{display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,3.5vw,34px);flex-wrap:nowrap;width:max-content;min-width:100%;margin:0 auto}
+  .eqrow .tok{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .eqrow .sym{font-size:clamp(34px,7vw,72px);font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap;color:var(--ink)}
+  .eqrow .sym.blue{color:var(--blue)}
+  .eqrow .lab{font-size:clamp(12px,1.5vw,15px);font-weight:500;color:var(--faint);line-height:1.3;text-align:center;max-width:11em}
+  .eqrow .lab::before{content:"";display:block;width:1px;height:12px;background:var(--line);margin:0 auto 8px}
+  .card{max-width:30em;margin:6px auto 0;padding:14px 18px;background:#eafaef;border:1px solid #c9edd3;border-radius:14px;font-size:clamp(15px,1.9vw,19px);color:var(--ink);line-height:1.55}
+  .defcard{max-width:33em;margin:16px auto 2px;padding:18px 22px 20px;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;text-align:left;box-shadow:0 6px 22px rgba(0,113,227,.10)}
+  .defcard .dt{font-size:clamp(16px,2vw,20px);font-weight:700;color:var(--blue);margin-bottom:8px;line-height:1.4}
+  .defcard .dd{font-size:clamp(14px,1.75vw,17px);line-height:1.62;color:var(--ink);margin:8px 0}
+  .defcard .dlist{margin:12px 0;display:flex;flex-direction:column;gap:7px}
+  .defcard .dlist>div{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:8px 13px;background:#fff;border-radius:9px;font-size:clamp(13px,1.7vw,15px)}
+  .defcard .dlist>div span{color:var(--soft)}
+  .defcard .dlist>div b{color:var(--blue);white-space:nowrap}
+  .tbl{font-size:clamp(15px,1.9vw,20px);font-weight:600;line-height:2;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .tbl .a{color:var(--ink)}.tbl .b{color:var(--blue)}
+  .lim{font-size:clamp(15px,1.9vw,20px);color:var(--soft);font-weight:500}.lim b{color:var(--ink)}
+  .deriv{max-width:40em;margin:12px auto 0;text-align:left;background:#f5f7fa;border:1px solid var(--line);border-radius:14px;padding:0 18px}
+  .deriv summary{cursor:pointer;padding:13px 0;font-size:clamp(15px,1.9vw,18px);font-weight:600;color:var(--ink);list-style:none}
+  .deriv summary::-webkit-details-marker{display:none}
+  .deriv summary::before{content:"▸ ";color:var(--blue)}.deriv[open] summary::before{content:"▾ "}
+  .deriv .db{padding:2px 0 16px;font-size:clamp(16px,2vw,21px);line-height:1.85;color:var(--soft);font-variant-numeric:tabular-nums}
+  .deriv .db b{color:var(--ink)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  .homelink,.langbtn,.prevbtn{position:fixed;top:16px;z-index:10;font-size:13px;font-weight:600;color:var(--soft);text-decoration:none;
+     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+     border:1px solid var(--line);border-radius:980px;padding:6px 15px;cursor:pointer;transition:color .2s}
+  .homelink{left:16px}.langbtn{right:16px}.prevbtn{left:50%;transform:translateX(-50%);font-weight:500}
+  .homelink:hover,.langbtn:hover,.prevbtn:hover{color:var(--ink)}
+  .nextbtn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:15px;font-weight:600;color:#fff;
+     background:var(--blue);text-decoration:none;border-radius:980px;padding:12px 26px;transition:background .2s,transform .08s}
+  .nextbtn:hover{background:#0077ed}.nextbtn:active{transform:scale(.97)}
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:6;font-size:13px;font-weight:500;color:var(--faint);
+     pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bob 2s ease-in-out infinite}
+  .hint svg{width:20px;height:20px}
+  @keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.55}50%{transform:translate(-50%,6px);opacity:1}}
+  @media (prefers-reduced-motion:reduce){.hint{animation:none}}
+</style></head>
+<body>
+<a href="../index.html" class="homelink" data-i18n="nav_home">← 目录</a>
+<a href="ch05.html" class="prevbtn" data-i18n="nav_prev">← 上一章</a>
+<button id="langBtn" class="langbtn">EN</button>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="m1_kicker">接着上一章</div>
+  <div class="q reveal" data-i18n="m1_q">弯道上，<em>此刻多快</em>？</div>
+  <div class="sub reveal" data-i18n="m1_sub"></div>
+  <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cCurve" height="360"></canvas></div>
+  <div class="readout reveal" data-i18n="m1_read"></div>
+  <div class="card reveal" data-i18n="m1_card"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="m2_kicker">牛顿的招 · 缩到极限</div>
+  <div class="q reveal" data-i18n="m2_q">让那一步，缩到<em>几乎没有</em></div>
+  <div class="sub reveal" data-i18n="m2_sub"></div>
+  <div class="reveal" style="margin:6px auto 2px;padding:14px 22px;max-width:32em;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;font-size:clamp(16px,2.1vw,21px);line-height:1.7;text-align:center;color:var(--ink);box-shadow:0 6px 20px rgba(0,113,227,.10)" data-i18n="m2_formula"></div>
+  <div class="fig reveal" style="width:min(580px,95vw)"><canvas id="cLim" height="420"></canvas></div>
+  <div class="ctrl reveal"><label data-i18n="m2_la">起点（此刻）→</label><input id="limA" type="range" min="30" max="340" value="160" step="1">
+    <label data-i18n="m2_lb">终点（往起点拖）→</label><input id="limB" type="range" min="40" max="400" value="340" step="1"></div>
+  <div class="readout reveal" id="limOut"></div>
+  <div class="card reveal" data-i18n="m2_card"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="m3_kicker">任何曲线 · 割线变切线</div>
+  <div class="q reveal" data-i18n="m3_q">缩到底，割线<em>绷成切线</em></div>
+  <div class="sub reveal" data-i18n="m3_sub"></div>
+  <div class="fig reveal" style="width:min(560px,95vw)"><canvas id="cZoom" height="380"></canvas></div>
+  <div class="readout reveal" data-i18n="m3_read"></div>
+  <div class="card reveal" data-i18n="m3_card"></div>
+</section>
+
+<section class="panel">
+  <div class="kicker reveal" data-i18n="m4_kicker">给这套招起个名</div>
+  <div class="q reveal" data-i18n="m4_q">这一招，就叫<em>求导</em></div>
+  <div class="sub reveal" data-i18n="m4_sub"></div>
+  <div class="reveal" style="margin:10px auto 4px;padding:18px 24px;max-width:34em;background:#eff5ff;border:1.5px solid var(--blue);border-radius:16px;font-size:clamp(17px,2.3vw,23px);line-height:1.75;text-align:center;color:var(--ink);box-shadow:0 6px 20px rgba(0,113,227,.10)" data-i18n="m4_formula"></div>
+  <div class="card reveal" data-i18n="m4_card"></div>
+  <a href="ch06.html" class="nextbtn reveal" data-i18n="m2_next">下一章：积分 →</a>
+</section>
+
+<div class="hint" data-i18n="hint">向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+<script>
+const TAU=Math.PI*2;
+const INK='#1d1d1f',BLUE='#0071e3',IND='#5e5ce6',PINK='#ff2d55',GREEN='#28a745',SOFT='#86868b',RED='#e11d0f';
+let LANG='zh';
+function TT(zh,en){return LANG==='en'?en:zh;}
+function dpr(){return Math.min(window.devicePixelRatio||1,2);}
+function setup(cv,cssH){const r=dpr();const cssW=cv.clientWidth||cv.width;cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  const ctx=cv.getContext('2d');ctx.setTransform(r,0,0,r,0,0);return{ctx,w:cssW,h:cssH};}
+function ffont(){return getComputedStyle(document.body).fontFamily;}
+let limA=160,limB=340;
+function drawLim(){
+  const cv=document.getElementById('cLim');if(!cv)return;
+  const {ctx,w,h}=setup(cv,420);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  let t1=limA/100,t2=limB/100; if(t2<t1+0.01)t2=t1+0.01;   // 0.01精度：缝能缩到0.01(两球几乎重合)；滑块都是0.01整数倍，走了(4位小数)÷用了=平均，精确自洽
+  const groundY=h-26;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:72,y:82},B={x:344,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,dnx=-uy,dny=ux,th=13;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  const pos=f=>({x:A.x+dx*f,y:A.y+dy*f});
+  const pA=pos(t1*t1/16),pB=pos(t2*t2/16),upx=-dnx,upy=-dny,ballR=11;
+  ctx.strokeStyle='rgba(224,144,10,.7)';ctx.lineWidth=8;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(pA.x-4*dnx,pA.y-4*dny);ctx.lineTo(pB.x-4*dnx,pB.y-4*dny);ctx.stroke();ctx.lineCap='butt';
+  const aC={x:pA.x+ballR*upx,y:pA.y+ballR*upy},bC={x:pB.x+ballR*upx,y:pB.y+ballR*upy};
+  ctx.fillStyle='#fff';ctx.strokeStyle='#c47f00';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(aC.x,aC.y,ballR-1,0,TAU);ctx.fill();ctx.stroke();
+  const bg=ctx.createRadialGradient(bC.x-4,bC.y-4,1,bC.x,bC.y,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bC.x,bC.y,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('起点 第'+t1.toFixed(2)+'份','start '+t1.toFixed(2)),aC.x+13*upx,aC.y+13*upy-ballR);
+  ctx.fillText(TT('终点 第'+t2.toFixed(2)+'份','end '+t2.toFixed(2)),bC.x+13*upx,bC.y+13*upy-ballR);
+  const cupW=60,cupX=w-92,cupYt=150,cupB=groundY-4,cupH=cupB-cupYt;
+  const y1w=cupB-cupH*(t1/4),y2w=cupB-cupH*(t2/4);
+  ctx.fillStyle='rgba(0,140,220,.2)';ctx.fillRect(cupX+2.5,y1w,cupW-5,cupB-y1w-2.5);
+  ctx.fillStyle='rgba(224,144,10,.4)';ctx.fillRect(cupX+2.5,y2w,cupW-5,y1w-y2w);
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  ctx.fillStyle='#c47f00';ctx.font='700 10.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('用的时间','time used'),cupX+cupW/2,(y1w+y2w)/2);
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('水钟','clock'),cupX+cupW/2,cupYt-4);
+  const D=(t2*t2-t1*t1),T=(t2-t1),V=(t1+t2);
+  const near=(t2-t1)<=0.05;
+  const out=document.getElementById('limOut');
+  if(out)out.innerHTML=TT(
+   '这一小段：从第 <b>'+t1.toFixed(2)+'</b> 份到第 <b>'+t2.toFixed(2)+'</b> 份 —— 走了 <b>'+(+D.toFixed(4))+'</b> 份、用了 <b>'+(+T.toFixed(2))+'</b> 份。<br>平均 ＝ 走的 ÷ 用的 ＝ <b class="bl">'+V.toFixed(2)+'</b>。<br>'+(near?'<span class="note">缩到<b>几乎一点</b>了 —— 平均 <b class="bl">'+V.toFixed(2)+'</b> 只比真值高了<b>一条缝</b>（'+(+T.toFixed(2))+'）。缝再缩到 0，就精确到第 '+t1.toFixed(2)+' 份的 <b style="color:#c47f00;font-size:1.05em">此刻速度 ＝ '+(2*t1).toFixed(2)+'</b>。</span>':'<span class="note">现在这段还很宽 —— 平均 <b class="bl">'+V.toFixed(2)+'</b> 只是<b>这一大段的平均</b>，还<b>不是</b>极限。把<b>终点往起点拖</b>缩短它，平均会一路<b>往下贴</b>，越缩越逼近第 '+t1.toFixed(2)+' 份那一刻的<b>此刻速度</b>。</span>'),
+   'This tiny stretch: unit <b>'+t1.toFixed(2)+'</b> → <b>'+t2.toFixed(2)+'</b> — went <b>'+(+D.toFixed(4))+'</b>, took <b>'+(+T.toFixed(2))+'</b>.<br>average ＝ distance ÷ time ＝ <b class="bl">'+V.toFixed(2)+'</b>.<br>'+(near?'<span class="note">Shrunk to <b>almost a point</b> — the average <b class="bl">'+V.toFixed(2)+'</b> sits just <b>one gap</b> ('+(+T.toFixed(2))+') above the true value. Shrink the gap to 0 and it’s exactly the <b style="color:#c47f00;font-size:1.05em">instant speed ＝ '+(2*t1).toFixed(2)+'</b> at unit '+t1.toFixed(2)+'.</span>':'<span class="note">This stretch is still wide — the average <b class="bl">'+V.toFixed(2)+'</b> is just <b>the average over a big stretch</b>, <b>not</b> the limit. Drag the <b>end toward the start</b> to shrink it: the average slides <b>down</b>, approaching the <b>instant speed</b> at unit '+t1.toFixed(2)+'.</span>'));
+}
+// ==== 第8屏：弯道·速度不匀（本章结尾悬念，自动来回滚）====
+let crvCtx=null,crvW=0,crvH=0,crvInView=false,crvRAF=null,crvT0=0,crvReduce=false;
+function crvSetup(){
+  const cv=document.getElementById('cCurve');if(!cv)return false;
+  const r=dpr(),cssW=cv.clientWidth||cv.width,cssH=360;
+  cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  crvCtx=cv.getContext('2d');crvCtx.setTransform(r,0,0,r,0,0);crvW=cssW;crvH=cssH;return true;
+}
+function crvScene(phase){
+  const ctx=crvCtx;if(!ctx)return;const w=crvW,ff=ffont();
+  ctx.clearRect(0,0,w,crvH);
+  const groundY=crvH-22;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,crvH-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const X0=64,X1=w-64,topY=64,botY=groundY-34;
+  const cx=p=>X0+(X1-X0)*p, cy=p=>topY+(botY-topY)*(1-Math.pow(2*p-1,2));
+  ctx.strokeStyle='#b98a52';ctx.lineWidth=11;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();for(let i=0;i<=90;i++){const p=i/90;i?ctx.lineTo(cx(p),cy(p)):ctx.moveTo(cx(p),cy(p));}ctx.stroke();
+  ctx.strokeStyle='rgba(120,85,45,.45)';ctx.lineWidth=1.3;
+  ctx.beginPath();for(let i=0;i<=90;i++){const p=i/90;i?ctx.lineTo(cx(p),cy(p)-5):ctx.moveTo(cx(p),cy(p)-5);}ctx.stroke();
+  ctx.lineCap='butt';
+  const p=(1-Math.cos(phase))/2, bx=cx(p),by=cy(p);
+  const dp=0.003,txv=cx(p+dp)-cx(p-dp),tyv=cy(p+dp)-cy(p-dp),tl=Math.hypot(txv,tyv)||1,ux=txv/tl,uy=tyv/tl;
+  let nx=-uy,ny=ux; if(ny>0){nx=-nx;ny=-ny;}
+  const ballR=12,bcx=bx+nx*ballR,bcy=by+ny*ballR;
+  const drop=cy(p)-topY,span=botY-topY,vn=Math.sqrt(Math.max(0,drop)/span);
+  const dir=Math.sin(phase)>=0?1:-1,vdx=dir*ux,vdy=dir*uy,aLen=6+vn*54;
+  if(aLen>9){const ax=bcx+vdx*aLen,ay=bcy+vdy*aLen,px=-vdy,py=vdx;
+    ctx.strokeStyle='#e0900a';ctx.fillStyle='#e0900a';ctx.lineWidth=3.4;
+    ctx.beginPath();ctx.moveTo(bcx,bcy);ctx.lineTo(ax,ay);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax-vdx*9+px*5,ay-vdy*9+py*5);ctx.lineTo(ax-vdx*9-px*5,ay-vdy*9-py*5);ctx.closePath();ctx.fill();}
+  const g=ctx.createRadialGradient(bcx-4,bcy-4,1,bcx,bcy,ballR);g.addColorStop(0,'#f2f4f7');g.addColorStop(.55,'#b6bcc6');g.addColorStop(1,'#666a73');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(bcx,bcy,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle='#c47f00';ctx.font='700 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('此刻速度','speed now'),bcx,bcy-ballR-6);
+}
+function crvFrame(now){
+  if(!crvInView){crvRAF=null;return;}
+  if(!crvT0)crvT0=now;
+  const CYC=4600,phase=((now-crvT0)%CYC)/CYC*TAU;
+  crvScene(phase);crvRAF=requestAnimationFrame(crvFrame);
+}
+function crvPlay(){if(crvReduce){if(crvSetup())crvScene(1.4);return;}if(crvRAF)return;crvT0=0;crvRAF=requestAnimationFrame(crvFrame);}
+function crvStop(){if(crvRAF){cancelAnimationFrame(crvRAF);crvRAF=null;}}
+function drawCurve(){if(crvSetup()&&(crvReduce||!crvInView))crvScene(1.4);}
+// ==== 第3屏：放大变直（曲线放大 → 逼近直线/切线）====
+let zmCtx=null,zmW=0,zmH=0,zmIn=false,zmRAF=null,zmT0=0,zmReduce=false;
+function zoomSetup(){
+  const cv=document.getElementById('cZoom');if(!cv)return false;
+  const r=dpr(),cssW=cv.clientWidth||cv.width,cssH=380;
+  cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  zmCtx=cv.getContext('2d');zmCtx.setTransform(r,0,0,r,0,0);zmW=cssW;zmH=cssH;return true;
+}
+function zoomScene(u){                 // u: 0=整条曲线, 1=放到最大(近乎直线)
+  const ctx=zmCtx;if(!ctx)return;const w=zmW,h=zmH,ff=ffont();
+  ctx.clearRect(0,0,w,h);
+  const z=Math.pow(46,u);                       // 放大倍数 1 → 46
+  const a=0.45,x0=1,fx=x=>a*x*x,slope=2*a*x0,f0=fx(x0);
+  const midX=w/2,midY=h/2+26,baseHW=1.5,ppw=(w-96)/(2*baseHW)*z;   // 每单位世界坐标占多少像素(等比放大)
+  const syv=wy=>midY-(wy-f0)*ppw;
+  // 切线（虚线，始终过中心 P，永远是直的）
+  const tyAt=px=>{const wx=x0+(px-midX)/ppw;return syv(f0+slope*(wx-x0));};
+  ctx.strokeStyle='rgba(224,144,10,.85)';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);
+  ctx.beginPath();ctx.moveTo(48,tyAt(48));ctx.lineTo(w-48,tyAt(w-48));ctx.stroke();ctx.setLineDash([]);
+  // 曲线（蓝，放大后越来越贴住切线）
+  ctx.strokeStyle=BLUE;ctx.lineWidth=3.4;ctx.beginPath();let started=false;
+  for(let px=48;px<=w-48;px+=2){const wx=x0+(px-midX)/ppw,yy=syv(fx(wx));
+    if(yy<-40||yy>h+40){started=false;continue;}
+    started?ctx.lineTo(px,yy):ctx.moveTo(px,yy);started=true;}
+  ctx.stroke();
+  // P 点（画面中心）
+  ctx.fillStyle='#fff';ctx.strokeStyle=BLUE;ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(midX,midY,6.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=BLUE;ctx.font='700 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('此刻这点','this point'),midX+11,midY+8);
+  // 放大倍数
+  ctx.fillStyle=SOFT;ctx.font='700 14px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('放大 ×','zoom ×')+(z<9.5?z.toFixed(1):Math.round(z)),50,20);
+  // 状态标签
+  const straight=u>0.72;
+  ctx.fillStyle='#c47f00';ctx.font='700 15px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(straight?TT('几乎成直线了 —— 这条直线就是「切线」','almost a straight line — this line is the tangent'):TT('放大中…… 弯曲的曲线正在变直','zooming in… the curved line is straightening'),w/2,h-14);
+}
+function zoomFrame(now){
+  if(!zmIn){zmRAF=null;return;}
+  if(!zmT0)zmT0=now;
+  const UP=3600,HOLD=1200,CYC=UP+HOLD,tt=(now-zmT0)%CYC;
+  zoomScene(tt<UP?tt/UP:1);zmRAF=requestAnimationFrame(zoomFrame);
+}
+function zoomPlay(){if(zmReduce){if(zoomSetup())zoomScene(1);return;}if(zmRAF)return;zmT0=0;zmRAF=requestAnimationFrame(zoomFrame);}
+function zoomStop(){if(zmRAF){cancelAnimationFrame(zmRAF);zmRAF=null;}}
+function drawZoom(){if(zoomSetup()&&(zmReduce||!zmIn))zoomScene(zmReduce?1:0);}
+const I18N={
+  title:{zh:'缩到极限 — 从 0 开始的微积分',en:'To the Limit — Calculus from Zero'},
+  m1_kicker:{zh:'接着上一章',en:'Continuing'},
+  m1_q:{zh:'弯道上，<em>此刻多快</em>？',en:'On a curve, <em>how fast right now</em>?'},
+  m1_sub:{zh:'上一章结尾，球在弯道上忽快忽慢——伽利略的"翻倍"在这儿<b>失灵</b>了。<br>可牛顿有个<b>万能办法</b>，任何弯道都能求此刻速度。往下看 👇',en:'Last chapter ended with a ball on a curve, speeding up and slowing down — Galileo’s "double it" <b>fails</b> here.<br>But Newton had a <b>universal method</b> that works on any curve. Read on 👇'},
+  m1_read:{zh:'球速一直在变、而且<b>不匀</b>——伽利略那套只管匀加速，这儿使不上。',en:'The speed keeps changing, and <b>unevenly</b> — Galileo’s method (uniform acceleration only) can’t touch it.'},
+  m1_card:{zh:'🚩 这种<b>不匀</b>的运动里，某一刻的<b>此刻速度</b>怎么算？<br>牛顿的思路一句话：<b>把一小段时间，缩到几乎没有</b>。下一屏见真章。',en:'🚩 In this <b>uneven</b> motion, how do you find the <b>instant speed</b> at a moment?<br>Newton’s idea in a line: <b>shrink a tiny slice of time down to almost nothing</b>. See it next.'},
+  m2_kicker:{zh:'牛顿的招 · 缩到极限',en:'Newton’s move · to the limit'},
+  m2_q:{zh:'让那一步，缩到<em>几乎没有</em>',en:'Shrink that step to <em>almost nothing</em>'},
+  m2_sub:{zh:'牛顿的想法：给时间迈<b>极小的一步</b>，看这一步里走了多远、除出这小段的<b>平均</b>；再把这一步<b>缩到几乎没有</b>——平均稳到的那个数，就是<b>此刻速度</b>。写成式子就是 👇',en:'Newton’s idea: take a <b>tiny step</b> of time, see how far it moved, divide for that slice’s <b>average</b>; then <b>shrink the step to almost nothing</b> — the number the average settles on is the <b>instant speed</b>. As a formula 👇'},
+  m2_formula:{zh:'<b>此刻速度</b> ＝ <b style="color:var(--blue)">一小段走的距离</b> ÷ <b style="color:var(--blue)">那一小段时间</b><br><span style="font-size:.78em;color:var(--faint)">再把「那一小段时间」一直缩小 → 几乎 0</span>',en:'<b>instant speed</b> ＝ <b style="color:var(--blue)">distance in a tiny slice</b> ÷ <b style="color:var(--blue)">that tiny slice of time</b><br><span style="font-size:.78em;color:var(--faint)">then shrink "that tiny slice of time" → almost 0</span>'},
+  m2_la:{zh:'起点（此刻）→',en:'start (the instant) →'},
+  m2_lb:{zh:'终点（往起点拖）→',en:'end (drag toward start) →'},
+  m2_card:{zh:'🎯 缩到几乎一点，平均<b>稳到的那个数，就是此刻速度</b>。<br>牛顿管这叫"<b>最后的比值</b>"——那"极小一步"，你先拿它去除、最后又当它是 0 扔掉，<b>既在又不在</b>。这，就是现代求导的秘密。<br><span style="color:var(--faint);font-size:.9em">（这屏先用好算的直坡；下一屏换弯道，同一招照样灵。）</span>',en:'🎯 Shrunk to almost a point, the average <b>settles on a number — that’s the instant speed</b>.<br>Newton called it the "<b>ultimate ratio</b>" — that tiny step: you divide by it, then treat it as 0 and drop it — <b>both there and not there</b>. That’s the secret of the modern derivative.<br><span style="color:var(--faint);font-size:.9em">(A straight ramp here, for easy numbers; next screen: the curve — same trick.)</span>'},
+  m2_next:{zh:'下一章：积分 →',en:'Next: Integrals →'},
+  m3_kicker:{zh:'任何曲线 · 放大就变直',en:'Any curve · zoom in and it straightens'},
+  m3_q:{zh:'放大到极致，曲线<em>变成直线</em>',en:'Zoom in far enough, the curve <em>becomes a line</em>'},
+  m3_sub:{zh:'挑曲线上「此刻这点」，对着它<b>使劲放大</b>——你会看到弯弯的曲线一点点被<b>拉直</b>，最后几乎成一条<b>直线</b>。那条直线，就是这点的<b>切线</b>。',en:'Pick "this point" on the curve and <b>zoom hard</b> into it — the bent curve gradually <b>straightens</b> until it’s almost a straight <b>line</b>. That line is the point’s <b>tangent</b>.'},
+  m3_read:{zh:'曲线放大后≈直线，于是第2屏那招「<b>距离 ÷ 时间</b>」在这一点就<b>精确好使</b>了——它量出的，正是这点的<b>此刻速度</b>。曲线多弯都行。',en:'Zoomed in, the curve ≈ a line, so screen 2’s move (<b>distance ÷ time</b>) becomes <b>exact</b> right here — and it gives this point’s <b>instant speed</b>. Any curve, however bent.'},
+  m3_card:{zh:'🎯 <b>放大一点 = 缩小一小段 = 让曲线在这点变直</b>。<br>一变直，「距离÷时间」就精确了——这正是牛顿能算<b>任何曲线</b>此刻速度的秘密。',en:'🎯 <b>Zoom into a point = shrink a tiny stretch = make the curve straight there</b>.<br>Once straight, "distance ÷ time" is exact — that’s how Newton gets the instant speed of <b>any curve</b>.'},
+  m4_kicker:{zh:'给这套招起个名',en:'Name this move'},
+  m4_q:{zh:'这一招，就叫<em>求导</em>',en:'This move is called <em>differentiation</em>'},
+  m4_sub:{zh:'你这一路做的——<b>取一小段、算平均、把它缩到极限</b>，抓住某一刻的快慢——就是微积分的头号绝活。',en:'What you’ve been doing all along — <b>take a tiny stretch, average it, shrink it to the limit</b> to catch how fast at one instant — is calculus’s number-one trick.'},
+  m4_formula:{zh:'<b>此刻速度</b> ＝ <b style="color:var(--blue)">一小段的距离</b> ÷ <b style="color:var(--blue)">那一小段的时间</b><br><span style="font-size:.72em;color:var(--faint)">把「那一小段的时间」一路缩小 → 缩到几乎 0，读到的那个数，就是此刻速度</span>',en:'<b>instant speed</b> ＝ <b style="color:var(--blue)">distance in a tiny stretch</b> ÷ <b style="color:var(--blue)">that tiny stretch of time</b><br><span style="font-size:.72em;color:var(--faint)">shrink "that tiny stretch of time" → almost 0; the number you read off is the instant speed</span>'},
+  m4_card:{zh:'🎯 干这件事，叫 <b>求导</b>；求出来的那个「此刻速度 / 变化率」，叫 <b>导数</b>。<br>伽利略只会匀加速；牛顿这套「缩到极限」，<b>任何曲线</b>都能求导。',en:'🎯 Doing this is called <b>differentiation</b>; the result — that "instant speed / rate of change" — is the <b>derivative</b>.<br>Galileo could only do uniform acceleration; Newton’s "shrink to the limit" differentiates <b>any curve</b>.'},
+  nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
+  hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
+};
+function applyLang(){
+  document.documentElement.lang=LANG;document.title=I18N.title[LANG];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
+  document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
+  drawCurve();drawLim();drawZoom();
+}
+function initAll(){
+  drawCurve();drawLim();drawZoom();
+  crvReduce=zmReduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
+  {const cCv=document.getElementById('cCurve');
+   if(cCv&&'IntersectionObserver' in window){new IntersectionObserver(es=>{crvInView=es[0].isIntersecting;if(crvInView)crvPlay();else crvStop();},{threshold:.3}).observe(cCv);}
+   else{crvInView=true;crvPlay();}}
+  {const cZ=document.getElementById('cZoom');
+   if(cZ&&'IntersectionObserver' in window){new IntersectionObserver(es=>{zmIn=es[0].isIntersecting;if(zmIn)zoomPlay();else zoomStop();},{threshold:.3}).observe(cZ);}
+   else{zmIn=true;zoomPlay();}}
+  {const a=document.getElementById('limA'),b=document.getElementById('limB');const r=()=>requestAnimationFrame(drawLim);if(a)a.addEventListener('input',()=>{limA=+a.value;r();});if(b)b.addEventListener('input',()=>{limB=+b.value;r();});}
+  document.getElementById('langBtn').addEventListener('click',()=>{LANG=(LANG==='zh'?'en':'zh');applyLang();});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const lastPanel=document.querySelector('.panel:last-of-type');
+  new IntersectionObserver(es=>{const hint=document.querySelector('.hint');if(hint)hint.style.display=es[0].isIntersecting?'none':'';},{threshold:.5}).observe(lastPanel);
+  addEventListener('resize',()=>{drawCurve();drawLim();drawZoom();});
+  addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
+  applyLang();
+}
+initAll();
+
+
+</script>
+<script src="feedback.js"></script>
+</body></html>
