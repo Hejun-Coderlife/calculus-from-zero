@@ -122,6 +122,7 @@
   <div class="ctrl reveal"><label data-i18n="p3_lt">接了几份水（＝几份时间）→</label><input id="lawT" type="range" min="4" max="40" value="40" step="1"></div>
   <div class="readout reveal" id="lawOut"></div>
   <div class="card reveal" data-i18n="p3_law"></div>
+  <details class="deriv reveal"><summary data-i18n="p3_why_s">为什么是「平方」？—— 时间翻倍，距离翻四倍</summary><div class="db" data-i18n="p3_why"></div></details>
 </section>
 
 <section class="panel">
@@ -158,20 +159,16 @@
   <div class="kicker reveal" data-i18n="p7_kicker">它有名字了</div>
   <div class="q reveal" data-i18n="p7_q">这，就是<em>求导</em></div>
   <div class="sub reveal" data-i18n="p7_sub"></div>
-  <div class="eqbox reveal" data-i18n="p7_eq"></div>
+  <div class="reveal" data-i18n="p7_diagram" style="display:flex;align-items:center;justify-content:center;gap:clamp(10px,2.5vw,22px);flex-wrap:wrap;margin:8px 0"></div>
   <div class="card reveal" data-i18n="p7_card"></div>
 </section>
 
 <section class="panel">
-  <div class="kicker reveal" data-i18n="p8_kicker">一秒出答案</div>
-  <div class="q reveal" data-i18n="p8_q">幂法则：<em>指数搬下来，减一</em></div>
-  <div class="eqbox reveal" data-i18n="p8_eq"></div>
-  <div class="lim reveal" data-i18n="p8_check"></div>
+  <div class="kicker reveal" data-i18n="p8_kicker">一个新问题</div>
+  <div class="q reveal" data-i18n="p8_q">换成<em>弯道</em>呢？</div>
   <div class="sub reveal" data-i18n="p8_sub"></div>
-  <div class="fig reveal" style="width:min(440px,90vw)"><canvas id="cScale" height="300"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p8_lx">位置 x</label>
-    <input id="ansX" type="range" min="4" max="28" value="14" step="1"></div>
-  <div class="readout reveal" id="ansOut"></div>
+  <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cCurve" height="360"></canvas></div>
+  <div class="readout reveal" data-i18n="p8_read"></div>
   <div class="card reveal" data-i18n="p8_card"></div>
   <a href="ch06.html" class="nextbtn reveal" data-i18n="p8_next">下一章：怎么算积分 →</a>
 </section>
@@ -555,8 +552,8 @@ function drawLaw(){
   ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
   const tf=t.toFixed(1),acc=(t*t).toFixed(1);
   document.getElementById('lawOut').innerHTML=TT(
-   '接了 <b>'+tf+'</b> 份水（＝'+tf+' 份时间）：球一共滚了 <b class="bl">'+acc+'</b> 份距离。<br><span class="note">看<b>每一段相同时间</b>走的：<b>1、3、5、7</b> —— 越走越多（因为越来越快）；累计总距离 <b>1、4、9、16</b>，正好是 <b>1×1、2×2、3×3、4×4</b> —— <b>距离，就照着时间乘时间在长</b>。</span>',
-   'Caught <b>'+tf+'</b> units of water (= '+tf+' of time): the ball rolled <b class="bl">'+acc+'</b> units.<br><span class="note">Each equal time-slice covers <b>1, 3, 5, 7</b> — more and more (getting faster); totals <b>1, 4, 9, 16</b> = <b>1×1, 2×2, 3×3, 4×4</b> — <b>distance grows like time × time</b>.</span>');
+   '接了 <b>'+tf+'</b> 份水（＝'+tf+' 份时间）：球一共滚了 <b class="bl">'+acc+'</b> 份距离。<br><span class="note">看<b>每一段相同时间</b>走的：<b>1、3、5、7</b> —— 越走越多（因为越来越快）；累计总距离 <b>1、4、9、16</b>，正好是 <b>1×1、2×2、3×3、4×4</b>。<br><b>距离正好按「时间 × 时间」在长</b> —— 这是一次次<b>量出来的（实测发现），不是算出来的</b>。</span>',
+   'Caught <b>'+tf+'</b> units of water (= '+tf+' of time): the ball rolled <b class="bl">'+acc+'</b> units.<br><span class="note">Each equal time-slice covers <b>1, 3, 5, 7</b> — more and more (getting faster); totals <b>1, 4, 9, 16</b> = <b>1×1, 2×2, 3×3, 4×4</b>. <b>Distance grows exactly like time × time</b> — and this was <b>measured, not derived</b> (an experimental finding).</span>');
 }
 
 let avgA=8,avgB=30;
@@ -599,6 +596,90 @@ function drawAvg(){
    'From unit <b>'+t1.toFixed(1)+'</b> to <b>'+t2.toFixed(1)+'</b>: the ball went <b>'+D.toFixed(1)+'</b>, in <b>'+T.toFixed(1)+'</b> of time.<br>Average speed ＝ distance ÷ time ＝ <b class="bl">'+V.toFixed(1)+'</b>.<br><span class="note">But it kept speeding up across this stretch, so this is only the <b>average</b>, not the speed at one instant. So how fast at one moment? Galileo had a <b>clever trick</b> — next screen.</span>');
 }
 
+let limA=18,limB=30;
+function drawLim(){
+  const cv=document.getElementById('cLim');if(!cv)return;
+  const {ctx,w,h}=setup(cv,420);ctx.clearRect(0,0,w,h);
+  const ff=ffont();
+  let t1=limA/10,t2=limB/10; if(t2<t1+0.02)t2=t1+0.02;   // 缝可缩到极小(≈一点)，只留 0.02 防 0÷0
+  const groundY=h-26;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const A={x:72,y:82},B={x:344,y:groundY-4};
+  const dx=B.x-A.x,dy=B.y-A.y,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,dnx=-uy,dny=ux,th=13;
+  ctx.fillStyle='#c9a86e';ctx.fillRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.strokeStyle='rgba(110,80,45,.4)';ctx.lineWidth=1;ctx.strokeRect(A.x-9,A.y+2,18,groundY-A.y-2);
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(B.x+th*dnx,B.y+th*dny);ctx.lineTo(A.x+th*dnx,A.y+th*dny);ctx.closePath();
+  const wgd=ctx.createLinearGradient(A.x,A.y,A.x+th*dnx,A.y+th*dny);wgd.addColorStop(0,'#b98a52');wgd.addColorStop(1,'#875c32');
+  ctx.fillStyle=wgd;ctx.fill();ctx.strokeStyle='rgba(90,60,30,.5)';ctx.lineWidth=1;ctx.stroke();
+  const pos=f=>({x:A.x+dx*f,y:A.y+dy*f});
+  const pA=pos(t1*t1/16),pB=pos(t2*t2/16),upx=-dnx,upy=-dny,ballR=11;
+  ctx.strokeStyle='rgba(224,144,10,.7)';ctx.lineWidth=8;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(pA.x-4*dnx,pA.y-4*dny);ctx.lineTo(pB.x-4*dnx,pB.y-4*dny);ctx.stroke();ctx.lineCap='butt';
+  const aC={x:pA.x+ballR*upx,y:pA.y+ballR*upy},bC={x:pB.x+ballR*upx,y:pB.y+ballR*upy};
+  ctx.fillStyle='#fff';ctx.strokeStyle='#c47f00';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(aC.x,aC.y,ballR-1,0,TAU);ctx.fill();ctx.stroke();
+  const bg=ctx.createRadialGradient(bC.x-4,bC.y-4,1,bC.x,bC.y,ballR);bg.addColorStop(0,'#f2f4f7');bg.addColorStop(.55,'#b6bcc6');bg.addColorStop(1,'#666a73');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bC.x,bC.y,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle=SOFT;ctx.font='700 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(TT('起点 第'+t1.toFixed(2)+'份','start '+t1.toFixed(2)),aC.x+13*upx,aC.y+13*upy-ballR);
+  ctx.fillText(TT('终点 第'+t2.toFixed(2)+'份','end '+t2.toFixed(2)),bC.x+13*upx,bC.y+13*upy-ballR);
+  const cupW=60,cupX=w-92,cupYt=150,cupB=groundY-4,cupH=cupB-cupYt;
+  const y1w=cupB-cupH*(t1/4),y2w=cupB-cupH*(t2/4);
+  ctx.fillStyle='rgba(0,140,220,.2)';ctx.fillRect(cupX+2.5,y1w,cupW-5,cupB-y1w-2.5);
+  ctx.fillStyle='rgba(224,144,10,.4)';ctx.fillRect(cupX+2.5,y2w,cupW-5,y1w-y2w);
+  ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
+  ctx.fillStyle='#c47f00';ctx.font='700 10.5px '+ff;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(TT('用的时间','time used'),cupX+cupW/2,(y1w+y2w)/2);
+  ctx.fillStyle=SOFT;ctx.font='600 10px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('水钟','clock'),cupX+cupW/2,cupYt-4);
+  const D=(t2*t2-t1*t1),T=(t2-t1),V=(t1+t2);
+  const out=document.getElementById('limOut');
+  if(out)out.innerHTML=TT(
+   '这一小段：从第 <b>'+t1.toFixed(2)+'</b> 份到第 <b>'+t2.toFixed(2)+'</b> 份 —— 走了 <b>'+D.toFixed(2)+'</b> 份、用了 <b>'+T.toFixed(2)+'</b> 份。<br>平均 ＝ 走的 ÷ 用的 ＝ <b class="bl">'+V.toFixed(2)+'</b>。<br><span class="note">把<b>终点往起点拖</b>，这一段越缩越短 —— 平均越来越稳，稳到的那个数，就是第 '+t1.toFixed(2)+' 份那一刻的<b>此刻速度</b>。</span>',
+   'This tiny stretch: unit <b>'+t1.toFixed(2)+'</b> → <b>'+t2.toFixed(2)+'</b> — went <b>'+D.toFixed(2)+'</b>, took <b>'+T.toFixed(2)+'</b>.<br>average ＝ distance ÷ time ＝ <b class="bl">'+V.toFixed(2)+'</b>.<br><span class="note">Drag the <b>end toward the start</b>: the shorter it gets, the more the average settles — the value it settles on is the <b>instant speed</b> at unit '+t1.toFixed(2)+'.</span>');
+}
+// ==== 第8屏：弯道·速度不匀（本章结尾悬念，自动来回滚）====
+let crvCtx=null,crvW=0,crvH=0,crvInView=false,crvRAF=null,crvT0=0,crvReduce=false;
+function crvSetup(){
+  const cv=document.getElementById('cCurve');if(!cv)return false;
+  const r=dpr(),cssW=cv.clientWidth||cv.width,cssH=360;
+  cv.width=cssW*r;cv.height=cssH*r;cv.style.height=cssH+'px';
+  crvCtx=cv.getContext('2d');crvCtx.setTransform(r,0,0,r,0,0);crvW=cssW;crvH=cssH;return true;
+}
+function crvScene(phase){
+  const ctx=crvCtx;if(!ctx)return;const w=crvW,ff=ffont();
+  ctx.clearRect(0,0,w,crvH);
+  const groundY=crvH-22;
+  ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,crvH-groundY);
+  ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
+  const X0=64,X1=w-64,topY=64,botY=groundY-34;
+  const cx=p=>X0+(X1-X0)*p, cy=p=>topY+(botY-topY)*(1-Math.pow(2*p-1,2));
+  ctx.strokeStyle='#b98a52';ctx.lineWidth=11;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();for(let i=0;i<=90;i++){const p=i/90;i?ctx.lineTo(cx(p),cy(p)):ctx.moveTo(cx(p),cy(p));}ctx.stroke();
+  ctx.strokeStyle='rgba(120,85,45,.45)';ctx.lineWidth=1.3;
+  ctx.beginPath();for(let i=0;i<=90;i++){const p=i/90;i?ctx.lineTo(cx(p),cy(p)-5):ctx.moveTo(cx(p),cy(p)-5);}ctx.stroke();
+  ctx.lineCap='butt';
+  const p=(1-Math.cos(phase))/2, bx=cx(p),by=cy(p);
+  const dp=0.003,txv=cx(p+dp)-cx(p-dp),tyv=cy(p+dp)-cy(p-dp),tl=Math.hypot(txv,tyv)||1,ux=txv/tl,uy=tyv/tl;
+  let nx=-uy,ny=ux; if(ny>0){nx=-nx;ny=-ny;}
+  const ballR=12,bcx=bx+nx*ballR,bcy=by+ny*ballR;
+  const drop=cy(p)-topY,span=botY-topY,vn=Math.sqrt(Math.max(0,drop)/span);
+  const dir=Math.sin(phase)>=0?1:-1,vdx=dir*ux,vdy=dir*uy,aLen=6+vn*54;
+  if(aLen>9){const ax=bcx+vdx*aLen,ay=bcy+vdy*aLen,px=-vdy,py=vdx;
+    ctx.strokeStyle='#e0900a';ctx.fillStyle='#e0900a';ctx.lineWidth=3.4;
+    ctx.beginPath();ctx.moveTo(bcx,bcy);ctx.lineTo(ax,ay);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax-vdx*9+px*5,ay-vdy*9+py*5);ctx.lineTo(ax-vdx*9-px*5,ay-vdy*9-py*5);ctx.closePath();ctx.fill();}
+  const g=ctx.createRadialGradient(bcx-4,bcy-4,1,bcx,bcy,ballR);g.addColorStop(0,'#f2f4f7');g.addColorStop(.55,'#b6bcc6');g.addColorStop(1,'#666a73');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(bcx,bcy,ballR,0,TAU);ctx.fill();
+  ctx.fillStyle='#c47f00';ctx.font='700 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('此刻速度','speed now'),bcx,bcy-ballR-6);
+}
+function crvFrame(now){
+  if(!crvInView){crvRAF=null;return;}
+  if(!crvT0)crvT0=now;
+  const CYC=4600,phase=((now-crvT0)%CYC)/CYC*TAU;
+  crvScene(phase);crvRAF=requestAnimationFrame(crvFrame);
+}
+function crvPlay(){if(crvReduce){if(crvSetup())crvScene(1.4);return;}if(crvRAF)return;crvT0=0;crvRAF=requestAnimationFrame(crvFrame);}
+function crvStop(){if(crvRAF){cancelAnimationFrame(crvRAF);crvRAF=null;}}
+function drawCurve(){if(crvSetup()&&(crvReduce||!crvInView))crvScene(1.4);}
 function drawHero(){
   const cv=document.getElementById('cHero');const {ctx,w,h}=setup(cv,320);ctx.clearRect(0,0,w,h);
   const X=50,Y=24,W=w-76,H=h-58,ff=ffont(),xmax=3.2,ymax=10.5;
@@ -812,16 +893,18 @@ const I18N={
   pc_card:{zh:'🎯 就这样，从"走了多远、用了多久"里，我们把"<b>此刻到底多快</b>"实实在在算了出来 —— 四百年前，伽利略头一个做到。',en:'🎯 And so, from "how far" and "how long", we actually worked out "<b>how fast at this instant</b>" — the very thing Galileo first pulled off four hundred years ago.'},
   p7_kicker:{zh:'它有名字了',en:'It has a name'},
   p7_q:{zh:'这，就是<em>求导</em>',en:'This is <em>differentiation</em>'},
-  p7_sub:{zh:'这一章一直在做的这件事 —— 从「走了多远」里抠出「此刻多快」—— 就叫<b>求导</b>。',en:'What we’ve done all chapter — pulling "how fast right now" out of "how far you went" — is called <b>differentiation</b>.'},
-  p7_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">t²</span><span class="lab">距离随时间长</span></span><span class="tok"><span class="sym" style="color:var(--pink)">→</span><span class="lab" style="color:var(--pink)">求导</span></span><span class="tok"><span class="sym blue">2t</span><span class="lab">此刻的速度</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">t²</span><span class="lab">distance over time</span></span><span class="tok"><span class="sym" style="color:var(--pink)">→</span><span class="lab" style="color:var(--pink)">derivative</span></span><span class="tok"><span class="sym blue">2t</span><span class="lab">speed right now</span></span></div>'},
-  p7_card:{zh:'求导 = 求某一刻的<b>变化快慢</b>。<br>不只速度 —— 任何在变的东西，都能问「此刻变多快」。',en:'A derivative = <b>how fast something changes</b> at one instant. Not just speed — anything that changes, you can ask "how fast, right now".'},
-  p8_kicker:{zh:'一秒出答案',en:'The one-second shortcut'},
-  p8_q:{zh:'幂法则：<em>指数搬下来，减一</em>',en:'The power rule: <em>bring the exponent down, minus one</em>'},
+  p7_sub:{zh:'还记得上一屏你是怎么求"此刻速度"的吗？—— 从"<b>走了多远、用了多久</b>"里，把"<b>此刻多快</b>"一步步抠出来。<br>那一整套动作，就叫<b>求导</b>。',en:'Remember how you found the "instant speed" on the last screen? — pulling "<b>how fast right now</b>" out of "<b>how far, how long</b>". That whole move has a name: <b>a derivative</b>.'},
+  p7_diagram:{zh:'<div style="background:#eff5ff;border:1.5px solid var(--blue);border-radius:14px;padding:13px 18px;font-size:clamp(15px,2vw,19px);font-weight:600;color:var(--ink);line-height:1.45;text-align:center">走了多远<br>用了多久</div><div style="display:flex;flex-direction:column;align-items:center;color:var(--pink);flex:0 0 auto"><span style="font-size:30px;font-weight:800;line-height:1">→</span><span style="font-size:13px;font-weight:700;margin-top:2px">求导</span></div><div style="background:#eff5ff;border:1.5px solid var(--blue);border-radius:14px;padding:13px 20px;font-size:clamp(17px,2.4vw,22px);font-weight:800;color:var(--blue);text-align:center">此刻多快</div>',en:'<div style="background:#eff5ff;border:1.5px solid var(--blue);border-radius:14px;padding:13px 18px;font-size:clamp(15px,2vw,19px);font-weight:600;color:var(--ink);line-height:1.45;text-align:center">how far it went<br>how long it took</div><div style="display:flex;flex-direction:column;align-items:center;color:var(--pink);flex:0 0 auto"><span style="font-size:30px;font-weight:800;line-height:1">→</span><span style="font-size:13px;font-weight:700;margin-top:2px">derivative</span></div><div style="background:#eff5ff;border:1.5px solid var(--blue);border-radius:14px;padding:13px 20px;font-size:clamp(17px,2.4vw,22px);font-weight:800;color:var(--blue);text-align:center">how fast right now</div>'},
+  p7_card:{zh:'说白了，求导 = 求某一刻<b>变多快</b>。不只速度 —— 任何随时间在变的东西，都能这么问。',en:'In plain words, a derivative = <b>how fast something changes</b> at one instant. Not just speed — anything that changes over time.'},
+  p8_kicker:{zh:'一个新问题',en:'A new problem'},
+  p8_q:{zh:'换成<em>弯道</em>呢？',en:'What if the track <em>curves</em>?'},
+  p8_read:{zh:'球顺着弯道来回滚：下坡越冲越快、上坡慢下来、两头几乎停 —— <b>速度一直在变，而且变得不匀</b>。伽利略那套"1、3、5、7、翻倍"，在这儿全乱了。',en:'The ball rolls back and forth along the curve: faster downhill, slower uphill, nearly stopped at the ends — <b>the speed keeps changing, and unevenly</b>. Galileo’s "1, 3, 5, 7 / double it" falls apart here.'},
+  p8_intro:{zh:'你在第6屏<b>一步步</b>求出的落体"此刻速度"，其实有个<b>一秒钟的公式捷径</b>。<br><span style="color:var(--faint)">（全章头一回、也就这一屏，用字母写式子。）</span>',en:'That "instant speed" you worked out step by step on Screen 6 has a <b>one-second formula shortcut</b>.<br><span style="color:var(--faint)">(The only screen in this chapter that uses letters.)</span>'},
   p8_eq:{zh:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">一个幂函数</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">指数搬到前面当系数<br>指数减 1</span></span></div>',en:'<div class="eqrow"><span class="tok"><span class="sym blue">x<sup>n</sup></span><span class="lab">a power</span></span><span class="tok"><span class="sym">→</span></span><span class="tok"><span class="sym blue">n·x<sup>n−1</sup></span><span class="lab">exponent moves to the front<br>then drops by 1</span></span></div>'},
   p8_check:{zh:'验一下：x²（n=2）→ <b>2x</b>，正是落体那个 2t；x³ → <b>3x²</b>。',en:'Check: x² (n=2) → <b>2x</b>, exactly the ball’s 2t; x³ → <b>3x²</b>.'},
-  p8_sub:{zh:'拿 x² 试试：拖 x，导数永远 = <b>2x</b>，套公式一步就出 👇',en:'Try x²: drag x — the derivative is always <b>2x</b>, straight from the rule 👇'},
+  p8_sub:{zh:'前面都是<b>直斜坡</b>——匀匀加速，伽利略的"翻倍"才管用。可现实里的运动大多<b>不匀</b>。把斜坡换成一条<b>弯道</b>看看 👇',en:'So far it’s been a <b>straight ramp</b> — even acceleration, where Galileo’s "double it" works. But most real motion is <b>uneven</b>. Swap the ramp for a <b>curved track</b> 👇'},
   p8_lx:{zh:'位置 x',en:'position x'},
-  p8_card:{zh:'🧰 有了幂法则，xⁿ 的导数看一眼就写出来 —— 不用再一点点量。',en:'🧰 With the power rule you can write down the derivative of any xⁿ at a glance — no more measuring.'},
+  p8_card:{zh:'🚩 那么，在这种<b>不匀</b>的运动里，某一刻的<b>此刻速度</b>到底怎么算？<br>伽利略的翻倍失灵了 —— 这个问题，要等<b>牛顿</b>登场，才真正解开。',en:'🚩 So, in this <b>uneven</b> motion, how do you find the <b>instant speed</b> at a moment?<br>Galileo’s doubling fails here — this question waits for <b>Newton</b> to truly crack it.'},
   p8_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   p5_kicker:{zh:'给它一个规则',en:'Give it a rule'},
   p5_l1:{zh:'看出来了吗？<b>指数搬下来当系数，指数再减 1</b>。这就是<b>幂法则</b>：',en:'See it? <b>Bring the exponent down as a coefficient, then subtract 1 from it.</b> That is the <b>power rule</b>:'},
@@ -858,7 +941,9 @@ const I18N={
   p6_dn:{zh:'<b>幂法则 ≠ 导数。</b>幂法则只是「当曲线恰好是 xⁿ 时」的一条<b>捷径</b>。<br><br><b>① 幂法则只管 xⁿ 这一类</b>（x²、x³、√x…）。sin、eˣ、ln 各有各的求导公式，幂法则管不着。<br><br><b>② 但「求导」几乎不挑曲线。</b>导数是个<b>几何概念</b> —— 某点的<b>切线斜率</b>。只要曲线在那点<b>光滑</b>（放大后像直线），导数就存在，<b>根本不需要公式</b>。这正是本章开头互动图干的：纯靠「量两点、把 B 拖近 A」，没用一个公式。<br><br><b>③ 不规则曲线能不能求导？分三种：</b><br>· <b>有公式、非幂函数</b>（sin x、eˣ）：能 —— 用它自己的公式 + 加减/乘除/链式法则。<br>· <b>完全没公式</b>（手画波浪线、GPS 实测数据）：<b>也能</b> —— 回到定义，在那点取两个很近的点量斜率（<b>数值求导</b>），就是第 2、3 屏那套逼近法。<br>· <b>有尖角/断裂/无限抖动</b>（如 |x| 在 0 点）：那一点<b>不能</b> —— 没有唯一切线，导数在该点<b>不存在</b>。<br><br><b>一句话：</b>能不能求导，看曲线<b>光不光滑</b>，不看有没有漂亮公式。幂法则只是 xⁿ 的加速器；现实里没公式的数据（如汽车 GPS），靠的就是「量两点逼近」的数值办法（第 2 章瞬时速度正是这么干的）。',en:'<b>The power rule ≠ the derivative.</b> It is just a <b>shortcut for when the curve happens to be xⁿ</b>.<br><br><b>① It only covers the xⁿ family</b> (x², x³, √x…). sin, eˣ, ln each have their own derivative formulas; the power rule doesn’t touch them.<br><br><b>② But “taking a derivative” barely cares about the curve.</b> A derivative is a <b>geometric idea</b> — the <b>slope of the tangent</b> at a point. As long as the curve is <b>smooth</b> there (looks like a line when zoomed in), the derivative exists, <b>with no formula needed</b>. That is exactly what the interactive figure at the start did: purely “measure two points, drag B toward A”, no formula.<br><br><b>③ Can irregular curves be differentiated? Three cases:</b><br>· <b>Has a formula, not a power</b> (sin x, eˣ): yes — its own formula + sum/product/chain rules.<br>· <b>No formula at all</b> (a hand-drawn squiggle, measured GPS data): <b>also yes</b> — go back to the definition: take two very close points there and measure the slope (<b>numerical differentiation</b>) — the same limiting method as screens 2–3.<br>· <b>Has a corner / jump / infinite wiggle</b> (like |x| at 0): there it <b>can’t</b> — no single tangent, so the derivative <b>does not exist</b> at that point.<br><br><b>In one line:</b> whether you can differentiate depends on whether the curve is <b>smooth</b>, not on whether it has a pretty formula. The power rule is just an accelerator for xⁿ; real-world formula-less data (a car’s GPS) relies on the “measure two points, take the limit” numerical method (exactly what Chapter 2 did for instantaneous speed).'},
   p6_ex_s:{zh:'练一练 · 2 道求导题（点开看答案）',en:'Practice · 2 derivative problems (open for answers)'},
   p6_ex:{zh:'① 求 <b>x⁴</b> 的导数 = ?<br>　→ 幂法则：指数 4 搬下来、再减 1 → <b>4x³</b>。<br><br>② <b>x⁷</b> 在 x = 1 处的斜率 = ?<br>　→ 先求导 <b>7x⁶</b>，代入 x=1 → <b>7</b>。',en:'① derivative of <b>x⁴</b> = ?<br>　→ power rule: bring 4 down, subtract 1 → <b>4x³</b>.<br><br>② slope of <b>x⁷</b> at x = 1 = ?<br>　→ derivative <b>7x⁶</b>, plug x=1 → <b>7</b>.'},
-  p3_law:{zh:'🏛️ 这不是我编的数字：<b>1、3、5、7</b>（每段相同时间走的）和 <b>1、4、9、16</b>（累计＝平方），是伽利略在《<b>关于两门新科学的对话</b>》(1638) 里写下的<b>落体定律</b> —— 从斜面 + 水钟实验得来，他说反复做了上百次、结果一致到 1/10 脉搏。',en:'🏛️ Not made-up numbers: <b>1, 3, 5, 7</b> (each equal time-slice) and <b>1, 4, 9, 16</b> (totals = squares) are the law of falling bodies from <b>Two New Sciences</b> (1638, Galileo) — from ramp + water-clock experiments repeated a hundred times.'},
+  p3_why_s:{zh:'为什么是「平方」？—— 距离 = 平均速度 × 时间 × 倍数²',en:'Why "squared"? — distance = avg speed × time × number²'},
+  p3_why:{zh:'距离 = <b>平均速度 × 时间</b>。球匀匀加速，所以时间翻几倍、平均速度也跟着翻几倍。<br><br><b>时间翻 2 倍</b>（平均速度也 ×2）：<br>距离 = (平均速度<b>×2</b>) × (时间<b>×2</b>) = <b>平均速度 × 时间 × 2×2</b>（＝ 4 倍）。<br><br><b>时间翻 3 倍</b>（平均速度也 ×3）：<br>距离 = (平均速度<b>×3</b>) × (时间<b>×3</b>) = <b>平均速度 × 时间 × 3×3</b>（＝ 9 倍）。<br><br>所以时间翻几倍，距离就 = <b>平均速度 × 时间 × 倍数²</b>（倍数×倍数：翻 2 倍→4、翻 3 倍→9）—— 那个「倍数乘它自己」，就是<b>平方</b>。',en:'Distance = <b>average speed × time</b>. With even acceleration, whatever you multiply the time by, the average speed multiplies by the same.<br><br><b>Double the time</b> (average speed also ×2):<br>distance = (avg speed <b>×2</b>) × (time <b>×2</b>) = <b>avg speed × time × 2×2</b> (= 4×).<br><br><b>Triple the time</b> (average speed also ×3):<br>distance = (avg speed <b>×3</b>) × (time <b>×3</b>) = <b>avg speed × time × 3×3</b> (= 9×).<br><br>So: multiply the time by some number, and distance = <b>avg speed × time × number²</b> (number×number: 2→4, 3→9) — that "number times itself" is what <b>squared</b> means.'},
+  p3_law:{zh:'🏛️ 伽利略拿斜面 + 水钟<b>一次次量</b>，发现一条规律：<b>到第几份时间，一共走的路程，正好是那个数的「平方」</b> —— 第 2 份 → 2×2 = <b>4</b>，第 3 份 → 3×3 = <b>9</b>，第 4 份 → 4×4 = <b>16</b>。这些数不是我编的，记在《<b>关于两门新科学的对话</b>》(1638) 里，他反复做了上百次，次次都对得上。',en:'🏛️ Measuring again and again with a ramp and water clock, Galileo found a rule: <b>by any unit of time, the total distance is exactly that number "squared"</b> — unit 2 → 2×2 = <b>4</b>, unit 3 → 3×3 = <b>9</b>, unit 4 → 4×4 = <b>16</b>. Not made-up numbers — recorded in <b>Two New Sciences</b> (1638), repeated a hundred times, matching every time.'},
   p6_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
@@ -866,11 +951,11 @@ function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();
+  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
   {const pd0=document.getElementById('proofDetails');if(pd0&&pd0.open)drawProof();}
 }
 function initAll(){
-  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();
+  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
   {const _dt=document.getElementById('dropT');if(_dt)_dt.addEventListener('input',()=>{dropT=+_dt.value;requestAnimationFrame(drawDrop);});}
   {const _rt=document.getElementById('rampT');if(_rt)_rt.addEventListener('input',()=>{rampT=+_rt.value;requestAnimationFrame(drawRamp);});}
   {const _lt=document.getElementById('lawT');if(_lt)_lt.addEventListener('input',()=>{lawT=+_lt.value;requestAnimationFrame(drawLaw);});}
@@ -880,6 +965,10 @@ function initAll(){
   {const cSp=document.getElementById('cSpeed');
    if(cSp&&'IntersectionObserver' in window){new IntersectionObserver(es=>{spdInView=es[0].isIntersecting;if(spdInView)spdPlay();else spdStop();},{threshold:.3}).observe(cSp);}
    else{spdInView=true;spdPlay();}}
+  crvReduce=spdReduce;
+  {const cCv=document.getElementById('cCurve');
+   if(cCv&&'IntersectionObserver' in window){new IntersectionObserver(es=>{crvInView=es[0].isIntersecting;if(crvInView)crvPlay();else crvStop();},{threshold:.3}).observe(cCv);}
+   else{crvInView=true;crvPlay();}}
   {const _ct=document.getElementById('calcT');if(_ct)_ct.addEventListener('input',()=>{calcT=+_ct.value;requestAnimationFrame(drawCalc);});}
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
@@ -914,7 +1003,7 @@ function initAll(){
     hd.addEventListener('pointerup',()=>{drag=false;});hd.addEventListener('pointercancel',()=>{drag=false;});
   }}
   {const ax=document.getElementById('ansX');if(ax)ax.addEventListener('input',drawScale);}
-  addEventListener('resize',()=>{drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawScale();if(pd&&pd.open)drawProof();});
+  addEventListener('resize',()=>{drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();if(pd&&pd.open)drawProof();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }
