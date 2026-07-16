@@ -38,6 +38,8 @@ window.CH6Hero=function(mount){
   /* ---- SVG ---- */
   var svg=S('svg',{viewBox:'0 0 '+VW+' '+VH, class:'herosvg'}); svg.setAttribute('preserveAspectRatio','xMidYMid meet');
   figWrap.appendChild(svg);
+  figWrap.style.position='relative';
+  figWrap.appendChild(E('div','camnote','📷 现代高速摄像机视角'));   // 淡蓝角标：呼应上一章"当年没有高速摄像机"
   svg.appendChild(S('rect',{x:0,y:500,width:VW,height:VH-500,fill:'#eceef2'}));
   var futurePath=S('path',{d:pathD(0.5,1),fill:'none',stroke:'#b98a52','stroke-width':11,'stroke-linecap':'round',opacity:0.22}); svg.appendChild(futurePath);
   var track=S('path',{d:pathD(0,0.5),fill:'none',stroke:'#b98a52','stroke-width':11,'stroke-linecap':'round'}); svg.appendChild(track);

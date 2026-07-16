@@ -83,6 +83,44 @@
   .hero1{max-width:min(860px,94vw)}
   .hero1 .htxt{text-align:left;flex:1 1 300px}
   @media (max-width:680px){.hero1{flex-direction:column}.hero1 .htxt{text-align:center;flex:none}}
+  .eqc{text-align:center;margin:12px 0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:1.5em;line-height:1}
+  .eqc sup{font-size:.62em;vertical-align:super}
+  .eqbox{display:inline-block;border:1.6px solid currentColor;border-radius:8px;padding:5px 20px}
+  /* 第1屏 · 中性自由落体 + 比萨折叠页 */
+  .falltime{font-variant-numeric:tabular-nums;font-size:clamp(22px,3.2vw,30px);font-weight:800;color:var(--blue);letter-spacing:-.01em}
+  .falltime .fu{font-size:.6em;font-weight:700;color:var(--soft);margin-left:3px}
+  .fallbtn{font-size:15px;font-weight:700;color:#fff;background:var(--blue);border:none;border-radius:999px;padding:11px 30px;min-height:46px;cursor:pointer;box-shadow:0 8px 22px rgba(0,113,227,.26);transition:transform .08s,background .2s}
+  .fallbtn:hover{background:#0077ed;transform:translateY(-1px)} .fallbtn:active{transform:translateY(0)}
+  .fallbtn.ghost{color:var(--ink);background:#fff;border:1px solid var(--line);box-shadow:none}
+  .fallbtn.ghost:hover{border-color:var(--blue);color:var(--blue);background:#fff}
+  .fallmsg{max-width:26em;margin:2px auto 0;font-size:clamp(16px,2.1vw,20px);font-weight:600;color:var(--ink);line-height:1.55}
+  .histfold{width:min(660px,94vw);margin:16px auto 0;text-align:left;background:#f7f5ef;border:1px solid #e8e0d0;border-radius:16px;padding:0 20px}
+  .histfold>summary{cursor:pointer;padding:15px 2px;list-style:none}
+  .histfold>summary::-webkit-details-marker{display:none}
+  .histfold>summary::before{content:"▸ ";color:var(--amber);font-weight:700}
+  .histfold[open]>summary::before{content:"▾ "}
+  .hf-title{font-size:clamp(15px,1.95vw,17px);font-weight:700;color:#8a5a12}
+  .hf-sub{display:block;margin-top:5px;font-size:14px;color:var(--soft);font-weight:500}
+  .hf-inner{padding:2px 2px 18px}
+  .hf-inner .copy{max-width:none;text-align:left;gap:11px;margin:0}
+  .hf-inner .copy p{margin:0;font-size:clamp(15px,1.9vw,17px);line-height:1.72;color:var(--soft)}
+  .hf-inner .card{max-width:none;margin:14px 0 0;text-align:left}
+  .hf-bold{margin-top:12px;font-size:clamp(15px,1.9vw,17px);font-weight:700;color:var(--ink);line-height:1.62}
+  .pisawrap{display:flex;gap:20px;align-items:flex-start;justify-content:center;flex-wrap:wrap;margin:16px auto 4px}
+  .pisafig{margin:0;width:min(200px,52vw)}
+  .pisaimg{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+  .pisacap{margin-top:7px;text-align:center;font-size:12px;color:var(--faint);line-height:1.5}
+  .droplane{position:relative;width:140px;height:300px;flex:0 0 auto;border-radius:12px;
+    background:linear-gradient(180deg,#eaf2ff,#f6f9fd);border:1px solid #dbe6f5}
+  .dl-ground{position:absolute;left:0;right:0;bottom:0;height:20px;background:#e4e7ec;border-top:1px solid #cfd3da;border-radius:0 0 12px 12px}
+  .dl-ball{position:absolute;top:16px;border-radius:50%;box-shadow:0 3px 8px rgba(0,0,0,.28);z-index:2;transition:top 1.05s cubic-bezier(.5,0,1,.5)}
+  .dl-ball.light{width:22px;height:22px;left:30%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#fafafc,#b6b6c0)}
+  .dl-ball.heavy{width:32px;height:32px;left:70%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#eaeaef,#8d8d99)}
+  .pblab{position:absolute;bottom:106%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--ink);
+    white-space:nowrap;background:rgba(255,255,255,.88);padding:1px 6px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .pisares{margin-top:8px;font-size:14.5px;font-weight:700;color:var(--green);line-height:1.7;text-align:center}
+  .p1scroll{margin-top:16px;font-size:14px;color:var(--faint);font-weight:600}
+  .btnrow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px}
 </style></head>
 <body>
 <a href="../index.html" class="homelink" data-i18n="nav_home">← 目录</a>
@@ -96,13 +134,19 @@
       <figcaption style="font-size:13px;color:var(--faint);font-weight:500" data-i18n="p1_gal">伽利略 · 1564–1642</figcaption>
     </figure>
     <div class="htxt">
-      <div class="kicker" data-i18n="p1_kicker">从一个现实开始 · 400 年前</div>
-      <div class="q" style="margin-top:8px" data-i18n="p1_q">它掉得，<em>有多快</em>？</div>
+      <div class="kicker" data-i18n="p1_kicker">从一个快得来不及测量的运动开始</div>
+      <div class="q" style="margin-top:8px" data-i18n="p1_q">伽利略的问题：<br>物体是怎样越落越快的？</div>
     </div>
   </div>
   <div class="sub reveal" data-i18n="p1_sub"></div>
-  <div class="fig reveal" style="width:min(500px,94vw)"><canvas id="cDrop" height="430"></canvas></div>
-  <div class="ctrl reveal"><label data-i18n="p1_lt">松手后 · 拖着看时间走 →</label><input id="dropT" type="range" min="1" max="34" value="12" step="1"></div>
+
+  <!-- 主互动：中性自由落体（单球） -->
+  <div class="fig reveal" style="width:min(340px,84vw)"><canvas id="cFall" height="380"></canvas></div>
+  <div class="falltime reveal"><span id="fallTime">0.000</span><span class="fu" data-i18n="p1_sec">秒</span></div>
+  <div class="btnrow reveal"><button id="fallBtn" class="fallbtn" data-i18n="p1_release">松手</button></div>
+  <div class="fallmsg reveal" id="fallMsg" data-i18n="p1_fallmsg" style="display:none"></div>
+
+  <div class="p1scroll reveal" data-i18n="p1_scroll">把运动放慢，再看一次 ⌄</div>
 </section>
 
 <section class="panel">
@@ -122,7 +166,6 @@
   <div class="ctrl reveal"><label data-i18n="p3_lt">接了几份水（＝几份时间）→</label><input id="lawT" type="range" min="4" max="40" value="40" step="1"></div>
   <div class="readout reveal" id="lawOut"></div>
   <div class="card reveal" data-i18n="p3_law"></div>
-  <details class="deriv reveal"><summary data-i18n="p3_why_s">为什么是「平方」？—— 时间翻倍，距离翻四倍</summary><div class="db" data-i18n="p3_why"></div></details>
 </section>
 
 <section class="panel">
@@ -170,6 +213,32 @@
   <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cCurve" height="360"></canvas></div>
   <div class="readout reveal" data-i18n="p8_read"></div>
   <div class="card reveal" data-i18n="p8_card"></div>
+
+  <!-- 历史折叠页：比萨斜塔（本章末 · 默认收起）-->
+  <details class="histfold reveal" id="pisaFold">
+    <summary>
+      <span class="hf-title" data-i18n="p1_fold_title">历史旁页｜比萨斜塔上的问题</span>
+      <span class="hf-sub" data-i18n="p1_fold_sub">重的物体，真的会比轻的物体先落地吗？</span>
+    </summary>
+    <div class="hf-inner">
+      <div class="copy" data-i18n="p1_fold_body"></div>
+      <div class="pisawrap">
+        <figure class="pisafig">
+          <img class="pisaimg" src="img/pisa.jpg" alt="Leaning Tower of Pisa" loading="lazy">
+          <figcaption class="pisacap" data-i18n="p1_pisa_cap">🏛 比萨斜塔 · 高约 57 米（建筑高度，非实验数据）</figcaption>
+        </figure>
+        <div class="droplane" id="droplane">
+          <div class="dl-ball light" id="pbL"><span class="pblab" data-i18n="p1_fold_lighter">较轻</span></div>
+          <div class="dl-ball heavy" id="pbH"><span class="pblab" data-i18n="p1_fold_heavier">较重</span></div>
+          <div class="dl-ground"></div>
+        </div>
+      </div>
+      <div class="btnrow"><button id="pisaBtn" class="fallbtn ghost" data-i18n="p1_fold_drop">同时松手</button></div>
+      <div class="pisares" id="pisaRes" data-i18n="p1_fold_result" style="display:none"></div>
+      <div class="card" data-i18n="p1_fold_concl"></div>
+    </div>
+  </details>
+
   <a href="ch05b.html" class="nextbtn reveal" data-i18n="p8_next">下一章：缩到极限 →</a>
 </section>
 
@@ -413,58 +482,44 @@ function drawCalc(){
    '走了 <b class="bl">'+dist+'</b> 份距离　÷　用了 '+t+' 份时间　=　平均速度 <b>'+avg+'</b><br>平均速度 <b>'+avg+'</b>　×2　=　<b style="color:#c47f00">此刻速度 '+now+'</b><br><span class="note">这里"速度"＝每份时间走几份距离。拖着看：此刻速度永远是平均速度的两倍。</span>',
    'went <b class="bl">'+dist+'</b> distance　÷　'+t+' time　=　average speed <b>'+avg+'</b><br>average speed <b>'+avg+'</b>　×2　=　<b style="color:#c47f00">instant speed '+now+'</b><br><span class="note">here "speed" = distance per unit of time. Drag: the instant speed is always twice the average.</span>');
 }
-let dropT=12;
-function drawDrop(){
-  const cv=document.getElementById('cDrop');if(!cv)return;
-  const {ctx,w,h}=setup(cv,430);ctx.clearRect(0,0,w,h);
+// ==== 第1屏主互动：中性自由落体（单球，按钮触发，快到"还没看清就结束"） ====
+let fallP=0,fallE=0,fallRAF=null,fallT0=null,fallDur=850,fallDone=false,fallReduce=false;
+function drawFall(){
+  const cv=document.getElementById('cFall');if(!cv)return;
+  const {ctx,w,h}=setup(cv,380);ctx.clearRect(0,0,w,h);
   const ff=ffont();
-  const g=9.8,TMAX=3.4,T=dropT/10,d=0.5*g*T*T,DMAX=0.5*g*TMAX*TMAX,v=g*T,VMAX=g*TMAX;
-  const groundY=h-28;
+  const groundY=h-30,topY=46,bx=w/2,r=15,yRange=groundY-r-topY,by=topY+fallP*yRange;
   ctx.fillStyle='#eceef2';ctx.fillRect(0,groundY,w,h-groundY);
   ctx.strokeStyle='#d3d6db';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,groundY+.5);ctx.lineTo(w,groundY+.5);ctx.stroke();
-  const bx=132,tilt=0.068,towerH=306,hw0=42,hw1=35;
-  ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.ellipse(bx+24,groundY+3,64,8,0,0,TAU);ctx.fill();
-  const hwAt=f=>hw0+(hw1-hw0)*f;
-  ctx.save();ctx.translate(bx,groundY);ctx.rotate(tilt);
-  const gd=ctx.createLinearGradient(-hw0,0,hw0,0);gd.addColorStop(0,'#cbc2a8');gd.addColorStop(.16,'#efe9d9');gd.addColorStop(.5,'#fbf8f1');gd.addColorStop(.84,'#ece5d3');gd.addColorStop(1,'#c8bfa4');
-  ctx.fillStyle=gd;ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.lineTo(-hw1,-towerH);ctx.closePath();ctx.fill();
-  const L=8;
-  for(let i=0;i<L;i++){
-    const f0=i/L,f1=(i+1)/L,y0=-towerH*f0,y1=-towerH*f1,hwA=hwAt(f0),hw=hwAt((f0+f1)/2);
-    ctx.strokeStyle='rgba(140,126,98,.5)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(-hwA,y0);ctx.lineTo(hwA,y0);ctx.stroke();
-    if(i===0)continue;
-    const n=i===L-1?4:7,sp=2*hw/n,r=sp/2,colTop=y1+r;
-    ctx.strokeStyle='rgba(118,102,72,.5)';ctx.lineWidth=1;
-    for(let k=0;k<=n;k++){const x=-hw+k*sp;ctx.beginPath();ctx.moveTo(x,y0-1);ctx.lineTo(x,colTop);ctx.stroke();}
-    ctx.strokeStyle='rgba(118,102,72,.55)';ctx.lineWidth=1.1;
-    for(let k=0;k<n;k++){const cxk=-hw+(k+0.5)*sp;ctx.beginPath();ctx.arc(cxk,colTop,r,Math.PI,2*Math.PI);ctx.stroke();}
+  ctx.strokeStyle='rgba(0,0,0,.09)';ctx.setLineDash([4,4]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx,topY);ctx.lineTo(bx,groundY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('从这里松手','release here'),bx,topY-9);
+  if(fallE>0&&fallE<1){const streak=fallE*fallE*150;const gg=ctx.createLinearGradient(0,by-streak,0,by);
+    gg.addColorStop(0,'rgba(0,113,227,0)');gg.addColorStop(1,'rgba(0,113,227,.30)');ctx.fillStyle=gg;ctx.fillRect(bx-6,by-streak,12,streak);}
+  const bg=ctx.createRadialGradient(bx-4,by-4,1,bx,by,r);bg.addColorStop(0,'#5aa8f5');bg.addColorStop(1,'#0060cf');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(bx,by,r,0,TAU);ctx.fill();
+}
+function fallTimeEl(){return document.getElementById('fallTime');}
+function updFallTime(e){const el=fallTimeEl();if(el)el.textContent=e.toFixed(3);}
+function fallMsg(on){const m=document.getElementById('fallMsg');if(!m)return;if(on){m.style.display='';m.classList.add('in');}else m.style.display='none';}
+function fallBtnText(t){const b=document.getElementById('fallBtn');if(b)b.textContent=t;}
+function fallStep(ts){if(fallT0==null)fallT0=ts;let e=Math.min(1,(ts-fallT0)/fallDur);fallE=e;fallP=e*e;drawFall();updFallTime(e);
+  if(e<1)fallRAF=requestAnimationFrame(fallStep);else{fallDone=true;fallRAF=null;fallMsg(true);fallBtnText(I18N.p1_replay[LANG]);}}
+function fallRun(){if(fallRAF){cancelAnimationFrame(fallRAF);fallRAF=null;}fallT0=null;fallDone=false;fallMsg(false);fallP=0;fallE=0;updFallTime(0);drawFall();
+  if(fallReduce){fallE=1;fallP=1;drawFall();updFallTime(1);fallDone=true;fallMsg(true);fallBtnText(I18N.p1_replay[LANG]);return;}
+  fallRAF=requestAnimationFrame(fallStep);}
+// ==== 第1屏折叠页：比萨斜塔 · 两球同时松手（理想无空气阻力，同时落地）====
+function pisaRun(){
+  const L=document.getElementById('pbL'),H=document.getElementById('pbH'),res=document.getElementById('pisaRes'),btn=document.getElementById('pisaBtn');
+  if(!L||!H)return;
+  if(L.dataset.fell==='1'){                       // 复位
+    L.style.transition='none';H.style.transition='none';L.style.top='';H.style.top='';L.dataset.fell='0';H.dataset.fell='0';
+    if(res)res.style.display='none';if(btn)btn.textContent=I18N.p1_fold_drop[LANG];
+    void L.offsetWidth;L.style.transition='';H.style.transition='';return;
   }
-  ctx.fillStyle='#f2ede0';ctx.fillRect(-hw1+3,-towerH-13,2*hw1-6,14);ctx.strokeStyle='rgba(140,126,98,.6)';ctx.lineWidth=1;ctx.strokeRect(-hw1+3,-towerH-13,2*hw1-6,14);
-  ctx.fillStyle='#ded6c2';ctx.fillRect(-hw0-3,-6,2*hw0+6,7);ctx.strokeStyle='rgba(150,138,110,.55)';ctx.lineWidth=1;ctx.strokeRect(-hw0-3,-6,2*hw0+6,7);
-  ctx.strokeStyle='rgba(130,116,88,.6)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-hw0,0);ctx.lineTo(-hw1,-towerH);ctx.moveTo(hw0,0);ctx.lineTo(hw1,-towerH);ctx.stroke();
-  ctx.restore();
-  const topWX=bx+Math.sin(tilt)*towerH,topWY=groundY-Math.cos(tilt)*towerH;
-  const ballX=topWX+hw1+22,ballY0=topWY-2,fallPix=(groundY-14)-ballY0;
-  const by=ballY0+d/DMAX*fallPix;
-  ctx.fillStyle=SOFT;ctx.font='600 12.5px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';
-  ctx.fillText(TT('✋ 松手','✋ let go'),ballX,ballY0-11);
-  ctx.strokeStyle='rgba(0,0,0,.12)';ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ballX,ballY0-4);ctx.lineTo(ballX,groundY-12);ctx.stroke();ctx.setLineDash([]);
-  const al=15+v/VMAX*42;
-  ctx.strokeStyle='#e0900a';ctx.fillStyle='#e0900a';ctx.lineWidth=3.4;
-  ctx.beginPath();ctx.moveTo(ballX+17,by-al*0.5);ctx.lineTo(ballX+17,by+al*0.5);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(ballX+17,by+al*0.5+2);ctx.lineTo(ballX+11,by+al*0.5-8);ctx.lineTo(ballX+23,by+al*0.5-8);ctx.closePath();ctx.fill();
-  ctx.fillStyle='#c47f00';ctx.font='700 12px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('这一刻多快 ?','how fast ?'),ballX+28,by-2);
-  const bg=ctx.createRadialGradient(ballX-4,by-4,1,ballX,by,13);bg.addColorStop(0,'#5aa8f5');bg.addColorStop(1,'#0060cf');
-  ctx.fillStyle=bg;ctx.beginPath();ctx.arc(ballX,by,13,0,TAU);ctx.fill();
-  const dlx=ballX+92;
-  ctx.strokeStyle='rgba(120,120,128,.5)';ctx.setLineDash([3,3]);ctx.lineWidth=1.4;
-  ctx.beginPath();ctx.moveTo(dlx,ballY0);ctx.lineTo(dlx,by);ctx.stroke();ctx.setLineDash([]);
-  ctx.strokeStyle='rgba(120,120,128,.45)';ctx.lineWidth=1.1;
-  ctx.beginPath();ctx.moveTo(dlx-5,ballY0);ctx.lineTo(dlx+5,ballY0);ctx.moveTo(dlx-5,by);ctx.lineTo(dlx+5,by);ctx.stroke();
-  ctx.fillStyle=SOFT;ctx.font='700 11.5px '+ff;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(TT('量得到','measured'),dlx+9,(ballY0+by)/2);
-  ctx.fillStyle=SOFT;ctx.font='600 12px '+ff;ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(TT('🏛 比萨斜塔 · 约 57 米','🏛 Pisa · ~57 m'),12,12);
-  ctx.fillStyle=INK;ctx.font='700 13px '+ff;ctx.textAlign='right';ctx.textBaseline='bottom';
-  ctx.fillText(TT('松手后 '+T.toFixed(1)+' 秒','t = '+T.toFixed(1)+' s'),w-12,groundY-9);
+  const done=()=>{if(res){res.style.display='';res.classList.add('in');}if(btn)btn.textContent=I18N.p1_fold_replay[LANG];};
+  L.dataset.fell='1';H.dataset.fell='1';
+  if(fallReduce){L.style.transition='none';H.style.transition='none';L.style.top='258px';H.style.top='248px';done();return;}
+  L.style.top='258px';H.style.top='248px';setTimeout(done,1120);
 }
 let rampT=14;
 function drawRamp(){
@@ -854,10 +909,24 @@ const I18N={
   title:{zh:'伽利略的比萨斜塔 — 从 0 开始的微积分',en:'Galileo’s Leaning Tower — Calculus from Zero'},
   nav_home:{zh:'← 目录',en:'← Contents'},nav_prev:{zh:'← 上一章',en:'← Previous'},
   p1_gal:{zh:'伽利略 · 1564–1642',en:'Galileo Galilei · 1564–1642'},
-  p1_kicker:{zh:'从一个现实开始 · 400 年前',en:'Start from something real · 400 years ago'},
-  p1_q:{zh:'它掉得，<em>有多快</em>？',en:'How <em>fast</em> is it falling?'},
-  p1_lt:{zh:'松手后 · 拖着看时间走 →',en:'after release · drag time →'},
-  p1_sub:{zh:'400 年前，伽利略在比萨斜塔（<b>高约 57 米</b>）上松手，让一个球往下掉 —— 它<b>越掉越快</b>。<br>可它到底<b>每一刻掉得多快</b>？球一秒就砸到地上，太快了；那年头没有秒表，光靠眼睛和脉搏，根本量不出「这一刻多快」。<br>这一章，就想办法<b>算出它每一刻的速度</b>。',en:'400 years ago Galileo dropped a ball from the Leaning Tower of Pisa (<b>about 57 m</b> tall) — it falls <b>faster and faster</b>.<br>But exactly <b>how fast at each instant</b>? It hits the ground in a second — too fast; and back then there was no stopwatch, so eyes and a pulse could not catch the speed at a moment.<br>This chapter finds a way to <b>compute its speed at every instant</b>.'},
+  p1_kicker:{zh:'从一个快得来不及测量的运动开始',en:'Starting from a motion too fast to measure'},
+  p1_q:{zh:'伽利略的问题：<br>物体是怎样越落越快的？',en:'Galileo’s question:<br>how does an object fall faster and faster?'},
+  p1_sub:{zh:'400 多年前，伽利略开始研究下落。',en:'More than 400 years ago, Galileo began to study how things fall.'},
+  p1_sec:{zh:'秒',en:'s'},
+  p1_release:{zh:'松手',en:'Let go'},
+  p1_replay:{zh:'重新播放',en:'Play again'},
+  p1_fallmsg:{zh:'太快了。<br>我们知道它越来越快，<br>却看不清这一刻到底有多快。',en:'Too fast.<br>We know it keeps speeding up,<br>yet we cannot see how fast it is at this instant.'},
+  p1_fold_title:{zh:'历史旁页｜比萨斜塔上的问题',en:'History aside ｜ the question at the Tower of Pisa'},
+  p1_fold_sub:{zh:'重的物体，真的会比轻的物体先落地吗？',en:'Does a heavier object really land before a lighter one?'},
+  p1_fold_body:{zh:'<p>在伽利略生活的时代，很多人仍然接受亚里士多德的说法：<br>物体越重，下落得越快。</p><p>后来流传着一个著名故事：<br>伽利略站在比萨斜塔上，同时放下两个重量不同的物体，想看看重物是否真的会明显先落地。</p><p>这个故事讨论的是：<br>不同重量的物体，在自由落体时，下落速度是否不同？</p><p>它并不是为了测量某一瞬间的速度，也不是为了发现“路程与时间平方成正比”。</p><p>需要说明的是，伽利略是否真的在比萨斜塔上完成过这次公开实验，历史上仍有争议。这个故事主要来自他学生维维亚尼后来写下的传记。</p><p>但伽利略真正挑战的观点非常清楚：<br>如果忽略空气阻力，不同质量的物体会以相同的加速度下落。</p>',en:'<p>In Galileo’s time, many still accepted Aristotle’s claim:<br>the heavier an object, the faster it falls.</p><p>Later a famous story spread:<br>Galileo stood atop the Leaning Tower of Pisa and dropped two objects of different weight at the same time, to see whether the heavier one really lands noticeably first.</p><p>What the story is about:<br>do objects of different weight fall at different speeds in free fall?</p><p>It is not about measuring the speed at a single instant, nor about discovering that “distance is proportional to time squared”.</p><p>It should be noted that whether Galileo actually performed this public experiment on the tower is still debated by historians. The story comes mainly from a biography written later by his student Viviani.</p><p>But the view Galileo truly challenged is clear:<br>ignoring air resistance, objects of different mass fall with the same acceleration.</p>'},
+  p1_fold_lighter:{zh:'较轻',en:'Lighter'},
+  p1_fold_heavier:{zh:'较重',en:'Heavier'},
+  p1_pisa_cap:{zh:'🏛 比萨斜塔 · 高约 57 米（建筑高度，非实验数据）',en:'🏛 Leaning Tower of Pisa · ~57 m tall (building height, not experimental data)'},
+  p1_fold_drop:{zh:'同时松手',en:'Release together'},
+  p1_fold_replay:{zh:'↻ 再放一次',en:'↻ Again'},
+  p1_fold_result:{zh:'较轻的球：同时落地<br>较重的球：同时落地',en:'Lighter ball: lands at the same time<br>Heavier ball: lands at the same time'},
+  p1_fold_concl:{zh:'在忽略空气阻力的理想情况下，质量不同的物体具有相同的下落加速度。',en:'In the ideal case with air resistance ignored, objects of different mass have the same downward acceleration.'},
+  p1_scroll:{zh:'把运动放慢，再看一次 ⌄',en:'Slow the motion down, look again ⌄'},
   p1_goal:{zh:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 这一章：已知一个函数，求它的导数</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>已知</b>：一个函数 f（比如 xⁿ）<br><b>要算</b>：它的<b>导数</b>（变化率 / 斜率）<br><b>办法</b>：把曲线放大到变直、量斜率 → 得出<b>幂法则</b> xⁿ → n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">（看懵了回到这张卡 —— 就知道整章在干嘛。）</span></div>',en:'<div style="font-size:clamp(15px,2vw,18px);font-weight:700;color:var(--blue);margin-bottom:8px">🎯 This chapter: given a function, find its derivative</div><div style="font-size:clamp(14px,1.8vw,16px);line-height:1.75;color:var(--ink)"><b>Given</b>: a function f (like xⁿ)<br><b>Find</b>: its <b>derivative</b> (rate / slope)<br><b>How</b>: zoom until straight, measure the slope → the <b>power rule</b> xⁿ→n·xⁿ⁻¹<br><span style="color:var(--faint);font-size:.92em">(Lost later? Come back to this card to see what the chapter is about.)</span></div>'},
   p2_kicker:{zh:'把它放慢',en:'Slow it down'},
   p2_lt:{zh:'松手让球滚 · 拖时间 →',en:'release the ball · drag time →'},
@@ -941,9 +1010,7 @@ const I18N={
   p6_dn:{zh:'<b>幂法则 ≠ 导数。</b>幂法则只是「当曲线恰好是 xⁿ 时」的一条<b>捷径</b>。<br><br><b>① 幂法则只管 xⁿ 这一类</b>（x²、x³、√x…）。sin、eˣ、ln 各有各的求导公式，幂法则管不着。<br><br><b>② 但「求导」几乎不挑曲线。</b>导数是个<b>几何概念</b> —— 某点的<b>切线斜率</b>。只要曲线在那点<b>光滑</b>（放大后像直线），导数就存在，<b>根本不需要公式</b>。这正是本章开头互动图干的：纯靠「量两点、把 B 拖近 A」，没用一个公式。<br><br><b>③ 不规则曲线能不能求导？分三种：</b><br>· <b>有公式、非幂函数</b>（sin x、eˣ）：能 —— 用它自己的公式 + 加减/乘除/链式法则。<br>· <b>完全没公式</b>（手画波浪线、GPS 实测数据）：<b>也能</b> —— 回到定义，在那点取两个很近的点量斜率（<b>数值求导</b>），就是第 2、3 屏那套逼近法。<br>· <b>有尖角/断裂/无限抖动</b>（如 |x| 在 0 点）：那一点<b>不能</b> —— 没有唯一切线，导数在该点<b>不存在</b>。<br><br><b>一句话：</b>能不能求导，看曲线<b>光不光滑</b>，不看有没有漂亮公式。幂法则只是 xⁿ 的加速器；现实里没公式的数据（如汽车 GPS），靠的就是「量两点逼近」的数值办法（第 2 章瞬时速度正是这么干的）。',en:'<b>The power rule ≠ the derivative.</b> It is just a <b>shortcut for when the curve happens to be xⁿ</b>.<br><br><b>① It only covers the xⁿ family</b> (x², x³, √x…). sin, eˣ, ln each have their own derivative formulas; the power rule doesn’t touch them.<br><br><b>② But “taking a derivative” barely cares about the curve.</b> A derivative is a <b>geometric idea</b> — the <b>slope of the tangent</b> at a point. As long as the curve is <b>smooth</b> there (looks like a line when zoomed in), the derivative exists, <b>with no formula needed</b>. That is exactly what the interactive figure at the start did: purely “measure two points, drag B toward A”, no formula.<br><br><b>③ Can irregular curves be differentiated? Three cases:</b><br>· <b>Has a formula, not a power</b> (sin x, eˣ): yes — its own formula + sum/product/chain rules.<br>· <b>No formula at all</b> (a hand-drawn squiggle, measured GPS data): <b>also yes</b> — go back to the definition: take two very close points there and measure the slope (<b>numerical differentiation</b>) — the same limiting method as screens 2–3.<br>· <b>Has a corner / jump / infinite wiggle</b> (like |x| at 0): there it <b>can’t</b> — no single tangent, so the derivative <b>does not exist</b> at that point.<br><br><b>In one line:</b> whether you can differentiate depends on whether the curve is <b>smooth</b>, not on whether it has a pretty formula. The power rule is just an accelerator for xⁿ; real-world formula-less data (a car’s GPS) relies on the “measure two points, take the limit” numerical method (exactly what Chapter 2 did for instantaneous speed).'},
   p6_ex_s:{zh:'练一练 · 2 道求导题（点开看答案）',en:'Practice · 2 derivative problems (open for answers)'},
   p6_ex:{zh:'① 求 <b>x⁴</b> 的导数 = ?<br>　→ 幂法则：指数 4 搬下来、再减 1 → <b>4x³</b>。<br><br>② <b>x⁷</b> 在 x = 1 处的斜率 = ?<br>　→ 先求导 <b>7x⁶</b>，代入 x=1 → <b>7</b>。',en:'① derivative of <b>x⁴</b> = ?<br>　→ power rule: bring 4 down, subtract 1 → <b>4x³</b>.<br><br>② slope of <b>x⁷</b> at x = 1 = ?<br>　→ derivative <b>7x⁶</b>, plug x=1 → <b>7</b>.'},
-  p3_why_s:{zh:'为什么是「平方」？—— 距离 = 平均速度 × 时间 × 倍数²',en:'Why "squared"? — distance = avg speed × time × number²'},
-  p3_why:{zh:'距离 = <b>平均速度 × 时间</b>。球匀匀加速，所以时间翻几倍、平均速度也跟着翻几倍。<br><br><b>时间翻 2 倍</b>（平均速度也 ×2）：<br>距离 = (平均速度<b>×2</b>) × (时间<b>×2</b>) = <b>平均速度 × 时间 × 2×2</b>（＝ 4 倍）。<br><br><b>时间翻 3 倍</b>（平均速度也 ×3）：<br>距离 = (平均速度<b>×3</b>) × (时间<b>×3</b>) = <b>平均速度 × 时间 × 3×3</b>（＝ 9 倍）。<br><br>所以时间翻几倍，距离就 = <b>平均速度 × 时间 × 倍数²</b>（倍数×倍数：翻 2 倍→4、翻 3 倍→9）—— 那个「倍数乘它自己」，就是<b>平方</b>。',en:'Distance = <b>average speed × time</b>. With even acceleration, whatever you multiply the time by, the average speed multiplies by the same.<br><br><b>Double the time</b> (average speed also ×2):<br>distance = (avg speed <b>×2</b>) × (time <b>×2</b>) = <b>avg speed × time × 2×2</b> (= 4×).<br><br><b>Triple the time</b> (average speed also ×3):<br>distance = (avg speed <b>×3</b>) × (time <b>×3</b>) = <b>avg speed × time × 3×3</b> (= 9×).<br><br>So: multiply the time by some number, and distance = <b>avg speed × time × number²</b> (number×number: 2→4, 3→9) — that "number times itself" is what <b>squared</b> means.'},
-  p3_law:{zh:'🏛️ 伽利略拿斜面 + 水钟<b>一次次量</b>，发现一条规律：<b>到第几份时间，一共走的路程，正好是那个数的「平方」</b> —— 第 2 份 → 2×2 = <b>4</b>，第 3 份 → 3×3 = <b>9</b>，第 4 份 → 4×4 = <b>16</b>。这些数不是我编的，记在《<b>关于两门新科学的对话</b>》(1638) 里，他反复做了上百次，次次都对得上。',en:'🏛️ Measuring again and again with a ramp and water clock, Galileo found a rule: <b>by any unit of time, the total distance is exactly that number "squared"</b> — unit 2 → 2×2 = <b>4</b>, unit 3 → 3×3 = <b>9</b>, unit 4 → 4×4 = <b>16</b>. Not made-up numbers — recorded in <b>Two New Sciences</b> (1638), repeated a hundred times, matching every time.'},
+  p3_law:{zh:'🏛️ 伽利略用斜面和水钟<b>反复测量</b>，发现：在从静止开始的匀加速运动中，时间取 <b>1、2、3、4</b> 份时，累计路程按 <b>1、4、9、16</b> 增长。<br><br>也就是说，<b>路程与时间的平方成正比</b>：<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>为了让后面的讲解更直观，我们把比例常数取为 1，采用<b>简化模型</b>：<div class="eqc"><span class="eqbox"><i>s</i> ＝ <i>t</i><sup>2</sup></span></div>这里的 <i>s</i> 表示累计路程，<i>t</i> 表示经过的时间。',en:'🏛️ Measuring repeatedly with a ramp and water clock, Galileo found: in uniformly accelerated motion from rest, as time takes <b>1, 2, 3, 4</b> units, the total distance grows as <b>1, 4, 9, 16</b>.<br><br>In other words, <b>distance is proportional to time squared</b>:<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>To keep the rest of the explanation intuitive, we set the proportionality constant to 1 and use a <b>simplified model</b>:<div class="eqc"><span class="eqbox"><i>s</i> ＝ <i>t</i><sup>2</sup></span></div>Here <i>s</i> is the total distance and <i>t</i> is the elapsed time.'},
   p6_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
@@ -951,12 +1018,14 @@ function applyLang(){
   document.documentElement.lang=LANG;document.title=I18N.title[LANG];
   document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[k])el.innerHTML=I18N[k][LANG];});
   document.getElementById('langBtn').textContent=LANG==='zh'?'EN':'中';
-  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
+  drawFall();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
   {const pd0=document.getElementById('proofDetails');if(pd0&&pd0.open)drawProof();}
 }
 function initAll(){
-  drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
-  {const _dt=document.getElementById('dropT');if(_dt)_dt.addEventListener('input',()=>{dropT=+_dt.value;requestAnimationFrame(drawDrop);});}
+  drawFall();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();
+  fallReduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);
+  {const _fb=document.getElementById('fallBtn');if(_fb)_fb.addEventListener('click',fallRun);}
+  {const _pb=document.getElementById('pisaBtn');if(_pb)_pb.addEventListener('click',pisaRun);}
   {const _rt=document.getElementById('rampT');if(_rt)_rt.addEventListener('input',()=>{rampT=+_rt.value;requestAnimationFrame(drawRamp);});}
   {const _lt=document.getElementById('lawT');if(_lt)_lt.addEventListener('input',()=>{lawT=+_lt.value;requestAnimationFrame(drawLaw);});}
   let r2=null;const avR=()=>{if(r2)return;r2=requestAnimationFrame(()=>{r2=null;drawAvg();});};
@@ -1003,7 +1072,7 @@ function initAll(){
     hd.addEventListener('pointerup',()=>{drag=false;});hd.addEventListener('pointercancel',()=>{drag=false;});
   }}
   {const ax=document.getElementById('ansX');if(ax)ax.addEventListener('input',drawScale);}
-  addEventListener('resize',()=>{drawDrop();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();if(pd&&pd.open)drawProof();});
+  addEventListener('resize',()=>{drawFall();drawRamp();drawLaw();drawAvg();drawSpeed();drawCalc();drawCurve();if(pd&&pd.open)drawProof();});
   addEventListener('scroll',()=>{const hint=document.querySelector('.hint');if(hint&&hint.style.display!=='none')hint.style.opacity=scrollY>200?'0':'';},{passive:true});
   applyLang();
 }
