@@ -86,6 +86,10 @@
   .eqc{text-align:center;margin:12px 0;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:1.5em;line-height:1}
   .eqc sup{font-size:.62em;vertical-align:super}
   .eqbox{display:inline-block;border:1.6px solid currentColor;border-radius:8px;padding:5px 20px}
+  .eqkey{display:inline-block;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;
+    font-size:clamp(34px,7vw,52px);line-height:1;padding:16px 44px;border-radius:18px;
+    background:linear-gradient(120deg,#eafaef,#eef5ff);border:2.5px solid #bfe3cc;box-shadow:0 10px 30px rgba(22,163,74,.16)}
+  .eqkey sup{font-size:.56em;vertical-align:super;font-style:italic}
   /* 第1屏 · 中性自由落体 + 比萨折叠页 */
   .falltime{font-variant-numeric:tabular-nums;font-size:clamp(22px,3.2vw,30px);font-weight:800;color:var(--blue);letter-spacing:-.01em}
   .falltime .fu{font-size:.6em;font-weight:700;color:var(--soft);margin-left:3px}
@@ -521,7 +525,10 @@ function pisaRun(){
   if(fallReduce){L.style.transition='none';H.style.transition='none';L.style.top='258px';H.style.top='248px';done();return;}
   L.style.top='258px';H.style.top='248px';setTimeout(done,1120);
 }
-let rampT=14;
+let rampT=14,rampRAF=null,rampInView=false,rampReduce=false,rampPhase=0;
+function rampPlay(){ if(rampReduce){drawRamp();return;} if(rampRAF)return;
+  const step=()=>{ rampPhase=(rampPhase+0.018)%1; drawRamp(); rampRAF=requestAnimationFrame(step); }; rampRAF=requestAnimationFrame(step); }
+function rampStop(){ if(rampRAF){cancelAnimationFrame(rampRAF);rampRAF=null;} }
 function drawRamp(){
   const cv=document.getElementById('cRamp');if(!cv)return;
   const {ctx,w,h}=setup(cv,400);ctx.clearRect(0,0,w,h);
@@ -553,8 +560,9 @@ function drawRamp(){
   ctx.fillStyle=SOFT;ctx.font='600 11px '+ff;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(TT('🕐 用流水当秒表','🕐 water as a clock'),tx+tw/2,tyT-5);
   const sx=tx+tw/2;
   ctx.fillStyle='#9aa0aa';ctx.fillRect(sx-3,tyT+tyH,6,12);
-  ctx.fillStyle='rgba(0,140,220,.72)';
-  for(const dyy of [tyT+tyH+22,tyT+tyH+40,tyT+tyH+60]){ctx.beginPath();ctx.ellipse(sx,dyy,3,4.6,0,0,TAU);ctx.fill();}
+  {const dTop=tyT+tyH+14,dBot=tyT+tyH+75,dRange=dBot-dTop,ND=3;
+   for(let k=0;k<ND;k++){const fp=(rampPhase+k/ND)%1,dyy=dTop+fp*dRange,op=Math.min(1,Math.min(fp,1-fp)*4);
+     ctx.fillStyle='rgba(0,140,220,'+(0.78*op).toFixed(2)+')';ctx.beginPath();ctx.ellipse(sx,dyy,3,4.6,0,0,TAU);ctx.fill();}}
   const cupW=70,cupX=sx-cupW/2,cupYt=tyT+tyH+78,cupB=groundY-4,cupH=cupB-cupYt,wl=cupB-cupH*lvl;
   ctx.fillStyle='rgba(0,140,220,.4)';ctx.fillRect(cupX+2.5,wl,cupW-5,cupB-wl-2.5);
   ctx.strokeStyle='#8a8f98';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cupX,cupYt);ctx.lineTo(cupX,cupB);ctx.lineTo(cupX+cupW,cupB);ctx.lineTo(cupX+cupW,cupYt);ctx.stroke();
@@ -1010,7 +1018,7 @@ const I18N={
   p6_dn:{zh:'<b>幂法则 ≠ 导数。</b>幂法则只是「当曲线恰好是 xⁿ 时」的一条<b>捷径</b>。<br><br><b>① 幂法则只管 xⁿ 这一类</b>（x²、x³、√x…）。sin、eˣ、ln 各有各的求导公式，幂法则管不着。<br><br><b>② 但「求导」几乎不挑曲线。</b>导数是个<b>几何概念</b> —— 某点的<b>切线斜率</b>。只要曲线在那点<b>光滑</b>（放大后像直线），导数就存在，<b>根本不需要公式</b>。这正是本章开头互动图干的：纯靠「量两点、把 B 拖近 A」，没用一个公式。<br><br><b>③ 不规则曲线能不能求导？分三种：</b><br>· <b>有公式、非幂函数</b>（sin x、eˣ）：能 —— 用它自己的公式 + 加减/乘除/链式法则。<br>· <b>完全没公式</b>（手画波浪线、GPS 实测数据）：<b>也能</b> —— 回到定义，在那点取两个很近的点量斜率（<b>数值求导</b>），就是第 2、3 屏那套逼近法。<br>· <b>有尖角/断裂/无限抖动</b>（如 |x| 在 0 点）：那一点<b>不能</b> —— 没有唯一切线，导数在该点<b>不存在</b>。<br><br><b>一句话：</b>能不能求导，看曲线<b>光不光滑</b>，不看有没有漂亮公式。幂法则只是 xⁿ 的加速器；现实里没公式的数据（如汽车 GPS），靠的就是「量两点逼近」的数值办法（第 2 章瞬时速度正是这么干的）。',en:'<b>The power rule ≠ the derivative.</b> It is just a <b>shortcut for when the curve happens to be xⁿ</b>.<br><br><b>① It only covers the xⁿ family</b> (x², x³, √x…). sin, eˣ, ln each have their own derivative formulas; the power rule doesn’t touch them.<br><br><b>② But “taking a derivative” barely cares about the curve.</b> A derivative is a <b>geometric idea</b> — the <b>slope of the tangent</b> at a point. As long as the curve is <b>smooth</b> there (looks like a line when zoomed in), the derivative exists, <b>with no formula needed</b>. That is exactly what the interactive figure at the start did: purely “measure two points, drag B toward A”, no formula.<br><br><b>③ Can irregular curves be differentiated? Three cases:</b><br>· <b>Has a formula, not a power</b> (sin x, eˣ): yes — its own formula + sum/product/chain rules.<br>· <b>No formula at all</b> (a hand-drawn squiggle, measured GPS data): <b>also yes</b> — go back to the definition: take two very close points there and measure the slope (<b>numerical differentiation</b>) — the same limiting method as screens 2–3.<br>· <b>Has a corner / jump / infinite wiggle</b> (like |x| at 0): there it <b>can’t</b> — no single tangent, so the derivative <b>does not exist</b> at that point.<br><br><b>In one line:</b> whether you can differentiate depends on whether the curve is <b>smooth</b>, not on whether it has a pretty formula. The power rule is just an accelerator for xⁿ; real-world formula-less data (a car’s GPS) relies on the “measure two points, take the limit” numerical method (exactly what Chapter 2 did for instantaneous speed).'},
   p6_ex_s:{zh:'练一练 · 2 道求导题（点开看答案）',en:'Practice · 2 derivative problems (open for answers)'},
   p6_ex:{zh:'① 求 <b>x⁴</b> 的导数 = ?<br>　→ 幂法则：指数 4 搬下来、再减 1 → <b>4x³</b>。<br><br>② <b>x⁷</b> 在 x = 1 处的斜率 = ?<br>　→ 先求导 <b>7x⁶</b>，代入 x=1 → <b>7</b>。',en:'① derivative of <b>x⁴</b> = ?<br>　→ power rule: bring 4 down, subtract 1 → <b>4x³</b>.<br><br>② slope of <b>x⁷</b> at x = 1 = ?<br>　→ derivative <b>7x⁶</b>, plug x=1 → <b>7</b>.'},
-  p3_law:{zh:'🏛️ 伽利略用斜面和水钟<b>反复测量</b>，发现：在从静止开始的匀加速运动中，时间取 <b>1、2、3、4</b> 份时，累计路程按 <b>1、4、9、16</b> 增长。<br><br>也就是说，<b>路程与时间的平方成正比</b>：<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>为了让后面的讲解更直观，我们把比例常数取为 1，采用<b>简化模型</b>：<div class="eqc"><span class="eqbox"><i>s</i> ＝ <i>t</i><sup>2</sup></span></div>这里的 <i>s</i> 表示累计路程，<i>t</i> 表示经过的时间。',en:'🏛️ Measuring repeatedly with a ramp and water clock, Galileo found: in uniformly accelerated motion from rest, as time takes <b>1, 2, 3, 4</b> units, the total distance grows as <b>1, 4, 9, 16</b>.<br><br>In other words, <b>distance is proportional to time squared</b>:<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>To keep the rest of the explanation intuitive, we set the proportionality constant to 1 and use a <b>simplified model</b>:<div class="eqc"><span class="eqbox"><i>s</i> ＝ <i>t</i><sup>2</sup></span></div>Here <i>s</i> is the total distance and <i>t</i> is the elapsed time.'},
+  p3_law:{zh:'🏛️ 伽利略用斜面和水钟<b>反复测量</b>，发现：在从静止开始的匀加速运动中，时间取 <b>1、2、3、4</b> 份时，累计路程按 <b>1、4、9、16</b> 增长。<br><br>也就是说，<b>路程与时间的平方成正比</b>：<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>为了让后面的讲解更直观，我们把比例常数取为 1，采用<b>简化模型</b>：<div class="eqc"><span class="eqkey"><i style="color:#17a34a">s</i><span style="color:#9aa0aa;margin:0 .16em">＝</span><i style="color:#0071e3">t</i><sup style="color:#0071e3">2</sup></span></div>这里的 <i>s</i> 表示累计路程，<i>t</i> 表示经过的时间。',en:'🏛️ Measuring repeatedly with a ramp and water clock, Galileo found: in uniformly accelerated motion from rest, as time takes <b>1, 2, 3, 4</b> units, the total distance grows as <b>1, 4, 9, 16</b>.<br><br>In other words, <b>distance is proportional to time squared</b>:<div class="eqc"><i>s</i> ∝ <i>t</i><sup>2</sup></div>To keep the rest of the explanation intuitive, we set the proportionality constant to 1 and use a <b>simplified model</b>:<div class="eqc"><span class="eqkey"><i style="color:#17a34a">s</i><span style="color:#9aa0aa;margin:0 .16em">＝</span><i style="color:#0071e3">t</i><sup style="color:#0071e3">2</sup></span></div>Here <i>s</i> is the total distance and <i>t</i> is the elapsed time.'},
   p6_next:{zh:'下一章：怎么算积分 →',en:'Next: Computing Integrals →'},
   hint:{zh:'向下滚动<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',en:'Scroll down<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'}
 };
@@ -1038,6 +1046,10 @@ function initAll(){
   {const cCv=document.getElementById('cCurve');
    if(cCv&&'IntersectionObserver' in window){new IntersectionObserver(es=>{crvInView=es[0].isIntersecting;if(crvInView)crvPlay();else crvStop();},{threshold:.3}).observe(cCv);}
    else{crvInView=true;crvPlay();}}
+  rampReduce=spdReduce;
+  {const cRp=document.getElementById('cRamp');
+   if(cRp&&'IntersectionObserver' in window){new IntersectionObserver(es=>{rampInView=es[0].isIntersecting;if(rampInView)rampPlay();else rampStop();},{threshold:.3}).observe(cRp);}
+   else{rampInView=true;rampPlay();}}
   {const _ct=document.getElementById('calcT');if(_ct)_ct.addEventListener('input',()=>{calcT=+_ct.value;requestAnimationFrame(drawCalc);});}
   document.querySelectorAll('.segb').forEach(b=>b.addEventListener('click',()=>{
     fnIdx=+b.dataset.fn;document.querySelectorAll('.segb').forEach(x=>x.classList.toggle('on',x===b));drawPat();}));
