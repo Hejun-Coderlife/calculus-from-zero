@@ -110,19 +110,31 @@
   .hf-inner .copy p{margin:0;font-size:clamp(15px,1.9vw,17px);line-height:1.72;color:var(--soft)}
   .hf-inner .card{max-width:none;margin:14px 0 0;text-align:left}
   .hf-bold{margin-top:12px;font-size:clamp(15px,1.9vw,17px);font-weight:700;color:var(--ink);line-height:1.62}
-  .pisawrap{display:flex;gap:20px;align-items:flex-start;justify-content:center;flex-wrap:wrap;margin:16px auto 4px}
-  .pisafig{margin:0;width:min(200px,52vw)}
-  .pisaimg{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,.2)}
-  .pisacap{margin-top:7px;text-align:center;font-size:12px;color:var(--faint);line-height:1.5}
-  .droplane{position:relative;width:140px;height:300px;flex:0 0 auto;border-radius:12px;
-    background:linear-gradient(180deg,#eaf2ff,#f6f9fd);border:1px solid #dbe6f5}
-  .dl-ground{position:absolute;left:0;right:0;bottom:0;height:20px;background:#e4e7ec;border-top:1px solid #cfd3da;border-radius:0 0 12px 12px}
-  .dl-ball{position:absolute;top:16px;border-radius:50%;box-shadow:0 3px 8px rgba(0,0,0,.28);z-index:2;transition:top 1.05s cubic-bezier(.5,0,1,.5)}
-  .dl-ball.light{width:22px;height:22px;left:30%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#fafafc,#b6b6c0)}
-  .dl-ball.heavy{width:32px;height:32px;left:70%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#eaeaef,#8d8d99)}
-  .pblab{position:absolute;bottom:106%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--ink);
-    white-space:nowrap;background:rgba(255,255,255,.88);padding:1px 6px;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-  .pisares{margin-top:8px;font-size:14.5px;font-weight:700;color:var(--green);line-height:1.7;text-align:center}
+  /* 比萨斜塔历史正文 + 双球互动（本章末，已展开成正文）*/
+  .pisatext{width:min(600px,92vw);margin:16px auto 0;text-align:left}
+  .pisatext p{margin:0 0 15px;font-size:clamp(16px,2vw,18px);line-height:1.9;color:#3b3b42}
+  .pisatext p:last-child{margin-bottom:0}
+  .pisatext b{color:var(--ink);font-weight:700}
+  .pisacard{width:min(660px,94vw);margin:26px auto 0;padding:22px 22px 20px;border-radius:22px;
+    background:linear-gradient(180deg,#f2f8ff,#fcfeff);border:1px solid #e4edf8;box-shadow:0 16px 40px rgba(30,64,128,.10)}
+  .mediahd{font-size:14.5px;font-weight:700;color:#4a4a52;text-align:center;margin-bottom:16px}
+  .pisawrap{display:flex;gap:24px;align-items:center;justify-content:center;flex-wrap:wrap;margin:0}
+  .pisafig{margin:0;width:min(196px,50vw)}
+  .pisaimg{width:100%;height:auto;display:block;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.24)}
+  .pisacap{margin-top:8px;text-align:center;font-size:11.5px;color:var(--faint);line-height:1.5}
+  .droplane{position:relative;width:152px;height:302px;flex:0 0 auto;border-radius:16px;overflow:hidden;
+    background:linear-gradient(180deg,#cfe6ff,#e9f4ff 58%,#f6fbff);border:1px solid #cfe0f2;box-shadow:inset 0 3px 14px rgba(0,90,170,.08)}
+  .droplane::before{content:"";position:absolute;top:14px;right:16px;width:32px;height:32px;border-radius:50%;
+    background:radial-gradient(circle,#fff4b0,#ffdf6e);box-shadow:0 0 20px rgba(255,208,70,.65)}
+  .dl-ground{position:absolute;left:0;right:0;bottom:0;height:26px;background:linear-gradient(180deg,#93d68d,#69bd67);border-top:2px solid #57ad57}
+  .dl-ball{position:absolute;top:30px;border-radius:50%;z-index:2;transition:top 1.05s cubic-bezier(.5,0,1,.5)}
+  .dl-ball.light{width:24px;height:24px;left:33%;transform:translateX(-50%);
+    background:radial-gradient(circle at 34% 28%,#ffffff,#c4c8d2 68%,#9aa0ab);box-shadow:0 5px 11px rgba(0,0,0,.28)}
+  .dl-ball.heavy{width:36px;height:36px;left:67%;transform:translateX(-50%);
+    background:radial-gradient(circle at 34% 28%,#f1f2f6,#9ba1ac 66%,#686d78);box-shadow:0 6px 13px rgba(0,0,0,.32)}
+  .pblab{position:absolute;bottom:112%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:#0a3a66;
+    white-space:nowrap;background:rgba(255,255,255,.94);padding:2px 9px;border-radius:999px;box-shadow:0 2px 7px rgba(0,0,0,.14)}
+  .pisares{margin-top:14px;font-size:14.5px;font-weight:700;color:#16a34a;line-height:1.8;text-align:center}
   .p1scroll{margin-top:16px;font-size:14px;color:var(--faint);font-weight:600}
   .btnrow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px}
 </style></head>
@@ -210,39 +222,31 @@
   <div class="card reveal" data-i18n="p7_card"></div>
 </section>
 
-<section class="panel">
-  <div class="kicker reveal" data-i18n="p8_kicker">一个新问题</div>
-  <div class="q reveal" data-i18n="p8_q">换成<em>弯道</em>呢？</div>
-  <div class="sub reveal" data-i18n="p8_sub"></div>
-  <div class="fig reveal" style="width:min(600px,96vw)"><canvas id="cCurve" height="360"></canvas></div>
-  <div class="readout reveal" data-i18n="p8_read"></div>
-  <div class="card reveal" data-i18n="p8_card"></div>
+<section class="panel" style="justify-content:flex-start;padding-top:96px">
+  <div class="kicker hist reveal" data-i18n="p1_pisa_kick">历史旁页</div>
+  <div class="q reveal" data-i18n="p1_pisa_title">比萨斜塔上的问题</div>
+  <div class="sub reveal" data-i18n="p1_fold_sub">重的物体，真的会比轻的物体先落地吗？</div>
 
-  <!-- 历史折叠页：比萨斜塔（本章末 · 默认收起）-->
-  <details class="histfold reveal" id="pisaFold">
-    <summary>
-      <span class="hf-title" data-i18n="p1_fold_title">历史旁页｜比萨斜塔上的问题</span>
-      <span class="hf-sub" data-i18n="p1_fold_sub">重的物体，真的会比轻的物体先落地吗？</span>
-    </summary>
-    <div class="hf-inner">
-      <div class="copy" data-i18n="p1_fold_body"></div>
-      <div class="pisawrap">
-        <figure class="pisafig">
-          <img class="pisaimg" src="img/pisa.jpg" alt="Leaning Tower of Pisa" loading="lazy">
-          <figcaption class="pisacap" data-i18n="p1_pisa_cap">🏛 比萨斜塔 · 高约 57 米（建筑高度，非实验数据）</figcaption>
-        </figure>
-        <div class="droplane" id="droplane">
-          <div class="dl-ball light" id="pbL"><span class="pblab" data-i18n="p1_fold_lighter">较轻</span></div>
-          <div class="dl-ball heavy" id="pbH"><span class="pblab" data-i18n="p1_fold_heavier">较重</span></div>
-          <div class="dl-ground"></div>
-        </div>
+  <div class="pisatext reveal" data-i18n="p1_fold_body"></div>
+
+  <div class="pisacard reveal">
+    <div class="mediahd" data-i18n="p1_pisa_try">同时松手，会一起落地吗？</div>
+    <div class="pisawrap">
+      <figure class="pisafig">
+        <img class="pisaimg" src="img/pisa.jpg" alt="Leaning Tower of Pisa" loading="lazy">
+        <figcaption class="pisacap" data-i18n="p1_pisa_cap">🏛 比萨斜塔 · 高约 57 米（建筑高度，非实验数据）</figcaption>
+      </figure>
+      <div class="droplane" id="droplane">
+        <div class="dl-ball light" id="pbL"><span class="pblab" data-i18n="p1_fold_lighter">较轻</span></div>
+        <div class="dl-ball heavy" id="pbH"><span class="pblab" data-i18n="p1_fold_heavier">较重</span></div>
+        <div class="dl-ground"></div>
       </div>
-      <div class="btnrow"><button id="pisaBtn" class="fallbtn ghost" data-i18n="p1_fold_drop">同时松手</button></div>
-      <div class="pisares" id="pisaRes" data-i18n="p1_fold_result" style="display:none"></div>
-      <div class="card" data-i18n="p1_fold_concl"></div>
     </div>
-  </details>
+    <div class="btnrow"><button id="pisaBtn" class="fallbtn" data-i18n="p1_fold_drop">同时松手</button></div>
+    <div class="pisares" id="pisaRes" data-i18n="p1_fold_result" style="display:none"></div>
+  </div>
 
+  <div class="card reveal" data-i18n="p1_fold_concl"></div>
   <a href="ch05b.html" class="nextbtn reveal" data-i18n="p8_next">下一章：缩到极限 →</a>
 </section>
 
@@ -522,8 +526,8 @@ function pisaRun(){
   }
   const done=()=>{if(res){res.style.display='';res.classList.add('in');}if(btn)btn.textContent=I18N.p1_fold_replay[LANG];};
   L.dataset.fell='1';H.dataset.fell='1';
-  if(fallReduce){L.style.transition='none';H.style.transition='none';L.style.top='258px';H.style.top='248px';done();return;}
-  L.style.top='258px';H.style.top='248px';setTimeout(done,1120);
+  if(fallReduce){L.style.transition='none';H.style.transition='none';L.style.top='250px';H.style.top='240px';done();return;}
+  L.style.top='250px';H.style.top='240px';setTimeout(done,1120);
 }
 let rampT=14,rampRAF=null,rampInView=false,rampReduce=false,rampPhase=0;
 function rampPlay(){ if(rampReduce){drawRamp();return;} if(rampRAF)return;
@@ -926,6 +930,9 @@ const I18N={
   p1_fallmsg:{zh:'太快了。<br>我们知道它越来越快，<br>却看不清这一刻到底有多快。',en:'Too fast.<br>We know it keeps speeding up,<br>yet we cannot see how fast it is at this instant.'},
   p1_fold_title:{zh:'历史旁页｜比萨斜塔上的问题',en:'History aside ｜ the question at the Tower of Pisa'},
   p1_fold_sub:{zh:'重的物体，真的会比轻的物体先落地吗？',en:'Does a heavier object really land before a lighter one?'},
+  p1_pisa_kick:{zh:'历史旁页',en:'History aside'},
+  p1_pisa_title:{zh:'比萨斜塔上的问题',en:'The question at the Tower of Pisa'},
+  p1_pisa_try:{zh:'同时松手，会一起落地吗？',en:'Release together — do they land at the same time?'},
   p1_fold_body:{zh:'<p>在伽利略生活的时代，很多人仍然接受亚里士多德的说法：<br>物体越重，下落得越快。</p><p>后来流传着一个著名故事：<br>伽利略站在比萨斜塔上，同时放下两个重量不同的物体，想看看重物是否真的会明显先落地。</p><p>这个故事讨论的是：<br>不同重量的物体，在自由落体时，下落速度是否不同？</p><p>它并不是为了测量某一瞬间的速度，也不是为了发现“路程与时间平方成正比”。</p><p>需要说明的是，伽利略是否真的在比萨斜塔上完成过这次公开实验，历史上仍有争议。这个故事主要来自他学生维维亚尼后来写下的传记。</p><p>但伽利略真正挑战的观点非常清楚：<br>如果忽略空气阻力，不同质量的物体会以相同的加速度下落。</p>',en:'<p>In Galileo’s time, many still accepted Aristotle’s claim:<br>the heavier an object, the faster it falls.</p><p>Later a famous story spread:<br>Galileo stood atop the Leaning Tower of Pisa and dropped two objects of different weight at the same time, to see whether the heavier one really lands noticeably first.</p><p>What the story is about:<br>do objects of different weight fall at different speeds in free fall?</p><p>It is not about measuring the speed at a single instant, nor about discovering that “distance is proportional to time squared”.</p><p>It should be noted that whether Galileo actually performed this public experiment on the tower is still debated by historians. The story comes mainly from a biography written later by his student Viviani.</p><p>But the view Galileo truly challenged is clear:<br>ignoring air resistance, objects of different mass fall with the same acceleration.</p>'},
   p1_fold_lighter:{zh:'较轻',en:'Lighter'},
   p1_fold_heavier:{zh:'较重',en:'Heavier'},
@@ -1043,9 +1050,7 @@ function initAll(){
    if(cSp&&'IntersectionObserver' in window){new IntersectionObserver(es=>{spdInView=es[0].isIntersecting;if(spdInView)spdPlay();else spdStop();},{threshold:.3}).observe(cSp);}
    else{spdInView=true;spdPlay();}}
   crvReduce=spdReduce;
-  {const cCv=document.getElementById('cCurve');
-   if(cCv&&'IntersectionObserver' in window){new IntersectionObserver(es=>{crvInView=es[0].isIntersecting;if(crvInView)crvPlay();else crvStop();},{threshold:.3}).observe(cCv);}
-   else{crvInView=true;crvPlay();}}
+  /* 弯道互动已从末屏移除；cCurve 画布不存在时不启动动画 */
   rampReduce=spdReduce;
   {const cRp=document.getElementById('cRamp');
    if(cRp&&'IntersectionObserver' in window){new IntersectionObserver(es=>{rampInView=es[0].isIntersecting;if(rampInView)rampPlay();else rampStop();},{threshold:.3}).observe(cRp);}
